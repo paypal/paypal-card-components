@@ -1,0 +1,36 @@
+{
+  "name": "paypal-braintree-hosted-fields-component",
+  "version": "1.0.0",
+  "description": "Hosted Fields component for unified PayPal/Braintree web sdk",
+  "main": "index.js",
+  "scripts": {
+    "release": "npm run release:patch",
+    "release:patch": "./node_modules/grumbler-scripts/publish.sh patch",
+    "release:minor": "./node_modules/grumbler-scripts/publish.sh minor",
+    "release:major": "./node_modules/grumbler-scripts/publish.sh major",
+    "flow-typed": "flow-typed install",
+    "flow": "flow",
+    "flow:build": "flow gen-flow-files ./src/index.js --out-dir ./dist/module",
+    "lint": "eslint src/ test/ *.js",
+    "test": "npm run lint && npm run flow-typed && npm run flow && npm run karma",
+    "karma": "cross-env NODE_ENV=test babel-node --plugins=transform-es2015-modules-commonjs ./node_modules/.bin/karma start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/paypal/paypal-braintree-hosted-fields-component.git"
+  },
+  "author": "dbrain",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/paypal/paypal-braintree-hosted-fields-component/issues"
+  },
+  "homepage": "https://github.com/paypal/paypal-braintree-hosted-fields-component#readme",
+  "devDependencies": {
+    "grumbler-scripts": "^2",
+    "mocha": "^5.0.5",
+    "flow-bin": "^0.56.0"
+  },
+  "dependencies": {
+    "paypal-braintree-web-client": "^1.0.5"
+  }
+}
