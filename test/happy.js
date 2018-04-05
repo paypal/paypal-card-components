@@ -1,38 +1,42 @@
 /* @flow */
 
-import '../src/index'; // eslint-disable-line import/no-unassigned-import
+import '../src/index';
+
+import hostedFields from 'braintree-web/hosted-fields';
+import td from 'testdouble/dist/testdouble';
 
 describe('Happy cases', () => {
+    let client;
+    let create;
+    let fakeHostedFieldsInstance;
 
-    it('Should create an instance of the client and render HostedFields', () => {
+    beforeEach(() => {
+        client = window.paypal.client();
+        fakeHostedFieldsInstance = td.object([ 'tokenize' ]);
+        create = td.replace(hostedFields, 'create');
 
-        let body = document.body;
-        if (!body) {
-            throw new Error(`Expected document.body to be present`);
-        }
+        td.when(create(td.matchers.isA(Object))).thenResolve(fakeHostedFieldsInstance);
+    });
 
-        let container = document.createElement('div');
-        container.id = 'hosted-fields-container';
-        body.appendChild(container);
+    afterEach(() => {
+        td.reset();
+    });
 
-        let client = window.paypal.client();
-        client.HostedFields.render({
-            buttonText: 'Pay Now'
-        }, '#hosted-fields-container');
+    it('Should create a Hosted Fields instance', () => {
+        let options = {};
 
-        let button = container.querySelector('button');
-        if (!button) {
-            throw new Error(`Expected button to be rendered`);
-        }
+        return client.HostedFields.render(options).then(() => {
+            td.verify(create(options));
+        });
+    });
 
-        if (!button.innerText) {
-            throw new Error(`Expected button to have text`);
-        }
+    it('Resolves with an object that can tokenize', () => {
+        return client.HostedFields.render({}).then((handler) => {
+            let options = {};
 
-        if (button.innerText !== 'Pay Now') {
-            throw new Error(`Expected button text to be "Pay Now", got "${ button.innerText.toString() }"`);
-        }
+            handler.submit(options);
 
-        body.removeChild(container);
+            td.verify(fakeHostedFieldsInstance.tokenize(options));
+        });
     });
 });

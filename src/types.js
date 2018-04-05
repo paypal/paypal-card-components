@@ -1,3 +1,7 @@
 /* @flow */
 
-declare var FEATURE_Y : boolean;
+type SubmitFunctionType = (tokenizeOptions : Object) => Promise<Object>;
+
+export type HostedFieldsHandler = {
+    submit : SubmitFunctionType
+};

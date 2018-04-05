@@ -1,22 +1,20 @@
 /* @flow */
 /* eslint no-console: 0 */
 
-// Pull in the common client
 import { attach } from 'paypal-braintree-web-client/src';
+import hostedFields from 'braintree-web/hosted-fields';
 
-// Attach to public api
+import type { HostedFieldsHandler } from './types';
+
 attach(({ clientOptions, clientConfig, serverConfig, queryOptions }) => {
+
+    console.log('Client config:', clientConfig);
 
     // Read from merchant-passed options
     console.log('Client tokens:', clientOptions.auth);
 
-    // Set a shared client config key
-    clientConfig.set('credit_fields_handled', true);
-
-    // Read a shared client config key
-    console.log('Config foo:', clientConfig.get('credit_fields_handled'));
-
     // Read a server config key
+    // payment sdk will already have graph ql configuration, so bt-web does not need to make configuration request on the client
     console.log('Logger url', serverConfig.urls.logger);
 
     // Read a query option key
@@ -26,24 +24,22 @@ attach(({ clientOptions, clientConfig, serverConfig, queryOptions }) => {
     return {
 
         HostedFields: {
-            render(options, container) {
-
-                if (!options.buttonText) {
-                    throw new Error(`Expected options.buttonText`);
-                }
-
-                if (FEATURE_Y) {
-                    console.log('Feature Y is enabled!');
-                }
-
-                document.querySelector(container).innerHTML =
-                    `<button>${ options.buttonText }</button>`;
+            render(options, submitButton) : Promise<HostedFieldsHandler> { // eslint-disable-line no-unused-vars
+                // reject if auth is not a valid client token
+                // create options for hosted fieldw with authorization
+                return hostedFields.create(options).then((hostedFieldsInstance) => {
+                    return {
+                        submit: (tokenizeOptions) => {
+                            return hostedFieldsInstance.tokenize(tokenizeOptions);
+                        }
+                    };
+                }).catch(() => {
+                    return Promise.reject(new Error('Something went wrong.'));
+                });
             }
         },
 
         HOSTED_FIELDS_CONSTANTS: {
-            FOO: 'FOO',
-            BAR: 'BAR'
         }
     };
 

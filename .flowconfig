@@ -4,8 +4,7 @@
 [include]
 [libs]
 flow-typed
-src/types.js
-node_modules/paypal-braintree-web-client/src/types.js
+node_modules/paypal-braintree-web-client/src/declarations.js
 [options]
 module.name_mapper='^src\(.*\)$' -> '<PROJECT_ROOT>/src/\1'
 unsafe.enable_getters_and_setters=true

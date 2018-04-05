@@ -26,11 +26,13 @@
   },
   "homepage": "https://github.com/paypal/paypal-braintree-hosted-fields-component#readme",
   "devDependencies": {
+    "flow-bin": "^0.56.0",
     "grumbler-scripts": "^2",
     "mocha": "^5.0.5",
-    "flow-bin": "^0.56.0"
+    "testdouble": "^3.7.0"
   },
   "dependencies": {
-    "paypal-braintree-web-client": "^1.0.5"
+    "braintree-web": "^3.31.0",
+    "paypal-braintree-web-client": "^1.0.9"
   }
 }

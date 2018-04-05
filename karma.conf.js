@@ -13,8 +13,7 @@ export default (karma : Object) =>
                         logger: 'https://paypal.com/logger'
                     }
                 },
-                __PAYPAL_BRAINTREE_QUERY_OPTIONS__: {},
-                FEATURE_Y:                          true
+                __PAYPAL_BRAINTREE_QUERY_OPTIONS__: {}
             }
         })
     }));
