@@ -7,16 +7,14 @@ import btClient from 'braintree-web/client';
 import hostedFields from 'braintree-web/hosted-fields';
 import td from 'testdouble/dist/testdouble';
 
-function rejectIfResolves () {
-    throw new Error('should not have resolved');
-}
+import rejectIfResolves from './utils/reject-if-resolves';
 
-describe('Error cases', () => {
-    let client;
-    let hostedFieldsCreate;
+describe('hosted-fields-component', () => {
     let btClientCreate;
-    let fakeHostedFieldsInstance;
+    let client;
     let fakeBtClient;
+    let fakeHostedFieldsInstance;
+    let hostedFieldsCreate;
     let renderOptions;
 
     beforeEach(() => {
@@ -26,6 +24,9 @@ describe('Error cases', () => {
                 production: 'PROD'
             }
         });
+        renderOptions = {
+            payment: () => 'order-id'
+        };
         btClientCreate = td.replace(btClient, 'create');
 
         fakeHostedFieldsInstance = td.object([ 'tokenize' ]);
@@ -37,11 +38,6 @@ describe('Error cases', () => {
 
         td.when(hostedFieldsCreate(td.matchers.isA(Object))).thenResolve(fakeHostedFieldsInstance);
         td.when(btClientCreate(td.matchers.isA(Object))).thenResolve(fakeBtClient);
-        renderOptions = {
-            payment: () => {
-                return 'order-id';
-            }
-        };
     });
 
     afterEach(() => {
@@ -88,6 +84,37 @@ describe('Error cases', () => {
 
         return client.HostedFields.render(renderOptions).then(rejectIfResolves).catch((err) => {
             assert.equal(err.message, 'Some BT Web Error');
+        });
+    });
+
+    it('should create a Braintree client and Hosted Fields instance with configuration', () => {
+        return client.HostedFields.render(renderOptions).then(() => {
+            td.verify(btClientCreate({
+                authorization: 'PROD',
+                configuration: td.matchers.isA(Object)
+            }));
+            td.verify(hostedFieldsCreate({
+                client:      fakeBtClient,
+                paymentsSdk: true
+            }));
+        });
+    });
+
+    it('resolves with an object that can tokenize', () => {
+        return client.HostedFields.render(renderOptions).then((handler) => {
+            let options = {};
+
+            return handler.submit(options);
+        }).then(() => {
+            td.verify(fakeHostedFieldsInstance.tokenize({
+                orderId: 'order-id'
+            }));
+        });
+    });
+
+    it('resolves with a hosted fields instance', () => {
+        return client.HostedFields.render(renderOptions).then((handler) => {
+            assert.equal(handler, fakeHostedFieldsInstance);
         });
     });
 });

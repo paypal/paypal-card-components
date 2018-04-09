@@ -1,4 +1,3 @@
 /* @flow */
 
-export * from './happy';
-export * from './error';
+export * from './component';
