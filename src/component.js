@@ -2,39 +2,71 @@
 /* eslint no-console: 0 */
 
 import { attach } from 'paypal-braintree-web-client/src';
+import btClient from 'braintree-web/client';
 import hostedFields from 'braintree-web/hosted-fields';
 
 import type { HostedFieldsHandler } from './types';
 
-attach(({ clientOptions, clientConfig, serverConfig, queryOptions }) => {
+function createSubmitHandler (hostedFieldsInstance, orderIdFunction) : Function {
+    return () => {
+        return orderIdFunction().then((orderId) => {
+            return hostedFieldsInstance.tokenize({
+                orderId
+            });
+        });
+    };
+}
 
-    console.log('Client config:', clientConfig);
+attach(({ clientOptions, serverConfig }) => {
+    let { env = 'production', auth } = clientOptions;
 
-    // Read from merchant-passed options
-    console.log('Client tokens:', clientOptions.auth);
-
-    // Read a server config key
-    // payment sdk will already have graph ql configuration, so bt-web does not need to make configuration request on the client
-    console.log('Logger url', serverConfig.urls.logger);
-
-    // Read a query option key
-    console.log('Merchant id', queryOptions.merchantID);
-
-    // Expose public apis
     return {
 
         HostedFields: {
-            render(options, submitButton) : Promise<HostedFieldsHandler> { // eslint-disable-line no-unused-vars
-                // reject if auth is not a valid client token
-                // create options for hosted fieldw with authorization
-                return hostedFields.create(options).then((hostedFieldsInstance) => {
-                    return {
-                        submit: (tokenizeOptions) => {
-                            return hostedFieldsInstance.tokenize(tokenizeOptions);
-                        }
-                    };
-                }).catch(() => {
-                    return Promise.reject(new Error('Something went wrong.'));
+            render(options, buttonSelector) : Promise<HostedFieldsHandler> {
+                if (!auth || !auth[env]) {
+                    return Promise.reject(new Error('Invalid auth encountred. Check how you are creating your client.'));
+                }
+
+                let orderIdFunction = () => {
+                    return Promise.resolve().then(() => {
+                        return options.payment();
+                    });
+                };
+                let button;
+
+                if (buttonSelector && options.onAuthorize) {
+                    button = document.querySelector(buttonSelector);
+                    if (!button) {
+                        return Promise.reject(new Error(`Could not find selector \`${ buttonSelector }\` on the page`));
+                    }
+                }
+
+                return btClient.create({
+                    authorization: auth[env],
+                    configuration: serverConfig
+                }).then((btClientInstance) => {
+                    let hostedFieldsCreateOptions = JSON.parse(JSON.stringify(options));
+
+                    hostedFieldsCreateOptions.paymentsSdk = true;
+                    hostedFieldsCreateOptions.client = btClientInstance;
+                    return hostedFields.create(hostedFieldsCreateOptions);
+                }).then((hostedFieldsInstance) => {
+                    hostedFieldsInstance.submit = createSubmitHandler(hostedFieldsInstance, orderIdFunction);
+
+                    if (button) {
+                        button.addEventListener('click', () => {
+                            hostedFieldsInstance.submit().then((payload) => {
+                                return options.onAuthorize(payload);
+                            }).catch((err) => {
+                                if (options.onError) {
+                                    options.onError(err);
+                                }
+                            });
+                        });
+                    }
+
+                    return hostedFieldsInstance;
                 });
             }
         },
@@ -42,18 +74,4 @@ attach(({ clientOptions, clientConfig, serverConfig, queryOptions }) => {
         HOSTED_FIELDS_CONSTANTS: {
         }
     };
-
-    // Now end-user can do:
-    //
-    // var client = paypal.client({
-    //     env: 'sandbox',
-    //     auth: {
-    //         sandbox:    'abc',
-    //         production: 'xyz'
-    //     }
-    // });
-    //
-    // client.HostedFields.render({
-    //   someOption: client.HOSTED_FIELDS_CONSTANTS.FOO
-    // }, '#container');
 });
