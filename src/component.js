@@ -33,6 +33,14 @@ attach(({ clientOptions, serverConfig }) => {
                         return options.payment();
                     });
                 };
+                let button;
+
+                if (buttonSelector && options.onAuthorize) {
+                    button = document.querySelector(buttonSelector);
+                    if (!button) {
+                        return Promise.reject(new Error(`Could not find selector \`${ buttonSelector }\` on the page`));
+                    }
+                }
 
                 return btClient.create({
                     authorization: auth[env],
@@ -46,12 +54,7 @@ attach(({ clientOptions, serverConfig }) => {
                 }).then((hostedFieldsInstance) => {
                     hostedFieldsInstance.submit = createSubmitHandler(hostedFieldsInstance, orderIdFunction);
 
-                    if (buttonSelector && options.onAuthorize) {
-                        let button = document.querySelector(buttonSelector);
-                        if (!button) {
-                            return Promise.reject(new Error(`Could not find selector \`${ buttonSelector }\` on the page`));
-                        }
-
+                    if (button) {
                         button.addEventListener('click', () => {
                             hostedFieldsInstance.submit().then((payload) => {
                                 return options.onAuthorize(payload);
