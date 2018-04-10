@@ -140,6 +140,17 @@ describe('hosted-fields-component', () => {
         });
     });
 
+    it('rejects render with an error if button element cannot be found', () => {
+        let options = {
+            payment:     td.function(),
+            onAuthorize: td.function()
+        };
+
+        return client.HostedFields.render(options, '#button').then(rejectIfResolves).catch((err) => {
+            assert.equal(err.message, 'Could not find selector `#button` on the page');
+        });
+    });
+
     it('calls submit when btn is clicked', () => {
         let btn = document.createElement('button');
         let options = {

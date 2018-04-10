@@ -47,7 +47,12 @@ attach(({ clientOptions, serverConfig }) => {
                     hostedFieldsInstance.submit = createSubmitHandler(hostedFieldsInstance, orderIdFunction);
 
                     if (buttonSelector && options.onAuthorize) {
-                        document.querySelector(buttonSelector).addEventListener('click', () => {
+                        let button = document.querySelector(buttonSelector);
+                        if (!button) {
+                            return Promise.reject(new Error(`Could not find selector \`${ buttonSelector }\` on the page`));
+                        }
+
+                        button.addEventListener('click', () => {
                             hostedFieldsInstance.submit().then((payload) => {
                                 return options.onAuthorize(payload);
                             }).catch((err) => {
