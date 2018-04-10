@@ -23,7 +23,7 @@ attach(({ clientOptions, serverConfig }) => {
     return {
 
         HostedFields: {
-            render(options) : Promise<HostedFieldsHandler> {
+            render(options, buttonSelector) : Promise<HostedFieldsHandler> {
                 if (!auth || !auth[env]) {
                     return Promise.reject(new Error('Invalid auth encountred. Check how you are creating your client.'));
                 }
@@ -45,6 +45,19 @@ attach(({ clientOptions, serverConfig }) => {
                     return hostedFields.create(hostedFieldsCreateOptions);
                 }).then((hostedFieldsInstance) => {
                     hostedFieldsInstance.submit = createSubmitHandler(hostedFieldsInstance, orderIdFunction);
+
+                    if (buttonSelector && options.onAuthorize) {
+                        document.querySelector(buttonSelector).addEventListener('click', () => {
+                            hostedFieldsInstance.submit().then((payload) => {
+                                return options.onAuthorize(payload);
+                            }).catch((err) => {
+                                if (options.onError) {
+                                    options.onError(err);
+                                }
+                            });
+                        });
+                    }
+
                     return hostedFieldsInstance;
                 });
             }

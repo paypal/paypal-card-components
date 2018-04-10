@@ -42,6 +42,9 @@ describe('hosted-fields-component', () => {
 
     afterEach(() => {
         td.reset();
+        if (document.body) {
+            document.body.innerHTML = '';
+        }
     });
 
     it('rejects if no auth is provided', () => {
@@ -116,5 +119,121 @@ describe('hosted-fields-component', () => {
         return client.HostedFields.render(renderOptions).then((handler) => {
             assert.equal(handler, fakeHostedFieldsInstance);
         });
+    });
+
+    it('can setup click handler for provided button if onAuthorize function is passed', () => {
+        let btn = document.createElement('button');
+        let options = {
+            payment:     td.function(),
+            onAuthorize: td.function()
+        };
+
+        btn.id = 'button';
+        if (document.body) {
+            document.body.appendChild(btn);
+        }
+
+        td.replace(btn, 'addEventListener');
+
+        return client.HostedFields.render(options, '#button').then(() => {
+            td.verify(btn.addEventListener('click', td.matchers.isA(Function)));
+        });
+    });
+
+    it('calls submit when btn is clicked', () => {
+        let btn = document.createElement('button');
+        let options = {
+            payment:     td.function(),
+            onAuthorize: td.function()
+        };
+
+        btn.id = 'button';
+        if (document.body) {
+            document.body.appendChild(btn);
+        }
+
+        return client.HostedFields.render(options, '#button').then((handler) => {
+            td.replace(handler, 'submit');
+            td.when(handler.submit()).thenResolve();
+            btn.click();
+            td.verify(handler.submit());
+        });
+    });
+
+    it('calls onAuthorize function with tokenization data if passed in', (done) => {
+        let btn = document.createElement('button');
+        let options = {
+            payment:     td.function(),
+            onAuthorize: td.function()
+        };
+
+        btn.id = 'button';
+        if (document.body) {
+            document.body.appendChild(btn);
+        }
+
+        client.HostedFields.render(options, '#button').then((handler) => {
+            let tokenizationData = {
+                foo: 'bar'
+            };
+            td.replace(handler, 'submit');
+            td.when(handler.submit()).thenResolve(tokenizationData);
+            btn.click();
+
+            setTimeout(() => {
+                td.verify(options.onAuthorize(tokenizationData));
+                done();
+            }, 100);
+        }).catch(done);
+    });
+
+    it('calls onError function (if passed) when tokenization fails', (done) => {
+        let btn = document.createElement('button');
+        let options = {
+            payment:     td.function(),
+            onAuthorize: td.function(),
+            onError:     td.function()
+        };
+
+        btn.id = 'button';
+        if (document.body) {
+            document.body.appendChild(btn);
+        }
+
+        client.HostedFields.render(options, '#button').then((handler) => {
+            let error = new Error('error');
+            td.replace(handler, 'submit');
+            td.when(handler.submit()).thenReject(error);
+            btn.click();
+
+            setTimeout(() => {
+                td.verify(options.onError(error));
+                done();
+            }, 100);
+        }).catch(done);
+    });
+
+    it('does not require an onError function', (done) => {
+        let btn = document.createElement('button');
+        let options = {
+            payment:     td.function(),
+            onAuthorize: td.function()
+        };
+
+        btn.id = 'button';
+        if (document.body) {
+            document.body.appendChild(btn);
+        }
+
+        client.HostedFields.render(options, '#button').then((handler) => {
+            let error = new Error('error');
+            td.replace(handler, 'submit');
+            td.when(handler.submit()).thenReject(error);
+            btn.click();
+
+            setTimeout(() => {
+                done();
+            }, 100);
+        }).catch(done);
     });
 });
