@@ -12,6 +12,8 @@ function createSubmitHandler (hostedFieldsInstance, orderIdFunction) : Function 
         return orderIdFunction().then((orderId) => {
             return hostedFieldsInstance.tokenize({
                 orderId
+            }).then(() => {
+                return { orderId };
             });
         });
     };
@@ -44,7 +46,7 @@ attach(({ clientOptions, serverConfig }) => {
 
                 return btClient.create({
                     authorization: auth[env],
-                    paymentsSDK: true,
+                    paymentsSdk:   true,
                     configuration: serverConfig
                 }).then((btClientInstance) => {
                     let hostedFieldsCreateOptions = JSON.parse(JSON.stringify(options));

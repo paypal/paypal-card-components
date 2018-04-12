@@ -30,6 +30,7 @@ describe('hosted-fields-component', () => {
         btClientCreate = td.replace(btClient, 'create');
 
         fakeHostedFieldsInstance = td.object([ 'tokenize' ]);
+        td.when(fakeHostedFieldsInstance.tokenize(td.matchers.isA(Object))).thenResolve();
         hostedFieldsCreate = td.replace(hostedFields, 'create');
 
         fakeBtClient = {
@@ -94,6 +95,7 @@ describe('hosted-fields-component', () => {
         return client.HostedFields.render(renderOptions).then(() => {
             td.verify(btClientCreate({
                 authorization: 'PROD',
+                paymentsSdk:   true,
                 configuration: td.matchers.isA(Object)
             }));
             td.verify(hostedFieldsCreate({
