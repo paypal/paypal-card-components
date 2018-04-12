@@ -1,5 +1,4 @@
 /* @flow */
-/* eslint no-console: 0 */
 
 import { attach } from 'paypal-braintree-web-client/src';
 import btClient from 'braintree-web/client';
