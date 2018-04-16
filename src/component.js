@@ -4,6 +4,7 @@ import { attach } from 'paypal-braintree-web-client/src';
 import btClient from 'braintree-web/client';
 import hostedFields from 'braintree-web/hosted-fields';
 
+import contingencyFlow from './contingency-flow';
 import type { HostedFieldsHandler } from './types';
 
 function createSubmitHandler (hostedFieldsInstance, orderIdFunction) : Function {
@@ -11,6 +12,14 @@ function createSubmitHandler (hostedFieldsInstance, orderIdFunction) : Function 
         return orderIdFunction().then((orderId) => {
             return hostedFieldsInstance.tokenize({
                 orderId
+            }).catch((err) => {
+                if (!(err.details && err.details.find && err.details.find(detail => detail.issue === 'CONTINGENCY'))) {
+                    return Promise.reject(err);
+                }
+
+                let url = err.links.find(link => link.rel === '3ds-contingency-resolution').href;
+
+                return contingencyFlow.start(url);
             }).then(() => {
                 return { orderId };
             });
@@ -45,7 +54,7 @@ attach(({ clientOptions, serverConfig }) => {
 
                 return btClient.create({
                     authorization: auth[env],
-                    paymentsSdk:   true,
+                    paymentsSDK:   true,
                     configuration: serverConfig
                 }).then((btClientInstance) => {
                     let hostedFieldsCreateOptions = JSON.parse(JSON.stringify(options));
