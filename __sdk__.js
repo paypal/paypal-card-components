@@ -1,18 +1,16 @@
 /* @flow */
+/* eslint import/no-commonjs: 0 */
 
-export default {
+module.exports = {
+    'hosted-fields': {
+        entry: './src/index',
 
-    modules: {
-        'hosted-fields': './src/index'
-    },
+        staticNamespace: 'HOSTED_FIELDS',
 
-    staticNamespace: 'HOSTED_FIELDS',
-
-    configQuery: `
-        configuration {
-            card {
-                supportedCardTypes
+        configQuery: `
+            clientConfiguration {
+                assetsUrl
             }
-        }
-    `
+        `
+    }
 };

@@ -9,8 +9,10 @@ export default (karma : Object) =>
         webpack:  getWebpackConfig({
             vars: {
                 __PAYPAL_BRAINTREE_SERVER_CONFIG__: {
-                    urls: {
-                        logger: 'https://paypal.com/logger'
+                    'hosted-fields': {
+                        clientConfiguration: {
+                            assetsUrl: 'https://paypal.com/assets/'
+                        }
                     }
                 },
                 __PAYPAL_BRAINTREE_QUERY_OPTIONS__: {}
