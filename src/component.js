@@ -27,7 +27,7 @@ function createSubmitHandler (hostedFieldsInstance, orderIdFunction) : Function 
     };
 }
 
-attach(({ clientOptions, serverConfig }) => {
+attach('hosted-fields', ({ clientOptions, serverConfig }) => {
     let { env = 'production', auth } = clientOptions;
 
     return {
