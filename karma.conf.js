@@ -8,14 +8,14 @@ export default (karma : Object) =>
         basePath: __dirname,
         webpack:  getWebpackConfig({
             vars: {
-                __PAYPAL_BRAINTREE_SERVER_CONFIG__: {
+                __PAYPAL_BRAINTREE_SERVER_CONFIG__: JSON.stringify({
                     'hosted-fields': {
                         clientConfiguration: {
                             assetsUrl: 'https://paypal.com/assets/'
                         }
                     }
-                },
-                __PAYPAL_BRAINTREE_QUERY_OPTIONS__: {}
+                }),
+                __PAYPAL_BRAINTREE_QUERY_OPTIONS__: JSON.stringify({})
             }
         })
     }));
