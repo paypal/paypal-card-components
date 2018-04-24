@@ -5,5 +5,9 @@ module.exports = {
 
     'globals': {
         FEATURE_Y: true
+    },
+
+    rules: {
+      indent: [2, 2, {SwitchCase: 1}],
     }
 };
