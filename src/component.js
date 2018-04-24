@@ -27,8 +27,11 @@ function createSubmitHandler (hostedFieldsInstance, orderIdFunction) : Function 
     };
 }
 
-attach('hosted-fields', ({ clientOptions, serverConfig }) => {
-    let { env = 'production', auth } = clientOptions;
+attach('hosted-fields', ({ clientOptions }) => {
+    let { auth } = clientOptions;
+    let env = (typeof __sdk__ !== 'undefined')
+        ? __sdk__.queryOptions.env
+        : clientOptions.env;
 
     return {
 
@@ -55,7 +58,7 @@ attach('hosted-fields', ({ clientOptions, serverConfig }) => {
                 return btClient.create({
                     authorization: auth[env],
                     paymentsSDK:   true,
-                    configuration: serverConfig
+                    configuration: (typeof __hosted_fields__ !== 'undefined') ? __hosted_fields__.serverConfig : null
                 }).then((btClientInstance) => {
                     let hostedFieldsCreateOptions = JSON.parse(JSON.stringify(options));
 

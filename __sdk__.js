@@ -5,7 +5,7 @@ module.exports = {
     'hosted-fields': {
         entry: './src/index',
 
-        staticNamespace: 'HOSTED_FIELDS',
+        staticNamespace: '__hosted_fields__',
 
         configQuery: `
             clientConfiguration {
