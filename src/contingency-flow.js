@@ -1,11 +1,30 @@
 /* @flow */
 
-function start(url : string) : Object {
-    console.log(url); // eslint-disable-line no-console
+import xcomponent from './xcomponent-wrapper';
 
-    return { orderId: 'resolved-contingency' };
+let CONTINGENCY_TAG = 'payments-sdk-contingency-tag';
+
+function start(url : string) : Promise<Object> {
+  return new Promise((resolve, reject) => {
+    let contingencyComponent = xcomponent.create({
+      tag: CONTINGENCY_TAG,
+      url: url
+    });
+
+    contingencyComponent.render({
+      onContingencyResult: (err, result) => {
+        if (err) {
+          reject(err);
+          return;
+        }
+
+        resolve(result);
+      }
+    }, '#payments-sdk__contingency-lightbox');
+
+  });
 }
 
 export default {
-    start
+  start
 };

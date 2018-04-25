@@ -5,6 +5,7 @@ module.exports = {
 
     'rules': {
         'import/export': 'off',
-        'import/no-unassigned-import': 'off'
+        'import/no-unassigned-import': 'off',
+        'no-console': 'off'
     }
 };

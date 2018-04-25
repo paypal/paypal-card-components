@@ -5,6 +5,9 @@ import { getWebpackConfig } from 'grumbler-scripts/config/webpack.config';
 
 export default (karma : Object) =>
   karma.set(getKarmaConfig(karma, {
+    client: {
+      captureConsole: true
+    },
     basePath: __dirname,
     webpack:  getWebpackConfig({
       vars: {
