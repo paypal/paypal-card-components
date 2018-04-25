@@ -4,8 +4,8 @@ module.exports = {
   extends: '../.eslintrc.js',
 
   rules: {
-    import/export: 'off',
-    import/no-unassigned-import: 'off',
-    no-console: 'warn'
+    'import/export': 'off',
+    'import/no-unassigned-import': 'off',
+    'no-console': 'warn'
   }
 };
