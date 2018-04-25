@@ -33,7 +33,7 @@
   },
   "dependencies": {
     "braintree-web": "^3.31.0",
-    "paypal-braintree-web-client": "^2",
+    "paypal-braintree-web-client": "^3",
     "xcomponent": "^6.0.56"
   }
 }

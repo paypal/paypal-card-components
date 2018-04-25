@@ -24,7 +24,7 @@ describe('hosted-fields-component', () => {
     client = window.paypal.client({
       env:  'production',
       auth: {
-        production: 'PROD'
+        test: 'TEST'
       }
     });
     renderOptions = {
@@ -98,7 +98,7 @@ describe('hosted-fields-component', () => {
   it('should create a Braintree client and Hosted Fields instance with configuration', () => {
     return client.HostedFields.render(renderOptions).then(() => {
       td.verify(btClientCreate({
-        authorization: 'PROD',
+        authorization: 'TEST',
         paymentsSDK:   true,
         configuration: td.matchers.isA(Object)
       }));
