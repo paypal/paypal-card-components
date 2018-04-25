@@ -1,13 +1,13 @@
 /* @flow */
 
 module.exports = {
-    'extends': './node_modules/grumbler-scripts/config/.eslintrc.js',
+  extends: './node_modules/grumbler-scripts/config/.eslintrc.js',
 
-    'globals': {
-        FEATURE_Y: true
-    },
+  globals: {
+    FEATURE_Y: true
+  },
 
-    rules: {
-      indent: [2, 2, {SwitchCase: 1}],
-    }
+  rules: {
+    indent: [2, 2, {SwitchCase: 1}],
+  }
 };
