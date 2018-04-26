@@ -7,6 +7,13 @@ import hostedFields from 'braintree-web/hosted-fields';
 import contingencyFlow from './contingency-flow';
 import type { HostedFieldsHandler } from './types';
 
+let TESTING_CONFIGURATION = {
+  assetsUrl: 'https://payments-sdk-demo-assets.herokuapp.com',
+  card:      {
+    supportedCardBrands: [ 'VISA' ]
+  }
+};
+
 function createSubmitHandler (hostedFieldsInstance, orderIdFunction) : Function {
   return () => {
     return orderIdFunction().then((orderId) => {
@@ -29,6 +36,7 @@ function createSubmitHandler (hostedFieldsInstance, orderIdFunction) : Function 
 
 attach('hosted-fields', ({ clientOptions }) => {
   let { auth } = clientOptions;
+  let configuration = (typeof __hosted_fields__ !== 'undefined') ? __hosted_fields__.serverConfig : TESTING_CONFIGURATION;
   let env = (typeof __sdk__ !== 'undefined')
     ? __sdk__.queryOptions.env
     : clientOptions.env;
@@ -57,8 +65,8 @@ attach('hosted-fields', ({ clientOptions }) => {
 
         return btClient.create({
           authorization: auth[env],
-          paymentsSDK:   true,
-          configuration: (typeof __hosted_fields__ !== 'undefined') ? __hosted_fields__.serverConfig : null
+          paymentsSdk:   true,
+          configuration: configuration
         }).then((btClientInstance) => {
           let hostedFieldsCreateOptions = JSON.parse(JSON.stringify(options));
 
