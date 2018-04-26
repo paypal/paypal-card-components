@@ -19,7 +19,8 @@ function start(url : string) : Promise<Object> {
         }
 
         resolve(result);
-      }
+      },
+      onError: reject
     }, '#payments-sdk__contingency-lightbox');
 
   });

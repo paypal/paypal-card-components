@@ -38,7 +38,8 @@ describe('contingency-flow', () => {
     contingencyFlow.start('https://example.com');
 
     td.verify(fakeXcomponentInstance.render({
-      onContingencyResult: td.matchers.isA(Function)
+      onContingencyResult: td.matchers.isA(Function),
+      onError:             td.matchers.isA(Function)
     }, '#payments-sdk__contingency-lightbox'));
   });
 
@@ -83,6 +84,19 @@ describe('contingency-flow', () => {
 
     return promise.then((result) => {
       assert(result.success);
+    });
+  });
+
+  it('rejects when onError is called with an error', () => {
+    let randomError = new Error('spooky');
+    let promise = contingencyFlow.start('https://example.com');
+    let onError = td.explain(fakeXcomponentInstance.render).calls[0].args[0]
+      .onError;
+
+    onError(randomError);
+
+    return promise.then(rejectIfResolves).catch((err) => {
+      assert.equal(err, randomError);
     });
   });
 });
