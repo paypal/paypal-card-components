@@ -6,38 +6,25 @@ import td from 'testdouble/dist/testdouble';
 
 import '../src/index';
 import contingencyFlow from '../src/contingency-flow';
-import xcomponent from '../src/xcomponent-wrapper';
 
 import rejectIfResolves from './utils/reject-if-resolves';
 
 describe('contingency-flow', () => {
-  let fakeXcomponentCreate;
-  let fakeXcomponentInstance;
+  let fakeContingencyComponentRender;
 
   beforeEach(() => {
-    fakeXcomponentCreate = td.replace(xcomponent, 'create');
-    fakeXcomponentInstance = td.object([ 'render' ]);
-
-    td.when(fakeXcomponentCreate(td.matchers.isA(Object))).thenReturn(fakeXcomponentInstance);
+    fakeContingencyComponentRender = td.replace(contingencyFlow.ContingencyComponent, 'render');
   });
 
   afterEach(() => {
     td.reset();
   });
 
-  it('creates a xcomponent with the contingency tag and url', () => {
-    contingencyFlow.start('https://example.com');
-
-    td.verify(fakeXcomponentCreate({
-      tag: 'payments-sdk-contingency-tag',
-      url: 'https://example.com'
-    }));
-  });
-
   it('renders a xcomponent', () => {
     contingencyFlow.start('https://example.com');
 
-    td.verify(fakeXcomponentInstance.render({
+    td.verify(fakeContingencyComponentRender({
+      url:                 td.matchers.isA(String),
       onContingencyResult: td.matchers.isA(Function),
       onError:             td.matchers.isA(Function)
     }, '#payments-sdk__contingency-lightbox'));
@@ -45,7 +32,7 @@ describe('contingency-flow', () => {
 
   it('rejects when contingency returns an error object with code and description', () => {
     let promise = contingencyFlow.start('https://example.com');
-    let onContingencyResult = td.explain(fakeXcomponentInstance.render).calls[0].args[0]
+    let onContingencyResult = td.explain(fakeContingencyComponentRender).calls[0].args[0]
       .onContingencyResult;
 
     onContingencyResult({
@@ -61,7 +48,7 @@ describe('contingency-flow', () => {
 
   it('rejects when contingency returns an error object with description only', () => {
     let promise = contingencyFlow.start('https://example.com');
-    let onContingencyResult = td.explain(fakeXcomponentInstance.render).calls[0].args[0]
+    let onContingencyResult = td.explain(fakeContingencyComponentRender).calls[0].args[0]
       .onContingencyResult;
 
     onContingencyResult({
@@ -75,7 +62,7 @@ describe('contingency-flow', () => {
 
   it('resolves when contingency is successful', () => {
     let promise = contingencyFlow.start('https://example.com');
-    let onContingencyResult = td.explain(fakeXcomponentInstance.render).calls[0].args[0]
+    let onContingencyResult = td.explain(fakeContingencyComponentRender).calls[0].args[0]
       .onContingencyResult;
 
     onContingencyResult(null, {
@@ -90,7 +77,7 @@ describe('contingency-flow', () => {
   it('rejects when onError is called with an error', () => {
     let randomError = new Error('spooky');
     let promise = contingencyFlow.start('https://example.com');
-    let onError = td.explain(fakeXcomponentInstance.render).calls[0].args[0]
+    let onError = td.explain(fakeContingencyComponentRender).calls[0].args[0]
       .onError;
 
     onError(randomError);
