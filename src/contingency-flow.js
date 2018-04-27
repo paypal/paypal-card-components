@@ -8,7 +8,7 @@ function start(url : string) : Promise<Object> {
   return new Promise((resolve, reject) => {
     let contingencyComponent = xcomponent.create({
       tag: CONTINGENCY_TAG,
-      url: url
+      url
     });
 
     contingencyComponent.render({

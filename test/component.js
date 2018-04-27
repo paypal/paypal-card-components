@@ -99,7 +99,7 @@ describe('hosted-fields-component', () => {
     return client.HostedFields.render(renderOptions).then(() => {
       td.verify(btClientCreate({
         authorization: 'TEST',
-        paymentsSDK:   true,
+        paymentsSdk:   true,
         configuration: td.matchers.isA(Object)
       }));
       td.verify(hostedFieldsCreate({
