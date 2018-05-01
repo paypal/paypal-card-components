@@ -66,7 +66,7 @@ attach('hosted-fields', ({ clientOptions }) => {
         return btClient.create({
           authorization: auth[env],
           paymentsSdk:   true,
-          configuration: configuration
+          configuration
         }).then((btClientInstance) => {
           let hostedFieldsCreateOptions = JSON.parse(JSON.stringify(options));
 
