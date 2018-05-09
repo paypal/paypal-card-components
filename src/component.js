@@ -1,8 +1,8 @@
 /* @flow */
 
 import { attach } from 'paypal-braintree-web-client/src';
-import btClient from 'braintree-web/client';
-import hostedFields from 'braintree-web/hosted-fields';
+import btClient from '../vendor/braintree-web/client';
+import hostedFields from '../vendor/braintree-web/hosted-fields';
 
 import contingencyFlow from './contingency-flow';
 import type { HostedFieldsHandler } from './types';
@@ -36,13 +36,16 @@ function createSubmitHandler (hostedFieldsInstance, orderIdFunction) : Function 
 
 attach('hosted-fields', ({ clientOptions }) => {
   let { auth } = clientOptions;
+  // TODO change this back when we've hooked up graphql configuration in clientsdknodeweb
   let configuration = (typeof __hosted_fields__ !== 'undefined') ? __hosted_fields__.serverConfig : TESTING_CONFIGURATION;
+  configuration.assetsUrl = TESTING_CONFIGURATION.assetsUrl;
+  configuration.card = TESTING_CONFIGURATION.card;
+
   let env = (typeof __sdk__ !== 'undefined')
     ? __sdk__.queryOptions.env
     : clientOptions.env;
 
   return {
-
     HostedFields: {
       render(options, buttonSelector) : Promise<HostedFieldsHandler> {
         if (!auth || !auth[env]) {
