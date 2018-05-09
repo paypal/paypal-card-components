@@ -1,6 +1,8 @@
 /* @flow */
 
 import { attach } from 'paypal-braintree-web-client/src';
+
+// toodoo unvendor this when braintree-web is updated
 import btClient from '../vendor/braintree-web/client';
 import hostedFields from '../vendor/braintree-web/hosted-fields';
 
@@ -36,7 +38,7 @@ function createSubmitHandler (hostedFieldsInstance, orderIdFunction) : Function 
 
 attach('hosted-fields', ({ clientOptions }) => {
   let { auth } = clientOptions;
-  // TODO change this back when we've hooked up graphql configuration in clientsdknodeweb
+  // toodoo change this back when we've hooked up graphql configuration in clientsdknodeweb
   let configuration = (typeof __hosted_fields__ !== 'undefined') ? __hosted_fields__.serverConfig : TESTING_CONFIGURATION;
   configuration.assetsUrl = TESTING_CONFIGURATION.assetsUrl;
   configuration.card = TESTING_CONFIGURATION.card;
