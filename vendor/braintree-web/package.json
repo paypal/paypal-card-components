@@ -1,0 +1,29 @@
+{
+  "name": "braintree-web",
+  "version": "3.32.0-payments-sdk-dev",
+  "license": "MIT",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:braintree/braintree-web"
+  },
+  "dependencies": {
+    "@braintree/browser-detection": "1.7.0",
+    "@braintree/iframer": "1.0.3",
+    "@braintree/sanitize-url": "2.1.0",
+    "@braintree/wrap-promise": "1.1.1",
+    "card-validator": "4.3.0",
+    "credit-card-type": "6.2.0",
+    "framebus": "3.0.0",
+    "inject-stylesheet": "1.0.0",
+    "promise-polyfill": "7.0.2",
+    "restricted-input": "1.2.7"
+  },
+  "description": "A suite of tools for integrating Braintree in the browser",
+  "keywords": [
+    "braintree",
+    "payments"
+  ],
+  "author": "braintree <code@getbraintree.com>",
+  "homepage": "https://github.com/braintree/braintree-web"
+}
