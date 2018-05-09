@@ -21,6 +21,7 @@
     "url": "git+https://github.com/paypal/paypal-braintree-hosted-fields-component.git"
   },
   "files": [
+    "vendor/",
     "src/",
     "__sdk__.js",
     "globals.js"
