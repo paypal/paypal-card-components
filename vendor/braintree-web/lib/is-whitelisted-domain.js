@@ -7,9 +7,8 @@ var legalHosts = {
   'braintreepayments.com': 1,
   'braintreegateway.com': 1,
   'braintree-api.com': 1,
-  // TODO remove these hacks!
-  'herokuapp.com': 1,
-  'localhost': 1
+  // TODO remove this hack!
+  'herokuapp.com': 1
 };
 
 function stripSubdomains(domain) {
@@ -21,7 +20,7 @@ function isWhitelistedDomain(url) {
 
   url = url.toLowerCase();
 
-  if ("development" !== 'development' && !/^https:/.test(url)) {
+  if (!/^https:/.test(url)) {
     return false;
   }
 

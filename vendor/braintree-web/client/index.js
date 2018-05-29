@@ -69,9 +69,6 @@ function transformPaymentsSDKConfiguration(config, auth) {
   auth = new Buffer(auth, 'base64');
   auth = JSON.parse(auth.toString('utf8'));
 
-  console.log(config);
-  console.log('hey!');
-
   // TODO which of these fields do we need
   return Promise.resolve({
     analyticsMetadata: 'todo_analytics_metadata_needs_to_be_set',

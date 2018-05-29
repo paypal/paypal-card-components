@@ -49,8 +49,6 @@ function Client(configuration) {
     throw new BraintreeError(errors.CLIENT_MISSING_GATEWAY_CONFIGURATION);
   }
 
-  console.log('something');
-
   [
     'assetsUrl',
     'clientApiUrl',
@@ -286,11 +284,11 @@ Client.prototype.request = function (options, callback) {
     self._request(requestOptions, function (err, data, status) {
       var resolvedData, requestError;
 
-      console.log('request error', err);
-      console.log('request data', data);
-      console.log('request status', status);
-
-      requestError = formatRequestError(status, err);
+      if (api === 'clientApi') {
+        requestError = formatRequestError(status, err);
+      } else {
+        requestError = err;
+      }
 
       if (requestError) {
         reject(requestError);

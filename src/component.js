@@ -22,12 +22,14 @@ function createSubmitHandler (hostedFieldsInstance, orderIdFunction) : Function 
       return hostedFieldsInstance.tokenize({
         orderId
       }).catch((err) => {
+        console.log('contingency error', err);
         if (!(err.details && err.details.find && err.details.find(detail => detail.issue === 'CONTINGENCY'))) {
           return Promise.reject(err);
         }
 
         let url = err.links.find(link => link.rel === '3ds-contingency-resolution').href;
 
+        console.log('opening contingency url', url);
         return contingencyFlow.start(url);
       }).then(() => {
         return { orderId };
@@ -38,8 +40,9 @@ function createSubmitHandler (hostedFieldsInstance, orderIdFunction) : Function 
 
 attach('hosted-fields', ({ clientOptions }) => {
   let { auth } = clientOptions;
-  // toodoo change this back when we've hooked up graphql configuration in clientsdknodeweb
-  let configuration = (typeof __hosted_fields__ !== 'undefined') ? __hosted_fields__.serverConfig : TESTING_CONFIGURATION;
+
+  // toodoo - revert change below when config is being passed correctly
+  let configuration = (typeof __hosted_fields__ !== 'undefined') ? {} /* __hosted_fields__.serverConfig */ : TESTING_CONFIGURATION;
   configuration.assetsUrl = TESTING_CONFIGURATION.assetsUrl;
   configuration.card = TESTING_CONFIGURATION.card;
 
@@ -86,6 +89,7 @@ attach('hosted-fields', ({ clientOptions }) => {
               hostedFieldsInstance.submit().then((payload) => {
                 return options.onAuthorize(payload);
               }).catch((err) => {
+
                 if (options.onError) {
                   options.onError(err);
                 }

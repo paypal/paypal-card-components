@@ -10,6 +10,21 @@ module.exports = {
     configQuery:     `
       clientConfiguration {
         assetsUrl
+  			paypalMerchantConfiguration(merchantId: $clientID, locale: $country) {
+     			creditCard {
+        		isPayPalBranded
+						supportedCardBrands
+     			}
+					bank {
+						isPayPalBranded
+					}
+					paypalWallet {
+						isPayPalBranded
+					}
+					paypalCredit {
+						isPayPalBranded
+					}
+   			}
       }
     `,
     globals
