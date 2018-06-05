@@ -27,7 +27,7 @@ function createSubmitHandler (hostedFieldsInstance, orderIdFunction) : Function 
           return Promise.reject(err);
         }
 
-        let url = err.links.find(link => link.rel === '3ds-contingency-resolution').href;
+        let url = err.links.find(link => link.rel === '3ds-contingency-resolution').href + '&xcomponent=1';
 
         console.log('opening contingency url', url);
         return contingencyFlow.start(url);
@@ -50,6 +50,12 @@ attach('hosted-fields', ({ clientOptions }) => {
     ? __sdk__.queryOptions.env
     : clientOptions.env;
 
+  let correlationId = (typeof __sdk__ !== 'undefined')
+    ? __sdk__.correlationId
+    : '';
+
+
+  console.log('CID: ', correlationId);
   return {
     HostedFields: {
       render(options, buttonSelector) : Promise<HostedFieldsHandler> {
@@ -74,6 +80,7 @@ attach('hosted-fields', ({ clientOptions }) => {
         return btClient.create({
           authorization: auth[env],
           paymentsSdk:   true,
+          correlationId: correlationId,
           configuration
         }).then((btClientInstance) => {
           let hostedFieldsCreateOptions = JSON.parse(JSON.stringify(options));
