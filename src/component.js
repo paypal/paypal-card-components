@@ -29,11 +29,6 @@ function createSubmitHandler (hostedFieldsInstance, orderIdFunction) : Function 
 
         let url = err.links.find(link => link.rel === '3ds-contingency-resolution').href;
 
-        // hack code until we fix the 3ds url
-        if (url.indexOf('https://pssbraintreeserv4800.qa.paypal.com') > -1) {
-          url = url.replace('https://pssbraintreeserv4800.qa.paypal.com', 'https://www.pssbraintreeserv4800.qa.paypal.com');
-        }
-
         console.log('opening contingency url', url);
         return contingencyFlow.start(url);
       }).then(() => {
