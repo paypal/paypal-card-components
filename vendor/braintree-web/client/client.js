@@ -266,7 +266,8 @@ Client.prototype.request = function (options, callback) {
 
       requestOptions.headers = {
         Authorization: 'Bearer ' + self._paypalApi.accessToken,
-        'Braintree-SDK-Version': VERSION
+        'Braintree-SDK-Version': VERSION,
+        'PayPal-Client-Metadata-Id': self._configuration.correlationId
       };
     } else {
       throw new BraintreeError({

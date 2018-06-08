@@ -74,6 +74,7 @@ function transformPaymentsSDKConfiguration(config, auth) {
     analyticsMetadata: 'todo_analytics_metadata_needs_to_be_set',
     authorization: 'sandbox_f252zhq7_hh4cpc39zq4rgjcg',
     authorizationType: 'TOKENIZATION_KEY',
+    correlationId: config.correlationId,
     gatewayConfiguration: {
       paypalApi: {
         baseUrl: 'https://api.test25.stage.paypal.com', // TODO where to get this baseUrl from

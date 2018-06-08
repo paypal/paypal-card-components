@@ -53,9 +53,9 @@ attach('hosted-fields', ({ clientOptions }) => {
   let correlationId = (typeof __sdk__ !== 'undefined')
     ? __sdk__.correlationId
     : '';
+  configuration.correlationId = correlationId;
 
-
-  console.log('CID: ', correlationId);
+  console.log('CID: ' + correlationId);
   return {
     HostedFields: {
       render(options, buttonSelector) : Promise<HostedFieldsHandler> {
@@ -80,7 +80,6 @@ attach('hosted-fields', ({ clientOptions }) => {
         return btClient.create({
           authorization: auth[env],
           paymentsSdk:   true,
-          correlationId: correlationId,
           configuration
         }).then((btClientInstance) => {
           let hostedFieldsCreateOptions = JSON.parse(JSON.stringify(options));
