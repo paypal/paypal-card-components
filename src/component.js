@@ -42,9 +42,10 @@ attach('hosted-fields', ({ clientOptions }) => {
   let { auth } = clientOptions;
 
   // toodoo - revert change below when config is being passed correctly
-  let configuration = (typeof __hosted_fields__ !== 'undefined') ? {} /* __hosted_fields__.serverConfig */ : TESTING_CONFIGURATION;
+  let configuration = (typeof __hosted_fields__ !== 'undefined') ? __hosted_fields__.serverConfig : TESTING_CONFIGURATION;
   configuration.assetsUrl = TESTING_CONFIGURATION.assetsUrl;
   configuration.card = TESTING_CONFIGURATION.card;
+  console.log(configuration);
 
   let env = (typeof __sdk__ !== 'undefined')
     ? __sdk__.queryOptions.env
