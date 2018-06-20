@@ -7,6 +7,7 @@ var VERSION = "3.32.0-payments-sdk-dev";
 var Promise = require('../lib/promise');
 var wrapPromise = require('@braintree/wrap-promise');
 var sharedErrors = require('../lib/errors');
+var fraudnet = require('../data-collector/fraudnet');
 
 var cachedClients = {};
 
@@ -66,6 +67,7 @@ function create(options) {
 }
 
 function transformPaymentsSDKConfiguration(config, auth) {
+  var fraudnetInstance = fraudnet.setup();
   auth = new Buffer(auth, 'base64');
   auth = JSON.parse(auth.toString('utf8'));
 
@@ -75,6 +77,7 @@ function transformPaymentsSDKConfiguration(config, auth) {
     authorization: 'sandbox_f252zhq7_hh4cpc39zq4rgjcg',
     authorizationType: 'TOKENIZATION_KEY',
     correlationId: config.correlationId,
+    deviceDataId: fraudnetInstance.sessionId,
     gatewayConfiguration: {
       paypalApi: {
         baseUrl: 'https://api.test25.stage.paypal.com', // TODO where to get this baseUrl from
