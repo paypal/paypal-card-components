@@ -2,6 +2,7 @@
 
 var BraintreeError = require('../lib/braintree-error');
 var Client = require('./client');
+var globals = require('./globals');
 var getConfiguration = require('./get-configuration').getConfiguration;
 var VERSION = "3.32.0-payments-sdk-dev";
 var Promise = require('../lib/promise');
@@ -71,6 +72,11 @@ function transformPaymentsSDKConfiguration(config, auth) {
   auth = new Buffer(auth, 'base64');
   auth = JSON.parse(auth.toString('utf8'));
 
+  var supportedCardTypes = Object.keys(globals.FUNDING_ELIGIBILITY.card.vendors)
+    .filter(function(name) {
+      return globals.FUNDING_ELIGIBILITY.card.vendors[name].eligible;
+    });
+
   // TODO which of these fields do we need
   return Promise.resolve({
     analyticsMetadata: 'todo_analytics_metadata_needs_to_be_set',
@@ -88,7 +94,7 @@ function transformPaymentsSDKConfiguration(config, auth) {
         url: 'https://example.com/TODO'
       },
       creditCards: {
-        supportedCardTypes: config.card.supportedCardBrands,
+        supportedCardTypes: supportedCardTypes,
         supportedGateways: [{
           name: 'paypalApi'
         }]
