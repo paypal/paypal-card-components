@@ -69,8 +69,7 @@ function create(options) {
 
 function transformPaymentsSDKConfiguration(config, auth) {
   var fraudnetInstance = fraudnet.setup();
-  auth = new Buffer(auth, 'base64');
-  auth = JSON.parse(auth.toString('utf8'));
+  auth = JSON.parse(window.atob(auth));
 
   var supportedCardTypes = Object.keys(globals.FUNDING_ELIGIBILITY.card.vendors)
     .filter(function(name) {
