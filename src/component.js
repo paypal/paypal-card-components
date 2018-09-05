@@ -52,13 +52,9 @@ attach('hosted-fields', ({ clientOptions }) => {
   console.log("Using config");
   console.log(configuration);
 
-  let env = (typeof __sdk__ !== 'undefined')
-    ? __sdk__.queryOptions.env
-    : clientOptions.env;
+  let env = __ENV__;
 
-  let correlationId = (typeof __sdk__ !== 'undefined')
-    ? __sdk__.correlationId
-    : '';
+  let correlationId = '';
   configuration.correlationId = correlationId;
 
   console.log('CID: ' + correlationId);
