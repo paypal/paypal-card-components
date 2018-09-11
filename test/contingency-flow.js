@@ -20,7 +20,7 @@ describe('contingency-flow', () => {
     td.reset();
   });
 
-  it('renders a xcomponent', () => {
+  it('renders a zoid component', () => {
     contingencyFlow.start('https://example.com');
 
     td.verify(fakeContingencyComponentRender({

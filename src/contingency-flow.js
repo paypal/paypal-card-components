@@ -1,6 +1,6 @@
 /* @flow */
 
-import { create, type XComponent } from 'xcomponent/src';
+import { create, type Component } from 'zoid/src';
 
 let CONTINGENCY_TAG = 'payments-sdk-contingency-handler';
 
@@ -8,7 +8,7 @@ type ContingencyProps = {
   onContingencyResult : (err : mixed, result : Object) => void
 };
 
-let ContingencyComponent : XComponent<ContingencyProps> = create({
+let ContingencyComponent : Component<ContingencyProps> = create({
   tag: CONTINGENCY_TAG,
   containerTemplate({ id, CLASS, CONTEXT, tag, context, actions, outlet, jsxDom }) {
 

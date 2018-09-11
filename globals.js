@@ -1,8 +1,8 @@
 /* @flow */
 /* eslint import/no-commonjs: off */
 
-let xcomponentGlobals = require('xcomponent/globals');
+let zoidGlobals = require('zoid/globals');
 
-module.exports = Object.assign({}, xcomponentGlobals, {
+module.exports = Object.assign({}, zoidGlobals, {
   // Insert new globals here
 });

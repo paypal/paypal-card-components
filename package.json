@@ -41,6 +41,6 @@
   "dependencies": {
     "braintree-web": "^3.33.0",
     "paypal-braintree-web-client": "^4.0.0",
-    "xcomponent": "^6.0.56"
+    "zoid": "^7.0.6"
   }
 }
