@@ -40,8 +40,8 @@ function createSubmitHandler (hostedFieldsInstance, orderIdFunction) : Function 
 }
 
 type OptionsType = {
-  payment : () => string | Promise<string>,
-  onAuthorize : ({ }) => void | Promise<void>,
+  createOrder : () => Promise<string>,
+  onApprove : ({ }) => void | Promise<void>,
   onError? : (mixed) => void
 };
 
@@ -67,12 +67,12 @@ export let HostedFields = {
 
     let orderIdFunction = () => {
       return Promise.resolve().then(() => {
-        return options.payment();
+        return options.createOrder();
       });
     };
     let button;
 
-    if (buttonSelector && options.onAuthorize) {
+    if (buttonSelector && options.onApprove) {
       button = document.querySelector(buttonSelector);
       if (!button) {
         return Promise.reject(new Error(`Could not find selector \`${ buttonSelector }\` on the page`));
@@ -95,7 +95,7 @@ export let HostedFields = {
       if (button) {
         button.addEventListener('click', () => {
           hostedFieldsInstance.submit().then((payload) => {
-            return options.onAuthorize(payload);
+            return options.onApprove(payload);
           }).catch((err) => {
 
             if (options.onError) {

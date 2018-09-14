@@ -35,8 +35,8 @@ describe('hosted-fields-component', () => {
 
   beforeEach(() => {
     renderOptions = {
-      payment:     () => 'order-id',
-      onAuthorize: () => { /* pass */ }
+      createOrder: () => Promise.resolve('order-id'),
+      onApprove:   () => { /* pass */ }
     };
 
     btClientCreate = td.replace(btClient, 'create');
@@ -129,11 +129,11 @@ describe('hosted-fields-component', () => {
     });
   });
 
-  it('can setup click handler for provided button if onAuthorize function is passed', () => {
+  it('can setup click handler for provided button if onApprove function is passed', () => {
     let btn = document.createElement('button');
     let options = {
-      payment:     td.function(),
-      onAuthorize: td.function()
+      createOrder: td.function(),
+      onApprove:   td.function()
     };
 
     btn.id = 'button2';
@@ -150,8 +150,8 @@ describe('hosted-fields-component', () => {
 
   it('rejects render with an error if button element cannot be found', () => {
     let options = {
-      payment:     td.function(),
-      onAuthorize: td.function()
+      createOrder: td.function(),
+      onApprove:   td.function()
     };
 
     return HostedFields.render(options, '#button2').then(rejectIfResolves).catch((err) => {
@@ -162,8 +162,8 @@ describe('hosted-fields-component', () => {
   it('calls submit when btn is clicked', () => {
     let btn = document.createElement('button');
     let options = {
-      payment:     td.function(),
-      onAuthorize: td.function()
+      createOrder: td.function(),
+      onApprove:   td.function()
     };
 
     btn.id = 'button2';
@@ -179,11 +179,11 @@ describe('hosted-fields-component', () => {
     });
   });
 
-  it('calls onAuthorize function with tokenization data if passed in', (done) => {
+  it('calls onApprove function with tokenization data if passed in', (done) => {
     let btn = document.createElement('button');
     let options = {
-      payment:     td.function(),
-      onAuthorize: td.function()
+      createOrder: td.function(),
+      onApprove:   td.function()
     };
 
     btn.id = 'button2';
@@ -200,7 +200,7 @@ describe('hosted-fields-component', () => {
       btn.click();
 
       setTimeout(() => {
-        td.verify(options.onAuthorize(tokenizationData));
+        td.verify(options.onApprove(tokenizationData));
         done();
       }, 100);
     }).catch(done);
@@ -209,8 +209,8 @@ describe('hosted-fields-component', () => {
   it('calls onError function (if passed) when tokenization fails', (done) => {
     let btn = document.createElement('button');
     let options = {
-      payment:     td.function(),
-      onAuthorize: td.function(),
+      createOrder: td.function(),
+      onApprove:   td.function(),
       onError:     td.function()
     };
 
@@ -235,8 +235,8 @@ describe('hosted-fields-component', () => {
   it('does not require an onError function', (done) => {
     let btn = document.createElement('button');
     let options = {
-      payment:     td.function(),
-      onAuthorize: td.function()
+      createOrder:     td.function(),
+      onApprove:   td.function()
     };
 
     btn.id = 'button2';
@@ -260,8 +260,8 @@ describe('hosted-fields-component', () => {
     let button;
     let orderId = 'im-order-id';
     let options = {
-      payment:     td.function(),
-      onAuthorize: td.function()
+      createOrder:     td.function(),
+      onApprove:   td.function()
     };
 
     beforeEach(() => {
@@ -272,7 +272,7 @@ describe('hosted-fields-component', () => {
         document.body.appendChild(button);
       }
 
-      td.when(options.payment()).thenReturn(orderId);
+      td.when(options.createOrder()).thenReturn(orderId);
     });
 
     it('passes back order id', () => {
