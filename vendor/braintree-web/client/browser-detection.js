@@ -1,9 +1,9 @@
-'use strict';
+/* @flow */
 
-var isIe = require('@braintree/browser-detection/is-ie');
-var isIe9 = require('@braintree/browser-detection/is-ie9');
+let isIe = require('@braintree/browser-detection/is-ie');
+let isIe9 = require('@braintree/browser-detection/is-ie9');
 
 module.exports = {
-  isIe: isIe,
-  isIe9: isIe9
+  isIe,
+  isIe9
 };

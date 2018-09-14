@@ -1,16 +1,22 @@
-'use strict';
+/* @flow */
 
-var BraintreeError = require('../lib/braintree-error');
-var Client = require('./client');
-var globals = require('./globals');
-var getConfiguration = require('./get-configuration').getConfiguration;
-var VERSION = "3.32.0-payments-sdk-dev";
-var Promise = require('../lib/promise');
-var wrapPromise = require('@braintree/wrap-promise');
-var sharedErrors = require('../lib/errors');
-var fraudnet = require('../data-collector/fraudnet');
 
-var cachedClients = {};
+let BraintreeError = require('../lib/braintree-error');
+
+let Client = require('./client');
+let globals = require('./globals');
+let getConfiguration = require('./get-configuration').getConfiguration;
+
+
+let VERSION = '3.32.0-payments-sdk-dev';
+let Promise = require('../lib/promise');
+
+let wrapPromise = require('@braintree/wrap-promise');
+
+let sharedErrors = require('../lib/errors');
+let fraudnet = require('../data-collector/fraudnet');
+
+let cachedClients = {};
 
 /** @module braintree-web/client */
 
@@ -32,12 +38,12 @@ var cachedClients = {};
  * @static
  */
 function create(options) {
-  var configPromise;
+  let configPromise;
 
   if (!options.authorization) {
     return Promise.reject(new BraintreeError({
-      type: sharedErrors.INSTANTIATION_OPTION_REQUIRED.type,
-      code: sharedErrors.INSTANTIATION_OPTION_REQUIRED.code,
+      type:    sharedErrors.INSTANTIATION_OPTION_REQUIRED.type,
+      code:    sharedErrors.INSTANTIATION_OPTION_REQUIRED.code,
       message: 'options.authorization is required when instantiating a client.'
     }));
   }
@@ -52,8 +58,8 @@ function create(options) {
     configPromise = getConfiguration(options);
   }
 
-  return configPromise.then(function (configuration) {
-    var client;
+  return configPromise.then((configuration) => {
+    let client;
 
     if (options.debug) {
       configuration.isDebug = true;
@@ -68,24 +74,24 @@ function create(options) {
 }
 
 function transformPaymentsSDKConfiguration(config, auth) {
-  var fraudnetInstance = fraudnet.setup();
+  let fraudnetInstance = fraudnet.setup();
   auth = JSON.parse(window.atob(auth));
 
-  var supportedCardTypes = Object.keys(globals.FUNDING_ELIGIBILITY.card.vendors)
-    .filter(function(name) {
+  let supportedCardTypes = Object.keys(globals.FUNDING_ELIGIBILITY.card.vendors)
+    .filter((name) => {
       return globals.FUNDING_ELIGIBILITY.card.vendors[name].eligible;
     });
 
   // TODO which of these fields do we need
   return Promise.resolve({
-    analyticsMetadata: 'todo_analytics_metadata_needs_to_be_set',
-    authorization: 'sandbox_f252zhq7_hh4cpc39zq4rgjcg',
-    authorizationType: 'TOKENIZATION_KEY',
-    correlationId: config.correlationId,
-    deviceDataId: fraudnetInstance.sessionId,
+    analyticsMetadata:    'todo_analytics_metadata_needs_to_be_set',
+    authorization:        'sandbox_f252zhq7_hh4cpc39zq4rgjcg',
+    authorizationType:    'TOKENIZATION_KEY',
+    correlationId:        config.correlationId,
+    deviceDataId:         fraudnetInstance.sessionId,
     gatewayConfiguration: {
       paypalApi: {
-        baseUrl: 'https://api.test25.stage.paypal.com', // TODO where to get this baseUrl from
+        baseUrl:     'https://api.test25.stage.paypal.com', // TODO where to get this baseUrl from
         accessToken: auth.paypal.accessToken
       },
       assetsUrl: config.assetsUrl,
@@ -93,10 +99,10 @@ function transformPaymentsSDKConfiguration(config, auth) {
         url: 'https://example.com/TODO'
       },
       creditCards: {
-        supportedCardTypes: supportedCardTypes,
-        supportedGateways: [{
+        supportedCardTypes,
+        supportedGateways:  [ {
           name: 'paypalApi'
-        }]
+        } ]
       }
     }
   });
@@ -108,11 +114,11 @@ function clearCache() {
 }
 
 module.exports = {
-  create: wrapPromise(create),
+  create:      wrapPromise(create),
   /**
    * @description The current version of the SDK, i.e. `{@pkg version}`.
    * @type {string}
    */
-  VERSION: VERSION,
+  VERSION,
   _clearCache: clearCache
 };
