@@ -10,7 +10,7 @@ import contingencyFlow from './contingency-flow';
 import type { HostedFieldsHandler } from './types';
 
 let TESTING_CONFIGURATION = {
-  assetsUrl: 'https://payments-sdk-demo-assets.herokuapp.com',
+  assetsUrl: 'https://assets.braintreegateway.com',
   card:      {
     supportedCardBrands: [ 'VISA' ]
   }
