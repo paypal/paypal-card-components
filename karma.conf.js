@@ -4,40 +4,11 @@ import { getKarmaConfig } from 'grumbler-scripts/config/karma.conf';
 import { getWebpackConfig } from 'grumbler-scripts/config/webpack.config';
 
 import globals from './globals';
-import type { HostedFieldsGlobalType } from './src/types';
 
-// $FlowFixMe
-let hostedFieldsGlobal : HostedFieldsGlobalType = {
+const hostedFieldsGlobal = {
   serverConfig: {
     fundingEligibility: {
-      card: {
-        eligible: true,
-        branded:  false,
-
-        vendors: {
-          visa: {
-            eligible: true
-          },
-          mastercard: {
-            eligible: true
-          },
-          amex: {
-            eligible: true
-          },
-          discover: {
-            eligible: true
-          },
-          hiper: {
-            eligible: false
-          },
-          elo: {
-            eligible: false
-          },
-          jcb: {
-            eligible: false
-          }
-        }
-      }
+      card: () => 'window.TEST_CARD_ELIGIBILITY'
     }
   }
 };

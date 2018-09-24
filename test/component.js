@@ -72,20 +72,21 @@ describe('hosted-fields-component', () => {
 
   describe('isEligible', () => {
     it('returns true when card is eligible and not branded', () => {
+      window.TEST_CARD_ELIGIBILITY.eligible = true;
+      window.TEST_CARD_ELIGIBILITY.branded = false;
       assert.equal(HostedFields.isEligible(), true);
     });
 
     // can't reassign these variables in tests
-    it.skip('returns false when card is not eligible', () => {
-      // __hosted_fields__.serverConfig.fundingEligibility.card.eligible = false;
-      //
-      // assert.equal(HostedFields.isEligible(), false);
+    it('returns false when card is not eligible', () => {
+      window.TEST_CARD_ELIGIBILITY.eligible = false;
+      assert.equal(HostedFields.isEligible(), false);
     });
 
-    it.skip('returns false when card is branded', () => {
-      // __hosted_fields__.serverConfig.fundingEligibility.card.branded = true;
-      //
-      // assert.equal(HostedFields.isEligible(), false);
+    it('returns false when card is eligible but branded', () => {
+      window.TEST_CARD_ELIGIBILITY.eligible = true;
+      window.TEST_CARD_ELIGIBILITY.branded = true;
+      assert.equal(HostedFields.isEligible(), false);
     });
   });
 
