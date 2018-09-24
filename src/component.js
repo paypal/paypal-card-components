@@ -1,6 +1,6 @@
 /* @flow */
 
-import { getClientToken, getCorrelationID } from 'paypal-braintree-web-client/src';
+import { FPTI_KEY, getLogger, getClientToken, getCorrelationID } from 'paypal-braintree-web-client/src';
 
 // toodoo unvendor this when braintree-web is updated
 import btClient from '../vendor/braintree-web/client';
@@ -18,6 +18,8 @@ let TESTING_CONFIGURATION = {
 
 function createSubmitHandler (hostedFieldsInstance, orderIdFunction) : Function {
   return () => {
+    const logger = getLogger();
+
     return orderIdFunction().then((orderId) => {
       return hostedFieldsInstance.tokenize({
         orderId
@@ -32,7 +34,22 @@ function createSubmitHandler (hostedFieldsInstance, orderIdFunction) : Function 
         // eslint-disable-next-line no-console
         console.log('opening contingency url', url);
         return contingencyFlow.start(url);
-      }).then(() => {
+      }).then((payload) => {
+        logger.track({
+          comp: 'hostedpayment',
+          [FPTI_KEY.FEED]: 'hostedpayment',
+          risk_correlation_id: getCorrelationID(),
+          [FPTI_KEY.DATA_SOURCE]: 'checkout',
+          card_brand: payload.payemnt_source.card.card_type,
+          api_integration_type: 'PAYPALSDK',
+          product_identifier: 'PAYPAL_FOR_MARKETPLACES',
+          [FPTI_KEY.STATE]: 'CARD_PAYMENT_FORM',
+          [FPTI_KEY.TRANSITION]: 'process_card_payment',
+          hosted_payment_session_cre_dt: new Date(),
+          hosted_payment_session_cre_ts_epoch: Date.now(),
+          [FPTI_KEY.USER_AGENT]: window.navigator.userAgent,
+        });
+
         return { orderId };
       });
     });
@@ -53,6 +70,7 @@ export let HostedFields = {
   },
 
   render(options : OptionsType, buttonSelector : string) : Promise<HostedFieldsHandler> {
+    const logger = getLogger();
 
     // toodoo - revert change below when config is being passed correctly
     let configuration = (typeof __hosted_fields__ !== 'undefined') ? __hosted_fields__.serverConfig : TESTING_CONFIGURATION;
@@ -85,13 +103,13 @@ export let HostedFields = {
       }
     }
 
+    let hostedFieldsCreateOptions = JSON.parse(JSON.stringify(options));
+
     return btClient.create({
       authorization: clientToken,
       paymentsSdk:   true,
       configuration
     }).then((btClientInstance) => {
-      let hostedFieldsCreateOptions = JSON.parse(JSON.stringify(options));
-
       hostedFieldsCreateOptions.paymentsSdk = true;
       hostedFieldsCreateOptions.client = btClientInstance;
       return hostedFields.create(hostedFieldsCreateOptions);
@@ -110,6 +128,21 @@ export let HostedFields = {
           });
         });
       }
+
+      logger.track({
+        comp: 'hostedpayment',
+        [FPTI_KEY.FEED]: 'hostedpayment',
+        risk_correlation_id: getCorrelationID(),
+        [FPTI_KEY.DATA_SOURCE]: 'checkout',
+        api_integration_type: 'PAYPALSDK',
+        product_identifier: 'PAYPAL_FOR_MARKETPLACES',
+        [FPTI_KEY.STATE]: 'CARD_PAYMENT_FORM',
+        [FPTI_KEY.TRANSITION]: 'collect_card_info',
+        hosted_payment_textboxes_shown: Object.keys(hostedFieldsCreateOptions.fields).join(':'),
+        hosted_payment_session_cre_dt: new Date(),
+        hosted_payment_session_cre_ts_epoch: Date.now(),
+        [FPTI_KEY.USER_AGENT]: window.navigator.userAgent,
+      });
 
       return hostedFieldsInstance;
     });
