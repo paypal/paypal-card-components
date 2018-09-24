@@ -70,6 +70,25 @@ describe('hosted-fields-component', () => {
     }
   });
 
+  describe('isEligible', () => {
+    it('returns true when card is eligible and not branded', () => {
+      assert.equal(HostedFields.isEligible(), true);
+    });
+
+    // can't reassign these variables in tests
+    it.skip('returns false when card is not eligible', () => {
+      // __hosted_fields__.serverConfig.fundingEligibility.card.eligible = false;
+      //
+      // assert.equal(HostedFields.isEligible(), false);
+    });
+
+    it.skip('returns false when card is branded', () => {
+      // __hosted_fields__.serverConfig.fundingEligibility.card.branded = true;
+      //
+      // assert.equal(HostedFields.isEligible(), false);
+    });
+  });
+
   it('rejects if no payments function is provided', () => {
     return HostedFields.render(renderOptions, '#button').then(rejectIfResolves).catch((err) => {
       assert.equal(err.message, 'should not have resolved');

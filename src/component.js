@@ -46,6 +46,12 @@ type OptionsType = {
 };
 
 export let HostedFields = {
+  isEligible() : boolean {
+    let cardConfig = __hosted_fields__.serverConfig.fundingEligibility.card;
+
+    return cardConfig.eligible && !cardConfig.branded;
+  },
+
   render(options : OptionsType, buttonSelector : string) : Promise<HostedFieldsHandler> {
 
     // toodoo - revert change below when config is being passed correctly
