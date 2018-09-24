@@ -352,7 +352,7 @@ function HostedFields(options) {
 
   this._client = options.client;
 
-  analytics.sendEvent(this._client, 'custom.hosted-fields.initialized');
+  // analytics.sendEvent(this._client, 'custom.hosted-fields.initialized');
 
   Object.keys(options.fields).forEach(function (key) {
     var field, container, frame;
@@ -449,7 +449,7 @@ function HostedFields(options) {
   ];
 
   failureTimeout = setTimeout(function () {
-    analytics.sendEvent(self._client, 'custom.hosted-fields.load.timed-out');
+    // analytics.sendEvent(self._client, 'custom.hosted-fields.load.timed-out');
     self._emit('timeout');
   }, INTEGRATION_TIMEOUT_MS);
 
@@ -584,7 +584,7 @@ HostedFields.prototype.teardown = function () {
 
   return new Promise(function (resolve, reject) {
     self._destructor.teardown(function (err) {
-      analytics.sendEvent(self._client, 'custom.hosted-fields.teardown-completed');
+      // analytics.sendEvent(self._client, 'custom.hosted-fields.teardown-completed');
 
       if (err) {
         reject(err);

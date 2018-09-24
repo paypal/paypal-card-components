@@ -280,7 +280,7 @@ Client.prototype.request = function (options, callback) {
 
     requestOptions.url = baseUrl + options.endpoint;
     requestOptions.sendAnalyticsEvent = function (kind) {
-      analytics.sendEvent(self, kind);
+      // analytics.sendEvent(self, kind);
     };
 
     self._request(requestOptions, function (err, data, status) {
