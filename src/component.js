@@ -37,7 +37,6 @@ function createSubmitHandler (hostedFieldsInstance, orderIdFunction) : Function 
       }).then((payload) => {
         logger.track({
           comp: 'hostedpayment',
-          [FPTI_KEY.FEED]: 'hostedpayment',
           risk_correlation_id: getCorrelationID(),
           [FPTI_KEY.DATA_SOURCE]: 'checkout',
           card_brand: payload.payemnt_source.card.card_type,
@@ -130,7 +129,6 @@ export let HostedFields = {
 
       logger.track({
         comp: 'hostedpayment',
-        [FPTI_KEY.FEED]: 'hostedpayment',
         risk_correlation_id: getCorrelationID(),
         [FPTI_KEY.DATA_SOURCE]: 'checkout',
         api_integration_type: 'PAYPALSDK',
