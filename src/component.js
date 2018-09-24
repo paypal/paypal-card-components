@@ -46,8 +46,7 @@ function createSubmitHandler (hostedFieldsInstance, orderIdFunction) : Function 
           [FPTI_KEY.STATE]: 'CARD_PAYMENT_FORM',
           [FPTI_KEY.TRANSITION]: 'process_card_payment',
           hosted_payment_session_cre_dt: new Date(),
-          hosted_payment_session_cre_ts_epoch: Date.now(),
-          [FPTI_KEY.USER_AGENT]: window.navigator.userAgent,
+          hosted_payment_session_cre_ts_epoch: Date.now()
         });
 
         return { orderId };
@@ -140,8 +139,7 @@ export let HostedFields = {
         [FPTI_KEY.TRANSITION]: 'collect_card_info',
         hosted_payment_textboxes_shown: Object.keys(hostedFieldsCreateOptions.fields).join(':'),
         hosted_payment_session_cre_dt: new Date(),
-        hosted_payment_session_cre_ts_epoch: Date.now(),
-        [FPTI_KEY.USER_AGENT]: window.navigator.userAgent,
+        hosted_payment_session_cre_ts_epoch: Date.now()
       });
 
       return hostedFieldsInstance;
