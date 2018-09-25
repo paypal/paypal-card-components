@@ -17,11 +17,12 @@ let TESTING_CONFIGURATION = {
 };
 
 function createSubmitHandler (hostedFieldsInstance, orderIdFunction) : Function {
-  return () => {
+  return (options = {}) => {
     const logger = getLogger();
 
     return orderIdFunction().then((orderId) => {
       return hostedFieldsInstance.tokenize({
+        ...options,
         orderId
       }).catch((err) => {
         // eslint-disable-next-line no-console

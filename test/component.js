@@ -143,6 +143,23 @@ describe('hosted-fields-component', () => {
     });
   });
 
+  it('resolves with an object that can tokenize with additional options', () => {
+    return HostedFields.render(renderOptions, '#button').then((handler) => {
+      return handler.submit({
+        billingAddress: {
+          postalCode: '60654'
+        }
+      });
+    }).then(() => {
+      td.verify(fakeHostedFieldsInstance.tokenize({
+        orderId:        'order-id',
+        billingAddress: {
+          postalCode: '60654'
+        }
+      }));
+    });
+  });
+
   it('resolves with a hosted fields instance', () => {
     return HostedFields.render(renderOptions, '#button').then((handler) => {
       assert.equal(handler, fakeHostedFieldsInstance);

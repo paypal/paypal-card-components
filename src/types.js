@@ -2,7 +2,7 @@
 
 import type { FundingEligibilityType } from 'paypal-braintree-web-client/src';
 
-type SubmitFunctionType = () => Promise<Object>;
+type SubmitFunctionType = (options? : Object) => Promise<Object>;
 
 export type HostedFieldsHandler = {
     submit : SubmitFunctionType
