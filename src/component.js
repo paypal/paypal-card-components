@@ -37,7 +37,7 @@ function createSubmitHandler (hostedFieldsInstance, orderIdFunction) : Function 
       }).then((payload) => {
         logger.track({
           comp: 'hostedpayment',
-          risk_correlation_id: getCorrelationID(),
+          // risk_correlation_id: 'TODO',
           card_brand: payload.payemnt_source.card.card_type,
           api_integration_type: 'PAYPALSDK',
           product_identifier: 'PAYPAL_FOR_MARKETPLACES',
@@ -128,7 +128,7 @@ export let HostedFields = {
 
       logger.track({
         comp: 'hostedpayment',
-        risk_correlation_id: getCorrelationID(),
+        // risk_correlation_id: 'TODO',
         api_integration_type: 'PAYPALSDK',
         product_identifier: 'PAYPAL_FOR_MARKETPLACES',
         [FPTI_KEY.STATE]: 'CARD_PAYMENT_FORM',
