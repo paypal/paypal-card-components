@@ -104,9 +104,8 @@ describe('hosted-fields-component', () => {
     delete renderOptions.createOrder;
 
     return HostedFields.render(renderOptions, '#button').then(rejectIfResolves).catch((err) => {
-      // uhhh 'todo'
-      // assert.equal(err.message, 'should not have resolved');
-      assert.equal(err instanceof Error, true);
+      // $FlowFixMe
+      assert.equal(err.message, 'createOrder parameter must be a function.');
     });
   });
 
@@ -203,9 +202,8 @@ describe('hosted-fields-component', () => {
 
   it('rejects render with an error if button element cannot be found', () => {
     return HostedFields.render(renderOptions, '#button2').then(rejectIfResolves).catch((err) => {
-      // uhhhh 'todo'
-      // assert.equal(err.message, 'Could not find selector `#button2` on the page');
-      assert.equal(err instanceof Error, true);
+      // $FlowFixMe
+      assert.equal(err.message, 'Could not find selector `#button2` on the page');
     });
   });
 
