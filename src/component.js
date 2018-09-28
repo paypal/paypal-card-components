@@ -1,6 +1,7 @@
 /* @flow */
 
 import { FPTI_KEY, getLogger, getClientToken, getCorrelationID } from 'paypal-braintree-web-client/src';
+import { ZalgoPromise } from 'zalgo-promise/src';
 
 // toodoo unvendor this when braintree-web is updated
 import btClient from '../vendor/braintree-web/client';
@@ -25,15 +26,11 @@ function createSubmitHandler (hostedFieldsInstance, orderIdFunction) : Function 
         ...options,
         orderId
       }).catch((err) => {
-        // eslint-disable-next-line no-console
-        console.log('contingency error', err);
         if (!(err.details && err.details.find && err.details.find(detail => detail.issue === 'CONTINGENCY'))) {
-          return Promise.reject(err);
+          return ZalgoPromise.reject(err);
         }
 
         let url = `${ err.links.find(link => link.rel === '3ds-contingency-resolution').href  }`;
-        // eslint-disable-next-line no-console
-        console.log('opening contingency url', url);
         return contingencyFlow.start(url);
       }).then((payload) => {
         // does contingency flow give a payload?
@@ -56,8 +53,8 @@ function createSubmitHandler (hostedFieldsInstance, orderIdFunction) : Function 
 }
 
 type OptionsType = {
-  createOrder : () => Promise<string>,
-  onApprove : ({ }) => void | Promise<void>,
+  createOrder : () => ZalgoPromise<string>,
+  onApprove : ({ }) => void | ZalgoPromise<void>,
   onError? : (mixed) => void
 };
 
@@ -68,9 +65,12 @@ export let HostedFields = {
     return cardConfig.eligible && !cardConfig.branded;
   },
 
-  render(options : OptionsType, buttonSelector : string) : Promise<HostedFieldsHandler> {
+  render(options : OptionsType, buttonSelector : string) : ZalgoPromise<HostedFieldsHandler> {
     const logger = getLogger();
 
+    if (typeof options.createOrder !== 'function') {
+      return ZalgoPromise.reject(new Error('createOrder parameter must be a function.'));
+    }
     // toodoo - revert change below when config is being passed correctly
     let configuration = (typeof __hosted_fields__ !== 'undefined') ? __hosted_fields__.serverConfig : TESTING_CONFIGURATION;
     configuration.assetsUrl = TESTING_CONFIGURATION.assetsUrl;
@@ -79,8 +79,6 @@ export let HostedFields = {
     } else {
       // configuration.card = TESTING_CONFIGURATION.card;
     }
-    console.log('Using config'); // eslint-disable-line no-console
-    console.log(configuration); // eslint-disable-line no-console
 
     let clientToken = getClientToken();
 
@@ -89,7 +87,7 @@ export let HostedFields = {
     configuration.correlationId = correlationId;
 
     let orderIdFunction = () => {
-      return Promise.resolve().then(() => {
+      return ZalgoPromise.resolve().then(() => {
         return options.createOrder();
       });
     };
@@ -98,7 +96,7 @@ export let HostedFields = {
     if (buttonSelector && options.onApprove) {
       button = document.querySelector(buttonSelector);
       if (!button) {
-        return Promise.reject(new Error(`Could not find selector \`${ buttonSelector }\` on the page`));
+        return ZalgoPromise.reject(new Error(`Could not find selector \`${ buttonSelector }\` on the page`));
       }
     }
 

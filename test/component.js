@@ -5,6 +5,7 @@ import assert from 'assert';
 
 import td from 'testdouble/dist/testdouble';
 import { getHost, getPath } from 'paypal-braintree-web-client/src';
+import { ZalgoPromise } from 'zalgo-promise/src';
 
 import btClient from '../vendor/braintree-web/client';
 import hostedFields from '../vendor/braintree-web/hosted-fields';
@@ -22,21 +23,22 @@ describe('hosted-fields-component', () => {
   let renderOptions;
   let fakeTokenizationPayload;
 
-  before(() => {
+  beforeEach(() => {
+    let body = document.body;
+
+    if (!body) {
+      throw new Error('Document body not available');
+    }
+
+    body.innerHTML = '';
+
     let script = document.createElement('script');
     script.setAttribute('src', `https://${ getHost() }${ getPath() }`);
     script.setAttribute('data-client-token', 'TEST');
+    body.appendChild(script);
 
-    let body = document.body;
-
-    if (body) {
-      body.appendChild(script);
-    }
-  });
-
-  beforeEach(() => {
     renderOptions = {
-      createOrder: () => Promise.resolve('order-id'),
+      createOrder: () => ZalgoPromise.resolve('order-id'),
       onApprove:   td.function(),
       onError:     td.function(),
       fields:      {
@@ -71,19 +73,11 @@ describe('hosted-fields-component', () => {
 
     let button = document.createElement('button');
     button.id = 'button';
-
-    let body = document.body;
-
-    if (body) {
-      body.appendChild(button);
-    }
+    body.appendChild(button);
   });
 
   afterEach(() => {
     td.reset();
-    if (document.body) {
-      document.body.innerHTML = '';
-    }
   });
 
   describe('isEligible', () => {
@@ -107,8 +101,11 @@ describe('hosted-fields-component', () => {
   });
 
   it('rejects if no payments function is provided', () => {
+    delete renderOptions.createOrder;
+
     return HostedFields.render(renderOptions, '#button').then(rejectIfResolves).catch((err) => {
-      assert.equal(err.message, 'should not have resolved');
+      // $FlowFixMe
+      assert.equal(err.message, 'createOrder parameter must be a function.');
     });
   });
 
@@ -121,7 +118,8 @@ describe('hosted-fields-component', () => {
       td.verify(hostedFieldsCreate(td.matchers.anything()), {
         times: 0
       });
-      assert.equal(err.message, 'Some BT Web client Error');
+
+      assert.equal(err, error);
     });
   });
 
@@ -131,7 +129,7 @@ describe('hosted-fields-component', () => {
     td.when(hostedFieldsCreate(td.matchers.isA(Object))).thenReject(error);
 
     return HostedFields.render(renderOptions, '#button').then(rejectIfResolves).catch((err) => {
-      assert.equal(err.message, 'Some BT Web Error');
+      assert.equal(err, error);
     });
   });
 
@@ -204,6 +202,7 @@ describe('hosted-fields-component', () => {
 
   it('rejects render with an error if button element cannot be found', () => {
     return HostedFields.render(renderOptions, '#button2').then(rejectIfResolves).catch((err) => {
+      // $FlowFixMe
       assert.equal(err.message, 'Could not find selector `#button2` on the page');
     });
   });

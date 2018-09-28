@@ -1,7 +1,7 @@
 /* @flow */
 
 module.exports = {
-  extends: './node_modules/grumbler-scripts/config/.eslintrc.js',
+  extends: './node_modules/grumbler-scripts/config/.eslintrc-browser.js',
 
   globals: {
     __hosted_fields__: true,

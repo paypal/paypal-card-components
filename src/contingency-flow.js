@@ -2,7 +2,7 @@
 
 import { create } from 'zoid/src';
 import { type Component } from 'zoid/src/component/component';
-import { type ZalgoPromise } from 'zalgo-promise/src';
+import { ZalgoPromise } from 'zalgo-promise/src';
 
 let CONTINGENCY_TAG = 'payments-sdk-contingency-handler';
 
@@ -123,8 +123,8 @@ let ContingencyComponent : Component<ContingencyProps> = create({
     );
   }
 });
-function start(url : string) : Promise<Object> {
-  return new Promise((resolve, reject) => {
+function start(url : string) : ZalgoPromise<Object> {
+  return new ZalgoPromise((resolve, reject) => {
     ContingencyComponent.render({
       url:                 `${ url  }&xcomponent=1`,
       onContingencyResult: (err, result) => {
