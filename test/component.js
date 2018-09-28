@@ -23,19 +23,20 @@ describe('hosted-fields-component', () => {
   let renderOptions;
   let fakeTokenizationPayload;
 
-  before(() => {
+  beforeEach(() => {
+    let body = document.body;
+
+    if (!body) {
+      throw new Error('Document body not available');
+    }
+
+    body.innerHTML = '';
+
     let script = document.createElement('script');
     script.setAttribute('src', `https://${ getHost() }${ getPath() }`);
     script.setAttribute('data-client-token', 'TEST');
+    body.appendChild(script);
 
-    let body = document.body;
-
-    if (body) {
-      body.appendChild(script);
-    }
-  });
-
-  beforeEach(() => {
     renderOptions = {
       createOrder: () => ZalgoPromise.resolve('order-id'),
       onApprove:   td.function(),
@@ -72,19 +73,11 @@ describe('hosted-fields-component', () => {
 
     let button = document.createElement('button');
     button.id = 'button';
-
-    let body = document.body;
-
-    if (body) {
-      body.appendChild(button);
-    }
+    body.appendChild(button);
   });
 
   afterEach(() => {
     td.reset();
-    if (document.body) {
-      document.body.innerHTML = '';
-    }
   });
 
   describe('isEligible', () => {
