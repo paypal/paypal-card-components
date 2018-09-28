@@ -34,15 +34,15 @@ describe('contingency-flow', () => {
     let promise = contingencyFlow.start('https://example.com');
     let onContingencyResult = td.explain(fakeContingencyComponentRender).calls[0].args[0]
       .onContingencyResult;
-
-    onContingencyResult({
+    let error = {
       code:        42,
       description: 'The error of life'
-    });
+    };
+
+    onContingencyResult(error);
 
     return promise.then(rejectIfResolves).catch((err) => {
-      assert.equal(err.code, 42);
-      assert.equal(err.description, 'The error of life');
+      assert.equal(err, error);
     });
   });
 
@@ -50,13 +50,14 @@ describe('contingency-flow', () => {
     let promise = contingencyFlow.start('https://example.com');
     let onContingencyResult = td.explain(fakeContingencyComponentRender).calls[0].args[0]
       .onContingencyResult;
-
-    onContingencyResult({
+    let error = {
       description: 'The error of life'
-    });
+    };
+
+    onContingencyResult(error);
 
     return promise.then(rejectIfResolves).catch((err) => {
-      assert.equal(err.description, 'The error of life');
+      assert.equal(err, error);
     });
   });
 

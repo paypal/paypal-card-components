@@ -1,8 +1,9 @@
 /* @flow */
 
 import type { FundingEligibilityType } from 'paypal-braintree-web-client/src';
+import { ZalgoPromise } from 'zalgo-promise/src';
 
-type SubmitFunctionType = (options? : Object) => Promise<Object>;
+type SubmitFunctionType = (options? : Object) => ZalgoPromise<Object>;
 
 export type HostedFieldsHandler = {
     submit : SubmitFunctionType
