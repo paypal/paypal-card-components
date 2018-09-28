@@ -20,6 +20,7 @@ describe('hosted-fields-component', () => {
   let fakeHostedFieldsInstance;
   let hostedFieldsCreate;
   let renderOptions;
+  let fakeTokenizationPayload;
 
   before(() => {
     let script = document.createElement('script');
@@ -36,14 +37,29 @@ describe('hosted-fields-component', () => {
   beforeEach(() => {
     renderOptions = {
       createOrder: () => Promise.resolve('order-id'),
-      onApprove:   () => { /* pass */ }
+      onApprove:   td.function(),
+      onError:     td.function(),
+      fields:      {
+        number: {
+          selector: '#credit-card'
+        }
+      }
     };
 
+    fakeTokenizationPayload = {
+      payment_source: {
+        card: {
+          last_digits: '1111',
+          card_type:   'VISA'
+        }
+      },
+      links: []
+    };
     btClientCreate = td.replace(btClient, 'create');
     contingencyFlowStart = td.replace(contingencyFlow, 'start');
 
     fakeHostedFieldsInstance = td.object([ 'tokenize' ]);
-    td.when(fakeHostedFieldsInstance.tokenize(td.matchers.isA(Object))).thenResolve();
+    td.when(fakeHostedFieldsInstance.tokenize(td.matchers.isA(Object))).thenResolve(fakeTokenizationPayload);
     hostedFieldsCreate = td.replace(hostedFields, 'create');
 
     fakeBtClient = {
@@ -128,7 +144,12 @@ describe('hosted-fields-component', () => {
       }));
       td.verify(hostedFieldsCreate({
         client:      fakeBtClient,
-        paymentsSdk: true
+        paymentsSdk: true,
+        fields:      {
+          number: {
+            selector: '#credit-card'
+          }
+        }
       }));
     });
   });
@@ -168,10 +189,6 @@ describe('hosted-fields-component', () => {
 
   it('can setup click handler for provided button if onApprove function is passed', () => {
     let btn = document.createElement('button');
-    let options = {
-      createOrder: td.function(),
-      onApprove:   td.function()
-    };
 
     btn.id = 'button2';
     if (document.body) {
@@ -180,35 +197,26 @@ describe('hosted-fields-component', () => {
 
     td.replace(btn, 'addEventListener');
 
-    return HostedFields.render(options, '#button2').then(() => {
+    return HostedFields.render(renderOptions, '#button2').then(() => {
       td.verify(btn.addEventListener('click', td.matchers.isA(Function)));
     });
   });
 
   it('rejects render with an error if button element cannot be found', () => {
-    let options = {
-      createOrder: td.function(),
-      onApprove:   td.function()
-    };
-
-    return HostedFields.render(options, '#button2').then(rejectIfResolves).catch((err) => {
+    return HostedFields.render(renderOptions, '#button2').then(rejectIfResolves).catch((err) => {
       assert.equal(err.message, 'Could not find selector `#button2` on the page');
     });
   });
 
   it('calls submit when btn is clicked', () => {
     let btn = document.createElement('button');
-    let options = {
-      createOrder: td.function(),
-      onApprove:   td.function()
-    };
 
     btn.id = 'button2';
     if (document.body) {
       document.body.appendChild(btn);
     }
 
-    return HostedFields.render(options, '#button2').then((handler) => {
+    return HostedFields.render(renderOptions, '#button2').then((handler) => {
       td.replace(handler, 'submit');
       td.when(handler.submit()).thenResolve();
       btn.click();
@@ -218,17 +226,13 @@ describe('hosted-fields-component', () => {
 
   it('calls onApprove function with tokenization data if passed in', (done) => {
     let btn = document.createElement('button');
-    let options = {
-      createOrder: td.function(),
-      onApprove:   td.function()
-    };
 
     btn.id = 'button2';
     if (document.body) {
       document.body.appendChild(btn);
     }
 
-    HostedFields.render(options, '#button2').then((handler) => {
+    HostedFields.render(renderOptions, '#button2').then((handler) => {
       let tokenizationData = {
         foo: 'bar'
       };
@@ -237,7 +241,7 @@ describe('hosted-fields-component', () => {
       btn.click();
 
       setTimeout(() => {
-        td.verify(options.onApprove(tokenizationData));
+        td.verify(renderOptions.onApprove(tokenizationData));
         done();
       }, 100);
     }).catch(done);
@@ -245,25 +249,20 @@ describe('hosted-fields-component', () => {
 
   it('calls onError function (if passed) when tokenization fails', (done) => {
     let btn = document.createElement('button');
-    let options = {
-      createOrder: td.function(),
-      onApprove:   td.function(),
-      onError:     td.function()
-    };
 
     btn.id = 'button2';
     if (document.body) {
       document.body.appendChild(btn);
     }
 
-    HostedFields.render(options, '#button2').then((handler) => {
+    HostedFields.render(renderOptions, '#button2').then((handler) => {
       let error = new Error('error');
       td.replace(handler, 'submit');
       td.when(handler.submit()).thenReject(error);
       btn.click();
 
       setTimeout(() => {
-        td.verify(options.onError(error));
+        td.verify(renderOptions.onError(error));
         done();
       }, 100);
     }).catch(done);
@@ -271,17 +270,13 @@ describe('hosted-fields-component', () => {
 
   it('does not require an onError function', (done) => {
     let btn = document.createElement('button');
-    let options = {
-      createOrder:     td.function(),
-      onApprove:   td.function()
-    };
 
     btn.id = 'button2';
     if (document.body) {
       document.body.appendChild(btn);
     }
 
-    HostedFields.render(options, '#button2').then((handler) => {
+    HostedFields.render(renderOptions, '#button2').then((handler) => {
       let error = new Error('error');
       td.replace(handler, 'submit');
       td.when(handler.submit()).thenReject(error);
@@ -296,24 +291,22 @@ describe('hosted-fields-component', () => {
   describe('#submit', () => {
     let button;
     let orderId = 'im-order-id';
-    let options = {
-      createOrder:     td.function(),
-      onApprove:   td.function()
-    };
 
     beforeEach(() => {
       button = document.createElement('button');
       button.id = 'button';
+      renderOptions.createOrder = td.function();
+
 
       if (document.body) {
         document.body.appendChild(button);
       }
 
-      td.when(options.createOrder()).thenReturn(orderId);
+      td.when(renderOptions.createOrder()).thenReturn(orderId);
     });
 
     it('passes back order id', () => {
-      return HostedFields.render(options, '#button').then((handler) => {
+      return HostedFields.render(renderOptions, '#button').then((handler) => {
         return handler.submit().then((actual) => {
           assert.equal(orderId, actual.orderId);
         });
@@ -326,7 +319,7 @@ describe('hosted-fields-component', () => {
       td.when(fakeHostedFieldsInstance.tokenize(td.matchers.isA(Object)))
         .thenReject(expectedError);
 
-      return HostedFields.render(options, '#button').then((handler) => {
+      return HostedFields.render(renderOptions, '#button').then((handler) => {
         return handler.submit().then(rejectIfResolves).catch((err) => {
           assert.equal(expectedError, err);
         });
@@ -341,7 +334,7 @@ describe('hosted-fields-component', () => {
       td.when(fakeHostedFieldsInstance.tokenize(td.matchers.isA(Object)))
         .thenReject(expectedError);
 
-      return HostedFields.render(options, '#button').then((handler) => {
+      return HostedFields.render(renderOptions, '#button').then((handler) => {
         return handler.submit().then(rejectIfResolves).catch((err) => {
           assert.equal(expectedError, err);
         });
@@ -358,7 +351,7 @@ describe('hosted-fields-component', () => {
       td.when(fakeHostedFieldsInstance.tokenize(td.matchers.isA(Object)))
         .thenReject(expectedError);
 
-      return HostedFields.render(options, '#button').then((handler) => {
+      return HostedFields.render(renderOptions, '#button').then((handler) => {
         return handler.submit().then(rejectIfResolves).catch((err) => {
           assert.equal(expectedError, err);
         });
@@ -400,7 +393,7 @@ describe('hosted-fields-component', () => {
 
       td.when(contingencyFlow.start(expectedUrl)).thenResolve();
 
-      return HostedFields.render(options, '#button').then((handler) => {
+      return HostedFields.render(renderOptions, '#button').then((handler) => {
         return handler.submit().then(() => {
           td.verify(contingencyFlowStart(expectedUrl));
         });
@@ -442,7 +435,7 @@ describe('hosted-fields-component', () => {
 
       td.when(contingencyFlow.start(expectedUrl)).thenReject();
 
-      return HostedFields.render(options, '#button').then((handler) => {
+      return HostedFields.render(renderOptions, '#button').then((handler) => {
         return handler.submit().then(rejectIfResolves).catch(() => {
           td.verify(contingencyFlowStart(expectedUrl));
         });

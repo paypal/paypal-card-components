@@ -36,16 +36,17 @@ function createSubmitHandler (hostedFieldsInstance, orderIdFunction) : Function 
         console.log('opening contingency url', url);
         return contingencyFlow.start(url);
       }).then((payload) => {
+        // does contingency flow give a payload?
         logger.track({
-          comp: 'hostedpayment',
+          comp:                                'hostedpayment',
           // risk_correlation_id: 'TODO',
-          card_brand: payload.payemnt_source.card.card_type,
-          api_integration_type: 'PAYPALSDK',
-          product_identifier: 'PAYPAL_FOR_MARKETPLACES',
-          [FPTI_KEY.STATE]: 'CARD_PAYMENT_FORM',
-          [FPTI_KEY.TRANSITION]: 'process_card_payment',
-          hosted_payment_session_cre_dt: new Date(),
-          hosted_payment_session_cre_ts_epoch: Date.now()
+          card_brand:                          payload && payload.payment_source.card.card_type,
+          api_integration_type:                'PAYPALSDK',
+          product_identifier:                  'PAYPAL_FOR_MARKETPLACES',
+          [FPTI_KEY.STATE]:                    'CARD_PAYMENT_FORM',
+          [FPTI_KEY.TRANSITION]:               'process_card_payment',
+          hosted_payment_session_cre_dt:       (new Date()).toString(),
+          hosted_payment_session_cre_ts_epoch: Date.now().toString()
         });
 
         return { orderId };
@@ -128,15 +129,15 @@ export let HostedFields = {
       }
 
       logger.track({
-        comp: 'hostedpayment',
+        comp:                                'hostedpayment',
         // risk_correlation_id: 'TODO',
-        api_integration_type: 'PAYPALSDK',
-        product_identifier: 'PAYPAL_FOR_MARKETPLACES',
-        [FPTI_KEY.STATE]: 'CARD_PAYMENT_FORM',
-        [FPTI_KEY.TRANSITION]: 'collect_card_info',
-        hosted_payment_textboxes_shown: Object.keys(hostedFieldsCreateOptions.fields).join(':'),
-        hosted_payment_session_cre_dt: new Date(),
-        hosted_payment_session_cre_ts_epoch: Date.now()
+        api_integration_type:                'PAYPALSDK',
+        product_identifier:                  'PAYPAL_FOR_MARKETPLACES',
+        [FPTI_KEY.STATE]:                    'CARD_PAYMENT_FORM',
+        [FPTI_KEY.TRANSITION]:               'collect_card_info',
+        hosted_payment_textboxes_shown:      Object.keys(hostedFieldsCreateOptions.fields).join(':'),
+        hosted_payment_session_cre_dt:       (new Date()).toString(),
+        hosted_payment_session_cre_ts_epoch: Date.now().toString()
       });
 
       return hostedFieldsInstance;
