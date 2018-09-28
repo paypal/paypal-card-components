@@ -26,15 +26,11 @@ function createSubmitHandler (hostedFieldsInstance, orderIdFunction) : Function 
         ...options,
         orderId
       }).catch((err) => {
-        // eslint-disable-next-line no-console
-        console.log('contingency error', err);
         if (!(err.details && err.details.find && err.details.find(detail => detail.issue === 'CONTINGENCY'))) {
           return ZalgoPromise.reject(err);
         }
 
         let url = `${ err.links.find(link => link.rel === '3ds-contingency-resolution').href  }`;
-        // eslint-disable-next-line no-console
-        console.log('opening contingency url', url);
         return contingencyFlow.start(url);
       }).then((payload) => {
         // does contingency flow give a payload?
@@ -83,8 +79,6 @@ export let HostedFields = {
     } else {
       // configuration.card = TESTING_CONFIGURATION.card;
     }
-    console.log('Using config'); // eslint-disable-line no-console
-    console.log(configuration); // eslint-disable-line no-console
 
     let clientToken = getClientToken();
 
