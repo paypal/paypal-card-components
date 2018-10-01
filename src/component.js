@@ -1,7 +1,8 @@
 /* @flow */
 
-import { FPTI_KEY, getLogger, getClientToken, getCorrelationID } from 'paypal-braintree-web-client/src';
+import { getLogger, getClientToken, getCorrelationID } from 'paypal-braintree-web-client/src';
 import { ZalgoPromise } from 'zalgo-promise/src';
+import { FPTI_KEY } from 'paypal-sdk-constants/src';
 
 // toodoo unvendor this when braintree-web is updated
 import btClient from '../vendor/braintree-web/client';
