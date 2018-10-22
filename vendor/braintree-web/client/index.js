@@ -91,7 +91,7 @@ function transformPaymentsSDKConfiguration(config, auth) {
     deviceDataId:         fraudnetInstance.sessionId,
     gatewayConfiguration: {
       paypalApi: {
-        baseUrl:     'https://api.test25.stage.paypal.com', // TODO where to get this baseUrl from
+        baseUrl:     config.paypalApi,
         accessToken: auth.paypal.accessToken
       },
       assetsUrl: config.assetsUrl,
