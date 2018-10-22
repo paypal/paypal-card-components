@@ -41,6 +41,7 @@
   "dependencies": {
     "braintree-web": "^3.33.0",
     "paypal-braintree-web-client": "^4.0.0",
+    "paypal-sdk-constants": "^1.0.8",
     "zalgo-promise": "^1.0.34",
     "zoid": "^7.0.6"
   }
