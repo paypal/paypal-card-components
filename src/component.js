@@ -1,6 +1,6 @@
 /* @flow */
 
-import { FPTI_KEY, getLogger, getClientToken, getCorrelationID } from 'paypal-braintree-web-client/src';
+import { FPTI_KEY, getLogger, getClientToken, getCorrelationID, getPayPalAPIDomain } from 'paypal-braintree-web-client/src';
 import { ZalgoPromise } from 'zalgo-promise/src';
 
 // toodoo unvendor this when braintree-web is updated
@@ -85,6 +85,8 @@ export let HostedFields = {
     let correlationId = getCorrelationID();
     // $FlowFixMe
     configuration.correlationId = correlationId;
+    // $FlowFixMe
+    configuration.paypalApi = getPayPalAPIDomain();
 
     let orderIdFunction = () => {
       return ZalgoPromise.resolve().then(() => {
