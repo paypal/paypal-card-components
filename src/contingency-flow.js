@@ -3,14 +3,46 @@
 import { create } from 'zoid/src';
 import { type Component } from 'zoid/src/component/component';
 import { ZalgoPromise } from 'zalgo-promise/src';
+import { getPayPalDomain } from 'paypal-braintree-web-client/src';
 
-let CONTINGENCY_TAG = 'payments-sdk-contingency-handler';
+const CONTINGENCY_TAG = 'payments-sdk-contingency-handler';
+const LIGHTBOX_ID = 'payments-sdk__contingency-lightbox';
+
+const lightbox = document.createElement('div');
+lightbox.id = LIGHTBOX_ID;
+
+const BASE_URL = `${ getPayPalDomain() }/webapps/helios`;
 
 type ContingencyProps = {
   onContingencyResult : (err : mixed, result : Object) => void
 };
 
 let ContingencyComponent : Component<ContingencyProps> = create({
+  url:                 BASE_URL,
+  props: {
+    action: {
+      type: 'string',
+      queryParam: true
+    },
+    xcomponent: {
+      type: 'string',
+      queryParam: true
+    },
+    flow: {
+      type: 'string',
+      queryParam: true
+    },
+    cart_id: {
+      type: 'string',
+      queryParam: true
+    },
+    onContingencyResult: {
+      type: 'function'
+    },
+    onError: {
+      type: 'function'
+    }
+  },
   tag: CONTINGENCY_TAG,
   containerTemplate({ id, CLASS, CONTEXT, tag, context, actions, outlet, jsxDom }) : HTMLElement {
 
@@ -124,9 +156,23 @@ let ContingencyComponent : Component<ContingencyProps> = create({
   }
 });
 function start(url : string) : ZalgoPromise<Object> {
+  let queryString = url.split('?')[1];
+  let params = queryString.split('&').reduce((obj, pair) => {
+    let pieces = pair.split('=');
+
+    obj[pieces[0]] = pieces[1];
+
+    return obj;
+  }, {});
+
+  document.body.appendChild(lightbox);
+
   return new ZalgoPromise((resolve, reject) => {
     ContingencyComponent.render({
-      url:                 `${ url  }&xcomponent=1`,
+      action: params.action,
+      xcomponent: '1',
+      flow: params.flow,
+      cart_id: params.cart_id,
       onContingencyResult: (err, result) => {
         if (err) {
           reject(err);
@@ -135,7 +181,7 @@ function start(url : string) : ZalgoPromise<Object> {
         resolve(result);
       },
       onError: reject
-    }, '#payments-sdk__contingency-lightbox');
+    }, `#${LIGHTBOX_ID}`);
 
   });
 }
