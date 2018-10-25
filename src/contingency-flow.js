@@ -1,5 +1,5 @@
 /* @flow */
-
+import { getClientID } from 'paypal-braintree-web-client/src';
 import { create } from 'zoid/src';
 import { type Component } from 'zoid/src/component/component';
 import { ZalgoPromise } from 'zalgo-promise/src';
@@ -34,6 +34,11 @@ let ContingencyComponent : Component<ContingencyProps> = create({
     },
     cart_id: {
       type: 'string',
+      queryParam: true
+    },
+    clientID: {
+      type: 'string',
+      value: getClientID,
       queryParam: true
     },
     onContingencyResult: {
