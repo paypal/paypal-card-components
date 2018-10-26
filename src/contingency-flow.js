@@ -1,44 +1,41 @@
 /* @flow */
-import { getClientID } from 'paypal-braintree-web-client/src';
+import { getClientID, getPayPalDomain } from 'paypal-braintree-web-client/src';
 import { create } from 'zoid/src';
 import { type Component } from 'zoid/src/component/component';
 import { ZalgoPromise } from 'zalgo-promise/src';
-import { getPayPalDomain } from 'paypal-braintree-web-client/src';
 
 const CONTINGENCY_TAG = 'payments-sdk-contingency-handler';
 const LIGHTBOX_ID = 'payments-sdk__contingency-lightbox';
 
-const lightbox = document.createElement('div');
+let lightbox = document.createElement('div');
 lightbox.id = LIGHTBOX_ID;
-
-const BASE_URL = `${ getPayPalDomain() }/webapps/helios`;
 
 type ContingencyProps = {
   onContingencyResult : (err : mixed, result : Object) => void
 };
 
 let ContingencyComponent : Component<ContingencyProps> = create({
-  url:                 BASE_URL,
-  props: {
+  buildUrl: () => `${ getPayPalDomain() }/webapps/helios`,
+  props:    {
     action: {
-      type: 'string',
+      type:       'string',
       queryParam: true
     },
     xcomponent: {
-      type: 'string',
+      type:       'string',
       queryParam: true
     },
     flow: {
-      type: 'string',
+      type:       'string',
       queryParam: true
     },
     cart_id: {
-      type: 'string',
+      type:       'string',
       queryParam: true
     },
     clientID: {
-      type: 'string',
-      value: getClientID,
+      type:       'string',
+      value:      getClientID,
       queryParam: true
     },
     onContingencyResult: {
@@ -170,14 +167,18 @@ function start(url : string) : ZalgoPromise<Object> {
     return obj;
   }, {});
 
+  if (!document.body) {
+    throw new Error(`Could not find document.body`);
+  }
+
   document.body.appendChild(lightbox);
 
   return new ZalgoPromise((resolve, reject) => {
     ContingencyComponent.render({
-      action: params.action,
-      xcomponent: '1',
-      flow: params.flow,
-      cart_id: params.cart_id,
+      action:              params.action,
+      xcomponent:          '1',
+      flow:                params.flow,
+      cart_id:             params.cart_id,
       onContingencyResult: (err, result) => {
         if (err) {
           reject(err);
@@ -186,7 +187,7 @@ function start(url : string) : ZalgoPromise<Object> {
         resolve(result);
       },
       onError: reject
-    }, `#${LIGHTBOX_ID}`);
+    }, `#${ LIGHTBOX_ID }`);
 
   });
 }
