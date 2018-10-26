@@ -23,7 +23,7 @@ export default (karma : Object) =>
       vars: {
         ...globals,
         __hosted_fields__:  hostedFieldsGlobal,
-        
+
         __CLIENT_ID__:      'xyz',
         __MERCHANT_ID__:    'abc',
         __LOCALE_COUNTRY__: 'US',

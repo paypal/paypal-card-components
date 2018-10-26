@@ -39,6 +39,7 @@
     "testdouble": "^3.7.0"
   },
   "dependencies": {
+    "belter": "^1.0.44",
     "braintree-web": "^3.33.0",
     "paypal-braintree-web-client": "^4.0.0",
     "paypal-sdk-constants": "^1.0.8",

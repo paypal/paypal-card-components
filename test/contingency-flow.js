@@ -13,7 +13,9 @@ describe('contingency-flow', () => {
   let fakeContingencyComponentRender;
 
   beforeEach(() => {
-    fakeContingencyComponentRender = td.replace(contingencyFlow.ContingencyComponent, 'render');
+    let ContingencyComponent = contingencyFlow.getContingencyComponent();
+
+    fakeContingencyComponentRender = td.replace(ContingencyComponent, 'render');
   });
 
   afterEach(() => {
@@ -21,10 +23,13 @@ describe('contingency-flow', () => {
   });
 
   it('renders a zoid component', () => {
-    contingencyFlow.start('https://example.com');
+    contingencyFlow.start('https://example.com?action=foo&flow=bar&cart_id=baz');
 
     td.verify(fakeContingencyComponentRender({
-      url:                 td.matchers.isA(String),
+      action:              'foo',
+      xcomponent:           '1',
+      flow:                'bar',
+      cart_id:             'baz',
       onContingencyResult: td.matchers.isA(Function),
       onError:             td.matchers.isA(Function)
     }, '#payments-sdk__contingency-lightbox'));

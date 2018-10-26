@@ -67,6 +67,7 @@ export let HostedFields = {
   },
 
   render(options : OptionsType, buttonSelector : string) : ZalgoPromise<HostedFieldsHandler> {
+    contingencyFlow.getContingencyComponent();
     const logger = getLogger();
 
     if (typeof options.createOrder !== 'function') {
