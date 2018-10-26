@@ -32,7 +32,7 @@ describe('contingency-flow', () => {
       cart_id:             'baz',
       onContingencyResult: td.matchers.isA(Function),
       onError:             td.matchers.isA(Function)
-    }, '#payments-sdk__contingency-lightbox'));
+    }, document.body));
   });
 
   it('rejects when contingency returns an error object with code and description', () => {

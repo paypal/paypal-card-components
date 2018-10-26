@@ -7,10 +7,6 @@ import { ZalgoPromise } from 'zalgo-promise/src';
 import { parseQuery } from 'belter/src';
 
 const CONTINGENCY_TAG = 'payments-sdk-contingency-handler';
-const LIGHTBOX_ID = 'payments-sdk__contingency-lightbox';
-
-let lightbox = document.createElement('div');
-lightbox.id = LIGHTBOX_ID;
 
 type ContingencyProps = {
   onContingencyResult : (err : mixed, result : Object) => void
@@ -173,9 +169,6 @@ function getContingencyComponent() : Component<ContingencyProps> {
 function start(url : string) : ZalgoPromise<Object> {
   let params = parseQuery(url.split('?')[1]);
 
-  // $FlowFixMe
-  document.body.appendChild(lightbox);
-
   return new ZalgoPromise((resolve, reject) => {
     ContingencyComponent.render({
       action:              params.action,
@@ -190,7 +183,7 @@ function start(url : string) : ZalgoPromise<Object> {
         resolve(result);
       },
       onError:             reject
-    }, `#${ LIGHTBOX_ID }`);
+    }, document.body);
 
   });
 }
