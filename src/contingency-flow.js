@@ -184,7 +184,6 @@ function start(url : string) : ZalgoPromise<Object> {
       },
       onError:             reject
     }, document.body);
-
   });
 }
 

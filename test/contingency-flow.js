@@ -23,20 +23,20 @@ describe('contingency-flow', () => {
   });
 
   it('renders a zoid component', () => {
-    contingencyFlow.start('https://example.com?action=foo&flow=bar&cart_id=baz');
+    contingencyFlow.start('https://example.com?cart_id=abc123&action=action&xcomponent=1&flow=contingency');
 
     td.verify(fakeContingencyComponentRender({
-      action:              'foo',
+      action:              'action',
       xcomponent:           '1',
-      flow:                'bar',
-      cart_id:             'baz',
+      flow:                'contingency',
+      cart_id:             'abc123',
       onContingencyResult: td.matchers.isA(Function),
       onError:             td.matchers.isA(Function)
     }, document.body));
   });
 
   it('rejects when contingency returns an error object with code and description', () => {
-    let promise = contingencyFlow.start('https://example.com');
+    let promise = contingencyFlow.start('https://example.com?cart_id=abc123&action=contingency&xcomponent=1&flow=contingency');
     let onContingencyResult = td.explain(fakeContingencyComponentRender).calls[0].args[0]
       .onContingencyResult;
     let error = {
@@ -52,7 +52,7 @@ describe('contingency-flow', () => {
   });
 
   it('rejects when contingency returns an error object with description only', () => {
-    let promise = contingencyFlow.start('https://example.com');
+    let promise = contingencyFlow.start('https://example.com?cart_id=abc123&action=contingency&xcomponent=1&flow=contingency');
     let onContingencyResult = td.explain(fakeContingencyComponentRender).calls[0].args[0]
       .onContingencyResult;
     let error = {
@@ -67,7 +67,7 @@ describe('contingency-flow', () => {
   });
 
   it('resolves when contingency is successful', () => {
-    let promise = contingencyFlow.start('https://example.com');
+    let promise = contingencyFlow.start('https://example.com?cart_id=abc123&action=contingency&xcomponent=1&flow=contingency');
     let onContingencyResult = td.explain(fakeContingencyComponentRender).calls[0].args[0]
       .onContingencyResult;
 
@@ -82,7 +82,7 @@ describe('contingency-flow', () => {
 
   it('rejects when onError is called with an error', () => {
     let randomError = new Error('spooky');
-    let promise = contingencyFlow.start('https://example.com');
+    let promise = contingencyFlow.start('https://example.com?cart_id=abc123&action=contingency&xcomponent=1&flow=contingency');
     let onError = td.explain(fakeContingencyComponentRender).calls[0].args[0]
       .onError;
 
