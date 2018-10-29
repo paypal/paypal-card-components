@@ -22,8 +22,6 @@ describe('hosted-fields-component', () => {
   let fakeTokenizationPayload;
 
   beforeEach(() => {
-    let body = document.body;
-
     renderOptions = {
       createOrder: () => ZalgoPromise.resolve('order-id'),
       onApprove:   td.function(),
@@ -62,7 +60,7 @@ describe('hosted-fields-component', () => {
     button.id = 'button';
 
     // $FlowFixMe
-    body.appendChild(button);
+    document.body.appendChild(button);
   });
 
   afterEach(() => {
