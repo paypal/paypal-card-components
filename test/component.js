@@ -1,10 +1,8 @@
 /* @flow */
 
-
 import assert from 'assert';
 
 import td from 'testdouble/dist/testdouble';
-import { getHost, getPath } from 'paypal-braintree-web-client/src';
 import { ZalgoPromise } from 'zalgo-promise/src';
 
 import btClient from '../vendor/braintree-web/client';
@@ -24,19 +22,6 @@ describe('hosted-fields-component', () => {
   let fakeTokenizationPayload;
 
   beforeEach(() => {
-    let body = document.body;
-
-    if (!body) {
-      throw new Error('Document body not available');
-    }
-
-    body.innerHTML = '';
-
-    let script = document.createElement('script');
-    script.setAttribute('src', `https://${ getHost() }${ getPath() }`);
-    script.setAttribute('data-client-token', 'TEST');
-    body.appendChild(script);
-
     renderOptions = {
       createOrder: () => ZalgoPromise.resolve('order-id'),
       onApprove:   td.function(),
@@ -73,7 +58,9 @@ describe('hosted-fields-component', () => {
 
     let button = document.createElement('button');
     button.id = 'button';
-    body.appendChild(button);
+
+    // $FlowFixMe
+    document.body.appendChild(button);
   });
 
   afterEach(() => {

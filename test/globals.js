@@ -1,5 +1,7 @@
 /* @flow */
 
+import { getHost, getPath } from 'paypal-braintree-web-client/src';
+
 window.TEST_CARD_ELIGIBILITY = {
   eligible: true,
   branded:  false,
@@ -28,3 +30,20 @@ window.TEST_CARD_ELIGIBILITY = {
     }
   }
 };
+
+beforeEach(() => {
+  let body = document.body;
+
+  if (!body) {
+    throw new Error('Document body not available');
+  }
+
+  body.innerHTML = '';
+
+  let script = document.createElement('script');
+  let src =  `https://${ getHost() }${ getPath() }`;
+
+  script.setAttribute('src', src);
+  script.setAttribute('data-client-token', 'TEST');
+  body.appendChild(script);
+});
