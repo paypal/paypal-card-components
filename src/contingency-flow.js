@@ -12,65 +12,59 @@ type ContingencyProps = {
   onContingencyResult : (err : mixed, result : Object) => void
 };
 
-let ContingencyComponent : Component<ContingencyProps>;
+let ContingencyComponent : Component<ContingencyProps> = create({
+  buildUrl: () => `${ getPayPalDomain() }/webapps/helios`,
+  props:    {
+    action: {
+      type:       'string',
+      queryParam: true
+    },
+    xcomponent: {
+      type:       'string',
+      queryParam: true
+    },
+    flow: {
+      type:       'string',
+      queryParam: true
+    },
+    cart_id: {
+      type:       'string',
+      queryParam: true
+    },
+    clientID: {
+      type:       'string',
+      value:      getClientID,
+      queryParam: true
+    },
+    onContingencyResult: {
+      type: 'function'
+    },
+    onError: {
+      type: 'function'
+    }
+  },
+  tag: CONTINGENCY_TAG,
+  containerTemplate({ id, CLASS, CONTEXT, tag, context, actions, outlet, jsxDom }) : HTMLElement {
 
-function getContingencyComponent() : Component<ContingencyProps> {
-  if (!ContingencyComponent) {
-    const BASE_URL = `${ getPayPalDomain() }/webapps/helios`;
+    function close(event) : ZalgoPromise<void> {
+      event.preventDefault();
+      event.stopPropagation();
+      return actions.close();
+    }
 
-    ContingencyComponent = create({
-      url:                 BASE_URL,
-      props: {
-        action: {
-          type:       'string',
-          queryParam: true
-        },
-        xcomponent: {
-          type:       'string',
-          queryParam: true
-        },
-        flow: {
-          type:       'string',
-          queryParam: true
-        },
-        cart_id: {
-          type:       'string',
-          queryParam: true
-        },
-        clientID: {
-          type:       'string',
-          value:      getClientID,
-          queryParam: true
-        },
-        onContingencyResult: {
-          type: 'function'
-        },
-        onError: {
-          type: 'function'
-        }
-      },
-      tag: CONTINGENCY_TAG,
-      containerTemplate({ id, CLASS, CONTEXT, tag, context, actions, outlet, jsxDom }) : HTMLElement {
+    function focus(event) : ZalgoPromise<void> {
+      event.preventDefault();
+      event.stopPropagation();
+      return actions.focus();
+    }
 
-        function close(event) : ZalgoPromise<void> {
-          event.preventDefault();
-          event.stopPropagation();
-          return actions.close();
-        }
+    return jsxDom('div', { id, 'onClick': focus, 'class': `${ CLASS.ZOID } ${ CLASS.ZOID }-tag-${ tag } ${ CLASS.ZOID }-context-${ context } ${ CLASS.ZOID }-focus` },
 
-        function focus(event) : ZalgoPromise<void> {
-          event.preventDefault();
-          event.stopPropagation();
-          return actions.focus();
-        }
+      jsxDom('a', { 'href': '#', 'onClick': close, 'class': `${ CLASS.ZOID }-close` }),
 
-        return jsxDom('div', { id, 'onClick': focus, 'class': `${ CLASS.ZOID } ${ CLASS.ZOID }-tag-${ tag } ${ CLASS.ZOID }-context-${ context } ${ CLASS.ZOID }-focus` },
+      outlet,
 
-          jsxDom('a', { 'href': '#', 'onClick': close, 'class': `${ CLASS.ZOID }-close` }),
-
-          outlet,
-
-          jsxDom('style', null, `
+      jsxDom('style', null, `
           #${ id } {
               position: fixed;
               top: 0;
@@ -158,13 +152,9 @@ function getContingencyComponent() : Component<ContingencyProps> {
               transform: rotate(-45deg);
           }
           `)
-        );
-      }
-    });
+    );
   }
-
-  return ContingencyComponent;
-}
+});
 
 function start(url : string) : ZalgoPromise<Object> {
   let params = parseQuery(url.split('?')[1]);
@@ -189,5 +179,5 @@ function start(url : string) : ZalgoPromise<Object> {
 
 export default {
   start,
-  getContingencyComponent
+  ContingencyComponent
 };

@@ -13,9 +13,7 @@ describe('contingency-flow', () => {
   let fakeContingencyComponentRender;
 
   beforeEach(() => {
-    let ContingencyComponent = contingencyFlow.getContingencyComponent();
-
-    fakeContingencyComponentRender = td.replace(ContingencyComponent, 'render');
+    fakeContingencyComponentRender = td.replace(contingencyFlow.ContingencyComponent, 'render');
   });
 
   afterEach(() => {
