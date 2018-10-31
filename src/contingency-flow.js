@@ -12,6 +12,7 @@ type ContingencyProps = {
   onContingencyResult : (err : mixed, result : Object) => void
 };
 
+let contingencyResolveFunction;
 let ContingencyComponent : Component<ContingencyProps> = create({
   buildUrl: () => `${ getPayPalDomain() }/webapps/helios`,
   props:    {
@@ -49,6 +50,11 @@ let ContingencyComponent : Component<ContingencyProps> = create({
     function close(event) : ZalgoPromise<void> {
       event.preventDefault();
       event.stopPropagation();
+
+      if (contingencyResolveFunction) {
+        contingencyResolveFunction({ success: false });
+        contingencyResolveFunction = null;
+      }
       return actions.close();
     }
 
@@ -160,19 +166,26 @@ function start(url : string) : ZalgoPromise<Object> {
   let params = parseQuery(url.split('?')[1]);
 
   return new ZalgoPromise((resolve, reject) => {
+    contingencyResolveFunction = resolve;
+
     ContingencyComponent.render({
       action:              params.action,
       xcomponent:          '1',
       flow:                params.flow,
       cart_id:             params.cart_id,
       onContingencyResult: (err, result) => {
+        contingencyResolveFunction = null;
+
         if (err) {
           reject(err);
           return;
         }
         resolve(result);
       },
-      onError:             reject
+      onError:             (err) => {
+        contingencyResolveFunction = null;
+        reject(err);
+      }
     }, document.body);
   });
 }
