@@ -47,7 +47,10 @@ function createSubmitHandler (hostedFieldsInstance, orderIdFunction) : Function 
           hosted_payment_session_cre_ts_epoch: Date.now().toString()
         });
 
-        return { orderId };
+        return {
+          liabilityShifted: payload.success,
+          orderId
+        };
       });
     });
   };
