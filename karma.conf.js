@@ -38,7 +38,9 @@ export default (karma : Object) =>
         __HOST__:           'test.paypal.com',
         __HOSTNAME__:       'test.paypal.com',
         __PATH__:           '/sdk/js',
-        __CORRELATION_ID__: 'abc123'
+        __CORRELATION_ID__: 'abc123',
+        __VERSION__:        '1.0.55',
+        __NAMESPACE__:      'testpaypal'
       }
     })
   }));

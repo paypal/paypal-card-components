@@ -5,6 +5,7 @@ import { create } from 'zoid/src';
 import { type Component } from 'zoid/src/component/component';
 import { ZalgoPromise } from 'zalgo-promise/src';
 import { parseQuery } from 'belter/src';
+import { node, type ElementNode } from 'jsx-pragmatic/src';
 
 const CONTINGENCY_TAG = 'payments-sdk-contingency-handler';
 
@@ -45,7 +46,7 @@ let ContingencyComponent : Component<ContingencyProps> = create({
     }
   },
   tag: CONTINGENCY_TAG,
-  containerTemplate({ id, CLASS, CONTEXT, tag, context, actions, outlet, jsxDom }) : HTMLElement {
+  containerTemplate({ id, CLASS, CONTEXT, tag, context, actions, outlet }) : ElementNode {
 
     function close(event) : ZalgoPromise<void> {
       event.preventDefault();
@@ -64,13 +65,14 @@ let ContingencyComponent : Component<ContingencyProps> = create({
       return actions.focus();
     }
 
-    return jsxDom('div', { id, 'onClick': focus, 'class': `${ CLASS.ZOID } ${ CLASS.ZOID }-tag-${ tag } ${ CLASS.ZOID }-context-${ context } ${ CLASS.ZOID }-focus` },
+    // $FlowFixMe
+    return node('div', { id, 'onClick': focus, 'class': `${ CLASS.ZOID } ${ CLASS.ZOID }-tag-${ tag } ${ CLASS.ZOID }-context-${ context } ${ CLASS.ZOID }-focus` },
 
-      jsxDom('a', { 'href': '#', 'onClick': close, 'class': `${ CLASS.ZOID }-close` }),
+      node('a', { 'href': '#', 'onClick': close, 'class': `${ CLASS.ZOID }-close` }),
 
       outlet,
 
-      jsxDom('style', null, `
+      node('style', null, `
           #${ id } {
               position: fixed;
               top: 0;
