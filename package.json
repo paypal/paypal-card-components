@@ -8,7 +8,7 @@
     "release:patch": "./node_modules/grumbler-scripts/publish.sh patch",
     "release:minor": "./node_modules/grumbler-scripts/publish.sh minor",
     "release:major": "./node_modules/grumbler-scripts/publish.sh major",
-    "flow-typed": "flow-typed install",
+    "flow-typed": "rm -rf ./flow-typed && flow-typed install",
     "flow": "flow",
     "flow:build": "flow gen-flow-files ./src/index.js --out-dir ./dist/module",
     "build": "rm -rf ./vendor && mkdir -p ./vendor/braintree-web && cp -R ~/bt/braintree.js/dist/npm/* ./vendor/braintree-web",
