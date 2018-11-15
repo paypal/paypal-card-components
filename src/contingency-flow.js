@@ -64,13 +64,12 @@ let ContingencyComponent : Component<ContingencyProps> = create({
       event.stopPropagation();
       return actions.focus();
     }
-
-    // $FlowFixMe
+    
     return node('div', { id, 'onClick': focus, 'class': `${ CLASS.ZOID } ${ CLASS.ZOID }-tag-${ tag } ${ CLASS.ZOID }-context-${ context } ${ CLASS.ZOID }-focus` },
 
       node('a', { 'href': '#', 'onClick': close, 'class': `${ CLASS.ZOID }-close` }),
 
-      outlet,
+      node('node', { el: outlet }),
 
       node('style', null, `
           #${ id } {
