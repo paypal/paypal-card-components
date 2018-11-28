@@ -3,6 +3,7 @@
 import { getLogger, getClientToken, getCorrelationID, getPayPalAPIDomain } from 'paypal-braintree-web-client/src';
 import { FPTI_KEY } from 'paypal-sdk-constants/src';
 import { ZalgoPromise } from 'zalgo-promise/src';
+import { uniqueID } from 'belter/src';
 
 // toodoo unvendor this when braintree-web is updated
 import btClient from '../vendor/braintree-web/client';
@@ -18,11 +19,22 @@ let TESTING_CONFIGURATION = {
   }
 };
 
+let hosted_payment_session_id = '';
+
 function createSubmitHandler (hostedFieldsInstance, orderIdFunction) : Function {
   return (options = {}) => {
     const logger = getLogger();
 
     return orderIdFunction().then((orderId) => {
+      logger.track({
+          [ FPTI_KEY.STATE ]:              'CARD_PAYMENT_FORM',
+          [ FPTI_KEY.TRANSITION ]:         'process_receive_order',
+          hosted_payment_session_id:       hosted_payment_session_id,
+          [ FPTI_KEY.CONTEXT_TYPE ]:       'Cart-ID',
+          [ FPTI_KEY.CONTEXT_ID ]:         orderId
+      });
+      logger.flush();
+
       return hostedFieldsInstance.tokenize({
         ...options,
         orderId
@@ -46,6 +58,7 @@ function createSubmitHandler (hostedFieldsInstance, orderIdFunction) : Function 
           hosted_payment_session_cre_dt:       (new Date()).toString(),
           hosted_payment_session_cre_ts_epoch: Date.now().toString()
         });
+        logger.flush();
 
         return {
           liabilityShifted: payload.success,
@@ -97,6 +110,7 @@ export let HostedFields = {
         return options.createOrder();
       });
     };
+
     let button;
 
     if (buttonSelector && options.onApprove) {
@@ -132,6 +146,7 @@ export let HostedFields = {
         });
       }
 
+      hosted_payment_session_id = uniqueID();
       logger.track({
         comp:                                'hostedpayment',
         // risk_correlation_id: 'TODO',
@@ -141,8 +156,11 @@ export let HostedFields = {
         [FPTI_KEY.TRANSITION]:               'collect_card_info',
         hosted_payment_textboxes_shown:      Object.keys(hostedFieldsCreateOptions.fields).join(':'),
         hosted_payment_session_cre_dt:       (new Date()).toString(),
-        hosted_payment_session_cre_ts_epoch: Date.now().toString()
+        hosted_payment_session_cre_ts_epoch: Date.now().toString(),
+        [ FPTI_KEY.CONTEXT_TYPE ]:           'hosted_session_id',
+        [ FPTI_KEY.CONTEXT_ID ]:             hosted_payment_session_id
       });
+      logger.flush();
 
       return hostedFieldsInstance;
     });
