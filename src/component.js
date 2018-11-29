@@ -27,11 +27,11 @@ function createSubmitHandler (hostedFieldsInstance, orderIdFunction) : Function 
 
     return orderIdFunction().then((orderId) => {
       logger.track({
-          [ FPTI_KEY.STATE ]:              'CARD_PAYMENT_FORM',
-          [ FPTI_KEY.TRANSITION ]:         'process_receive_order',
-          hosted_payment_session_id:       hosted_payment_session_id,
-          [ FPTI_KEY.CONTEXT_TYPE ]:       'Cart-ID',
-          [ FPTI_KEY.CONTEXT_ID ]:         orderId
+        [ FPTI_KEY.STATE ]:              'CARD_PAYMENT_FORM',
+        [ FPTI_KEY.TRANSITION ]:         'process_receive_order',
+        hosted_payment_session_id,
+        [ FPTI_KEY.CONTEXT_TYPE ]:       'Cart-ID',
+        [ FPTI_KEY.CONTEXT_ID ]:         orderId
       });
       logger.flush();
 
