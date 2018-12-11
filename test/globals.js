@@ -1,6 +1,6 @@
 /* @flow */
 
-import { getHost, getPath } from 'paypal-braintree-web-client/src';
+import { getHost, getPath } from '@paypal/sdk-client/src';
 
 window.TEST_CARD_ELIGIBILITY = {
   eligible: true,
