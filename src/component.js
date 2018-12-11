@@ -146,6 +146,9 @@ export let HostedFields = {
       return hostedFields.create(hostedFieldsCreateOptions);
     }).then((hostedFieldsInstance) => {
       hostedFieldsInstance.submit = createSubmitHandler(hostedFieldsInstance, orderIdFunction);
+      hostedFieldsInstance.getCardTypes = () => {
+        return __hosted_fields__.serverConfig.fundingEligibility.card.vendors;
+      };
 
       if (button) {
         button.addEventListener('click', () => {

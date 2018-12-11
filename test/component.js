@@ -445,4 +445,17 @@ describe('hosted-fields-component', () => {
       });
     });
   });
+
+  describe('#getCardTypes', () => {
+    it('returns eligble card types', () => {
+      return HostedFields.render(renderOptions, '#button').then((hf) => {
+        let cards = hf.getCardTypes();
+
+        assert.equal(cards.visa.eligible, true);
+        assert.equal(cards.mastercard.eligible, true);
+        assert.equal(cards.elo.eligible, false);
+        assert.equal(cards.jcb.eligible, false);
+      });
+    });
+  });
 });
