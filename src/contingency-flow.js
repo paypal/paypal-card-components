@@ -59,12 +59,14 @@ let ContingencyComponent : Component<ContingencyProps> = create({
       return actions.close();
     }
 
+    // $FlowFixMe
     function focus(event) : ZalgoPromise<void> {
       event.preventDefault();
       event.stopPropagation();
+
       return actions.focus();
     }
-    
+
     return node('div', { id, 'onClick': focus, 'class': `${ CLASS.ZOID } ${ CLASS.ZOID }-tag-${ tag } ${ CLASS.ZOID }-context-${ context } ${ CLASS.ZOID }-focus` },
 
       node('a', { 'href': '#', 'onClick': close, 'class': `${ CLASS.ZOID }-close` }),

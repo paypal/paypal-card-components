@@ -22,8 +22,16 @@ let TESTING_CONFIGURATION = {
 let hosted_payment_session_id = '';
 
 function createSubmitHandler (hostedFieldsInstance, orderIdFunction) : Function {
+  let paymentInProgress = false;
+
   return (options = {}) => {
     const logger = getLogger();
+
+    if (paymentInProgress) {
+      return ZalgoPromise.reject(new Error('Hosted Fields payment is already in progress.'));
+    }
+
+    paymentInProgress = true;
 
     return orderIdFunction().then((orderId) => {
       logger.track({
@@ -60,10 +68,16 @@ function createSubmitHandler (hostedFieldsInstance, orderIdFunction) : Function 
         });
         logger.flush();
 
+        paymentInProgress = false;
+
         return {
           liabilityShifted: payload.success,
           orderId
         };
+      }).catch((err) => {
+        paymentInProgress = false;
+
+        return ZalgoPromise.reject(err);
       });
     });
   };
