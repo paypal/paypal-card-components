@@ -1,6 +1,6 @@
 /* @flow */
 
-import { getClientID, getPayPalDomain } from 'paypal-braintree-web-client/src';
+import { getClientID, getPayPalDomain } from '@paypal/sdk-client/src';
 import { create } from 'zoid/src';
 import { type Component } from 'zoid/src/component/component';
 import { ZalgoPromise } from 'zalgo-promise/src';
@@ -63,7 +63,7 @@ let ContingencyComponent : Component<ContingencyProps> = create({
     function focus(event) : ZalgoPromise<void> {
       event.preventDefault();
       event.stopPropagation();
-
+      // $FlowFixMe
       return actions.focus();
     }
 

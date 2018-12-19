@@ -1,6 +1,6 @@
 {
-  "name": "paypal-braintree-hosted-fields-component",
-  "version": "1.0.19",
+  "name": "@paypal/card-components",
+  "version": "1.0.20",
   "description": "Hosted Fields component for unified PayPal/Braintree web sdk",
   "main": "index.js",
   "scripts": {
@@ -39,11 +39,11 @@
     "testdouble": "^3.7.0"
   },
   "dependencies": {
+    "@paypal/sdk-client": "^4.0.0",
+    "@paypal/sdk-constants": "^1.0.8",
     "belter": "^1.0.44",
     "braintree-web": "^3.33.0",
     "jsx-pragmatic": "^1.0.9",
-    "paypal-braintree-web-client": "^4.0.0",
-    "paypal-sdk-constants": "^1.0.8",
     "zalgo-promise": "^1.0.34",
     "zoid": "^7.0.6"
   }
