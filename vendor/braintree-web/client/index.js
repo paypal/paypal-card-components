@@ -5,6 +5,7 @@ let BraintreeError = require('../lib/braintree-error');
 
 let Client = require('./client');
 let globals = require('./globals');
+
 let getConfiguration = require('./get-configuration').getConfiguration;
 
 
@@ -76,11 +77,12 @@ function create(options) {
 
 function transformPaymentsSDKConfiguration(config, auth) {
   let fraudnetInstance = fraudnet.setup();
-  
+  let accessToken;
+
   try {
-    auth = JSON.parse(window.atob(auth));
+    accessToken = JSON.parse(window.atob(auth)).paypal.accessToken;
   } catch (err) {
-      return Promise.reject(new BraintreeError(errors.CLIENT_INVALID_AUTHORIZATION));
+    return Promise.reject(new BraintreeError(errors.CLIENT_INVALID_AUTHORIZATION));
   }
 
   let supportedCardTypes = Object.keys(globals.FUNDING_ELIGIBILITY.card.vendors)
@@ -98,7 +100,7 @@ function transformPaymentsSDKConfiguration(config, auth) {
     gatewayConfiguration: {
       paypalApi: {
         baseUrl:     config.paypalApi,
-        accessToken: auth.paypal.accessToken
+        accessToken: accessToken
       },
       assetsUrl: config.assetsUrl,
       analytics: {
