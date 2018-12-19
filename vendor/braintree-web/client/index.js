@@ -14,6 +14,7 @@ let Promise = require('../lib/promise');
 let wrapPromise = require('@braintree/wrap-promise');
 
 let sharedErrors = require('../lib/errors');
+let errors = require('./errors');
 let fraudnet = require('../data-collector/fraudnet');
 
 let cachedClients = {};
@@ -75,7 +76,12 @@ function create(options) {
 
 function transformPaymentsSDKConfiguration(config, auth) {
   let fraudnetInstance = fraudnet.setup();
-  auth = JSON.parse(window.atob(auth));
+  
+  try {
+    auth = JSON.parse(window.atob(auth));
+  } catch (err) {
+      return Promise.reject(new BraintreeError(errors.CLIENT_INVALID_AUTHORIZATION));
+  }
 
   let supportedCardTypes = Object.keys(globals.FUNDING_ELIGIBILITY.card.vendors)
     .filter((name) => {
