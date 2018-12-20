@@ -5,7 +5,6 @@ let BraintreeError = require('../lib/braintree-error');
 
 let Client = require('./client');
 let globals = require('./globals');
-
 let getConfiguration = require('./get-configuration').getConfiguration;
 
 
@@ -77,26 +76,19 @@ function create(options) {
 
 function transformPaymentsSDKConfiguration(config, auth) {
   let fraudnetInstance = fraudnet.setup();
-<<<<<<< HEAD
+
+  let supportedCardTypes = Object.keys(globals.FUNDING_ELIGIBILITY.card.vendors)
+    .filter((name) => {
+      return globals.FUNDING_ELIGIBILITY.card.vendors[name].eligible;
+    });
+
   let accessToken;
 
   try {
     accessToken = JSON.parse(window.atob(auth)).paypal.accessToken;
   } catch (err) {
     return Promise.reject(new BraintreeError(errors.CLIENT_INVALID_AUTHORIZATION));
-=======
-  
-  try {
-    auth = JSON.parse(window.atob(auth));
-  } catch (err) {
-      return Promise.reject(new BraintreeError(errors.CLIENT_INVALID_AUTHORIZATION));
->>>>>>> f447aa1492e567172cacf4186cbdea865e08e649
   }
-
-  let supportedCardTypes = Object.keys(globals.FUNDING_ELIGIBILITY.card.vendors)
-    .filter((name) => {
-      return globals.FUNDING_ELIGIBILITY.card.vendors[name].eligible;
-    });
 
   // TODO which of these fields do we need
   return Promise.resolve({
