@@ -85,6 +85,7 @@ function transformPaymentsSDKConfiguration(config, auth) {
   let accessToken;
 
   try {
+    // will throw error if the decoded auth is not json or doesn't have paypal.accessToken
     accessToken = JSON.parse(window.atob(auth)).paypal.accessToken;
   } catch (err) {
     return Promise.reject(new BraintreeError(errors.CLIENT_INVALID_AUTHORIZATION));
