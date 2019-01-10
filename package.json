@@ -33,7 +33,7 @@
   },
   "homepage": "https://github.com/paypal/paypal-braintree-hosted-fields-component#readme",
   "devDependencies": {
-    "flow-bin": "^0.70.0",
+    "flow-bin": "^0.81.0",
     "grumbler-scripts": "^2",
     "mocha": "^5.0.5",
     "testdouble": "^3.7.0"
@@ -45,6 +45,6 @@
     "braintree-web": "^3.33.0",
     "jsx-pragmatic": "^1.0.9",
     "zalgo-promise": "^1.0.34",
-    "zoid": "^7.0.6"
+    "zoid": "^8.0.0"
   }
 }
