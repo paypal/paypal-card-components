@@ -164,6 +164,12 @@ let ContingencyComponent : ZoidComponent<ContingencyProps> = create({
   }
 });
 
+if (ContingencyComponent.isChild()) {
+  window.xchild = {
+    close: () => window.xprops.close()
+  };
+}
+
 let contingency = {
   Component: ContingencyComponent
 };
