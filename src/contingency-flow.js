@@ -1,6 +1,6 @@
 /* @flow */
 
-import { getClientID, getPayPalDomain } from '@paypal/sdk-client/src';
+import { getClientID, getPayPalDomain, getSDKMeta } from '@paypal/sdk-client/src';
 import { create, CLASS, CONTEXT, type ZoidComponent } from 'zoid/src';
 import { ZalgoPromise } from 'zalgo-promise/src';
 import { parseQuery } from 'belter/src';
@@ -43,6 +43,12 @@ let ContingencyComponent : ZoidComponent<ContingencyProps> = create({
     },
     onError: {
       type: 'function'
+    },
+    sdkMeta: {
+      type:        'string',
+      queryParam:  true,
+      sendToChild: false,
+      value:       () => getSDKMeta()
     }
   },
   tag: CONTINGENCY_TAG,
