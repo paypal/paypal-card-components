@@ -1,11 +1,10 @@
 /* @flow */
 
-import { getClientID, getPayPalDomain } from 'paypal-braintree-web-client/src';
-import { create } from 'zoid/src';
-import { type Component } from 'zoid/src/component/component';
+import { getClientID, getPayPalDomain, getSDKMeta } from '@paypal/sdk-client/src';
+import { create, CLASS, CONTEXT, type ZoidComponent } from 'zoid/src';
 import { ZalgoPromise } from 'zalgo-promise/src';
 import { parseQuery } from 'belter/src';
-import { node, type ElementNode } from 'jsx-pragmatic/src';
+import { node, dom } from 'jsx-pragmatic/src';
 
 const CONTINGENCY_TAG = 'payments-sdk-contingency-handler';
 
@@ -14,8 +13,9 @@ type ContingencyProps = {
 };
 
 let contingencyResolveFunction;
-let ContingencyComponent : Component<ContingencyProps> = create({
-  buildUrl: () => `${ getPayPalDomain() }/webapps/helios`,
+
+let ContingencyComponent : ZoidComponent<ContingencyProps> = create({
+  url:      () => `${ getPayPalDomain() }/webapps/helios`,
   props:    {
     action: {
       type:       'string',
@@ -43,12 +43,18 @@ let ContingencyComponent : Component<ContingencyProps> = create({
     },
     onError: {
       type: 'function'
+    },
+    sdkMeta: {
+      type:        'string',
+      queryParam:  true,
+      sendToChild: false,
+      value:       () => getSDKMeta()
     }
   },
   tag: CONTINGENCY_TAG,
-  containerTemplate({ id, CLASS, CONTEXT, tag, context, actions, outlet }) : ElementNode {
+  containerTemplate({ uid, tag, context, focus, close, outlet, doc }) : HTMLElement {
 
-    function close(event) : ZalgoPromise<void> {
+    function closeComponent(event) : ZalgoPromise<void> {
       event.preventDefault();
       event.stopPropagation();
 
@@ -56,23 +62,24 @@ let ContingencyComponent : Component<ContingencyProps> = create({
         contingencyResolveFunction({ success: false });
         contingencyResolveFunction = null;
       }
-      return actions.close();
+      return close();
     }
 
-    function focus(event) : ZalgoPromise<void> {
+    function focusComponent(event) : ZalgoPromise<void> {
       event.preventDefault();
       event.stopPropagation();
-      return actions.focus();
+      // $FlowFixMe
+      return focus();
     }
     
-    return node('div', { id, 'onClick': focus, 'class': `${ CLASS.ZOID } ${ CLASS.ZOID }-tag-${ tag } ${ CLASS.ZOID }-context-${ context } ${ CLASS.ZOID }-focus` },
+    return node('div', { 'id': uid, 'onClick': focusComponent, 'class': `${ tag } ${ tag }-tag-${ tag } ${ tag }-context-${ context } ${ tag }-focus` },
 
-      node('a', { 'href': '#', 'onClick': close, 'class': `${ CLASS.ZOID }-close` }),
+      node('a', { 'href': '#', 'onClick': closeComponent, 'class': `${ tag }-close` }),
 
       node('node', { el: outlet }),
 
       node('style', null, `
-          #${ id } {
+          #${ uid } {
               position: fixed;
               top: 0;
               left: 0;
@@ -82,11 +89,11 @@ let ContingencyComponent : Component<ContingencyProps> = create({
               z-index: 400;
           }
 
-          #${ id }.${ CLASS.ZOID }-context-${ CONTEXT.POPUP } {
+          #${ uid }.${ tag }-context-${ CONTEXT.POPUP } {
               cursor: pointer;
           }
 
-          #${ id }.${ CLASS.ZOID }-context-${ CONTEXT.IFRAME } .${ CLASS.OUTLET } {
+          #${ uid }.${ tag }-context-${ CONTEXT.IFRAME } .${ CLASS.OUTLET } {
               box-shadow: 2px 2px 10px 3px rgba(0, 0, 0, 0.4);
               position: fixed;
               top: 50%;
@@ -98,12 +105,12 @@ let ContingencyComponent : Component<ContingencyProps> = create({
               -ms-transform: translate3d(-50%, -50%, 0);
           }
 
-          #${ id }.${ CLASS.ZOID }-context-${ CONTEXT.IFRAME } .${ CLASS.OUTLET } {
+          #${ uid }.${ tag }-context-${ CONTEXT.IFRAME } .${ CLASS.OUTLET } {
               height: 510px;
               width: 450px;
           }
 
-          #${ id }.${ CLASS.ZOID }-context-${ CONTEXT.IFRAME } .${ CLASS.OUTLET } iframe {
+          #${ uid }.${ tag }-context-${ CONTEXT.IFRAME } .${ CLASS.OUTLET } iframe {
               height: 100%;
               width: 100%;
               position: absolute;
@@ -112,23 +119,23 @@ let ContingencyComponent : Component<ContingencyProps> = create({
               transition: opacity .2s ease-in-out;
           }
 
-          #${ id } > .${ CLASS.OUTLET } > iframe.${ CLASS.VISIBLE } {
+          #${ uid } > .${ CLASS.OUTLET } > iframe.${ CLASS.VISIBLE } {
               opacity: 1;
           }
 
-          #${ id } > .${ CLASS.OUTLET } > iframe.${ CLASS.INVISIBLE } {
+          #${ uid } > .${ CLASS.OUTLET } > iframe.${ CLASS.INVISIBLE } {
               opacity: 0;
           }
 
-          #${ id } > .${ CLASS.OUTLET } > iframe.${ CLASS.COMPONENT_FRAME } {
+          #${ uid } > .${ CLASS.OUTLET } > iframe.${ CLASS.COMPONENT_FRAME } {
               z-index: 200;
           }
 
-          #${ id } > .${ CLASS.OUTLET } > iframe.${ CLASS.PRERENDER_FRAME } {
+          #${ uid } > .${ CLASS.OUTLET } > iframe.${ CLASS.PRERENDER_FRAME } {
               z-index: 100;
           }
 
-          #${ id } .${ CLASS.ZOID }-close {
+          #${ uid } .${ tag }-close {
               position: absolute;
               right: 16px;
               top: 16px;
@@ -137,12 +144,12 @@ let ContingencyComponent : Component<ContingencyProps> = create({
               opacity: 0.6;
           }
 
-          #${ id } .${ CLASS.ZOID }-close:hover {
+          #${ uid } .${ tag }-close:hover {
               opacity: 1;
           }
 
-          #${ id } .${ CLASS.ZOID }-close:before,
-          #${ id } .${ CLASS.ZOID }-close:after {
+          #${ uid } .${ tag }-close:before,
+          #${ uid } .${ tag }-close:after {
               position: absolute;
               left: 8px;
               content: ' ';
@@ -151,17 +158,27 @@ let ContingencyComponent : Component<ContingencyProps> = create({
               background-color: white;
           }
 
-          #${ id } .${ CLASS.ZOID }-close:before {
+          #${ uid } .${ tag }-close:before {
               transform: rotate(45deg);
           }
 
-          #${ id } .${ CLASS.ZOID }-close:after {
+          #${ uid } .${ tag }-close:after {
               transform: rotate(-45deg);
           }
           `)
-    );
+    ).render(dom({ doc }));
   }
 });
+
+if (ContingencyComponent.isChild()) {
+  window.xchild = {
+    close: () => window.xprops.close()
+  };
+}
+
+let contingency = {
+  Component: ContingencyComponent
+};
 
 function start(url : string) : ZalgoPromise<Object> {
   let params = parseQuery(url.split('?')[1]);
@@ -169,7 +186,7 @@ function start(url : string) : ZalgoPromise<Object> {
   return new ZalgoPromise((resolve, reject) => {
     contingencyResolveFunction = resolve;
 
-    ContingencyComponent.render({
+    contingency.Component({
       action:              params.action,
       xcomponent:          '1',
       flow:                params.flow,
@@ -187,11 +204,11 @@ function start(url : string) : ZalgoPromise<Object> {
         contingencyResolveFunction = null;
         reject(err);
       }
-    }, document.body);
+    }).render(document.body);
   });
 }
 
 export default {
   start,
-  ContingencyComponent
+  contingency
 };
