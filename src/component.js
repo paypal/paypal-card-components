@@ -91,10 +91,16 @@ export let HostedFields = {
     // toodoo - revert change below when config is being passed correctly
     let configuration = (typeof __hosted_fields__ !== 'undefined') ? __hosted_fields__.serverConfig : TESTING_CONFIGURATION;
     configuration.assetsUrl = TESTING_CONFIGURATION.assetsUrl;
-    if (!configuration.card && configuration.paypalMerchantConfiguration && configuration.paypalMerchantConfiguration.creditCard) {
-      configuration.card = configuration.paypalMerchantConfiguration.creditCard;
-    } else {
-      // configuration.card = TESTING_CONFIGURATION.card;
+
+    let cardVendors = configuration.fundingEligibility && configuration.fundingEligibility.card && configuration.fundingEligibility.card.vendors;
+    let eligibleCards = [];
+    
+    if (cardVendors) {
+      for (let key in cardVendors) {
+        if (cardVendors[key].eligible) {
+          eligibleCards.push(key);
+        }
+      }
     }
 
     let clientToken = getClientToken();
@@ -148,17 +154,19 @@ export let HostedFields = {
 
       hosted_payment_session_id = uniqueID();
       logger.track({
-        comp:                                'hostedpayment',
+        comp:                                 'hostedpayment',
         // risk_correlation_id: 'TODO',
-        api_integration_type:                'PAYPALSDK',
-        product_identifier:                  'PAYPAL_FOR_MARKETPLACES',
-        [FPTI_KEY.STATE]:                    'CARD_PAYMENT_FORM',
-        [FPTI_KEY.TRANSITION]:               'collect_card_info',
-        hosted_payment_textboxes_shown:      Object.keys(hostedFieldsCreateOptions.fields).join(':'),
-        hosted_payment_session_cre_dt:       (new Date()).toString(),
-        hosted_payment_session_cre_ts_epoch: Date.now().toString(),
-        [ FPTI_KEY.CONTEXT_TYPE ]:           'hosted_session_id',
-        [ FPTI_KEY.CONTEXT_ID ]:             hosted_payment_session_id
+        api_integration_type:                 'PAYPALSDK',
+        product_identifier:                   'PAYPAL_FOR_MARKETPLACES',
+        [FPTI_KEY.STATE]:                     'CARD_PAYMENT_FORM',
+        [FPTI_KEY.TRANSITION]:                'collect_card_info',
+        hosted_payment_textboxes_shown:       Object.keys(hostedFieldsCreateOptions.fields).join(':'),
+        hosted_payment_session_cre_dt:        (new Date()).toString(),
+        hosted_payment_session_cre_ts_epoch:  Date.now().toString(),
+        [FPTI_KEY.CONTEXT_TYPE]:              'hosted_session_id',
+        [FPTI_KEY.CONTEXT_ID]:                hosted_payment_session_id,
+        [FPTI_KEY.FUNDING_LIST]:              eligibleCards.join(':'),
+        [FPTI_KEY.FUNDING_COUNT]:             eligibleCards.length.toString()
       });
       logger.flush();
 
