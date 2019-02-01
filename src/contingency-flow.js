@@ -182,6 +182,11 @@ let contingency = {
 
 function start(url : string) : ZalgoPromise<Object> {
   let params = parseQuery(url.split('?')[1]);
+  
+  const body = document.body;
+  if (!body) {
+    throw new Error(`No document body available to render to`);
+  }
 
   return new ZalgoPromise((resolve, reject) => {
     contingencyResolveFunction = resolve;
@@ -204,7 +209,7 @@ function start(url : string) : ZalgoPromise<Object> {
         contingencyResolveFunction = null;
         reject(err);
       }
-    }).render(document.body);
+    }).render(body);
   });
 }
 
