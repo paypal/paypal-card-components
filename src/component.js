@@ -149,7 +149,6 @@ export let HostedFields = {
         comp:                                 'hostedpayment',
         // risk_correlation_id: 'TODO',
         api_integration_type:                 'PAYPALSDK',
-        product_identifier:                   'PAYPAL_FOR_MARKETPLACES',
         [FPTI_KEY.STATE]:                     'CARD_PAYMENT_FORM',
         [FPTI_KEY.TRANSITION]:                'collect_card_info',
         hosted_payment_textboxes_shown:       Object.keys(hostedFieldsCreateOptions.fields).join(':'),
