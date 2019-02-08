@@ -1,20 +1,33 @@
 /* @flow */
+/* eslint import/no-default-export: off */
 
 import { getClientID, getPayPalDomain, getSDKMeta } from '@paypal/sdk-client/src';
-import { create, CLASS, CONTEXT, type ZoidComponent } from 'zoid/src';
+import { create, CONTEXT, EVENT, type ZoidComponent } from 'zoid/src';
 import { ZalgoPromise } from 'zalgo-promise/src';
-import { parseQuery } from 'belter/src';
+import { parseQuery, destroyElement } from 'belter/src';
 import { node, dom } from 'jsx-pragmatic/src';
 
 const CONTINGENCY_TAG = 'payments-sdk-contingency-handler';
 
-type ContingencyProps = {
-  onContingencyResult : (err : mixed, result : Object) => void
+const CLASS = {
+  OUTLET:          'outlet',
+  VISIBLE:         'visible',
+  INVISIBLE:       'invisible',
+  COMPONENT_FRAME: 'component-frame',
+  PRERENDER_FRAME: 'prerender-frame'
 };
+
+type ContingencyProps = {|
+  action : string,
+  cart_id : string,
+  flow : string,
+  xcomponent : string,
+  onContingencyResult : (err : mixed, result : Object) => void
+|};
 
 let contingencyResolveFunction;
 
-let ContingencyComponent : ZoidComponent<ContingencyProps> = create({
+const ContingencyComponent : ZoidComponent<ContingencyProps> = create({
   url:      () => `${ getPayPalDomain() }/webapps/helios`,
   props:    {
     action: {
@@ -52,11 +65,14 @@ let ContingencyComponent : ZoidComponent<ContingencyProps> = create({
     }
   },
   tag: CONTINGENCY_TAG,
-  containerTemplate({ uid, tag, context, focus, close, outlet, doc }) : HTMLElement {
+  containerTemplate({ uid, tag, context, focus, close, frame, prerenderFrame, doc, event }) : ?HTMLElement {
+    if (!frame || !prerenderFrame) {
+      return;
+    }
 
-    function closeComponent(event) : ZalgoPromise<void> {
-      event.preventDefault();
-      event.stopPropagation();
+    function closeComponent(e) : ZalgoPromise<void> {
+      e.preventDefault();
+      e.stopPropagation();
 
       if (contingencyResolveFunction) {
         contingencyResolveFunction({ success: false });
@@ -65,18 +81,38 @@ let ContingencyComponent : ZoidComponent<ContingencyProps> = create({
       return close();
     }
 
-    function focusComponent(event) : ZalgoPromise<void> {
-      event.preventDefault();
-      event.stopPropagation();
+    function focusComponent(e) : ZalgoPromise<void> {
+      e.preventDefault();
+      e.stopPropagation();
       // $FlowFixMe
       return focus();
     }
+
+    frame.classList.add(CLASS.COMPONENT_FRAME);
+    prerenderFrame.classList.add(CLASS.PRERENDER_FRAME);
+
+    frame.classList.add(CLASS.INVISIBLE);
+    prerenderFrame.classList.add(CLASS.VISIBLE);
+
+    event.on(EVENT.RENDERED, () => {
+      prerenderFrame.classList.remove(CLASS.VISIBLE);
+      prerenderFrame.classList.add(CLASS.INVISIBLE);
+
+      frame.classList.remove(CLASS.INVISIBLE);
+      frame.classList.add(CLASS.VISIBLE);
+
+      setTimeout(() => {
+        destroyElement(prerenderFrame);
+      }, 1);
+    });
     
     return node('div', { 'id': uid, 'onClick': focusComponent, 'class': `${ tag } ${ tag }-tag-${ tag } ${ tag }-context-${ context } ${ tag }-focus` },
 
       node('a', { 'href': '#', 'onClick': closeComponent, 'class': `${ tag }-close` }),
 
-      node('node', { el: outlet }),
+      node('div', { class: CLASS.OUTLET },
+        node('node', { el: frame }),
+        node('node', { el: prerenderFrame })),
 
       node('style', null, `
           #${ uid } {
@@ -165,8 +201,7 @@ let ContingencyComponent : ZoidComponent<ContingencyProps> = create({
           #${ uid } .${ tag }-close:after {
               transform: rotate(-45deg);
           }
-          `)
-    ).render(dom({ doc }));
+          `)).render(dom({ doc }));
   }
 });
 
@@ -176,12 +211,12 @@ if (ContingencyComponent.isChild()) {
   };
 }
 
-let contingency = {
+const contingency = {
   Component: ContingencyComponent
 };
 
 function start(url : string) : ZalgoPromise<Object> {
-  let params = parseQuery(url.split('?')[1]);
+  const params = parseQuery(url.split('?')[1]);
   
   const body = document.body;
   if (!body) {
@@ -191,6 +226,7 @@ function start(url : string) : ZalgoPromise<Object> {
   return new ZalgoPromise((resolve, reject) => {
     contingencyResolveFunction = resolve;
 
+    // $FlowFixMe
     contingency.Component({
       action:              params.action,
       xcomponent:          '1',
