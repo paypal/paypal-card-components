@@ -2,6 +2,7 @@
 
 import { getLogger, getClientToken, getCorrelationID, getPayPalAPIDomain } from '@paypal/sdk-client/src';
 import { FPTI_KEY } from '@paypal/sdk-constants/src';
+/* @flow */
 import { ZalgoPromise } from 'zalgo-promise/src';
 import { uniqueID } from 'belter/src';
 
@@ -61,6 +62,7 @@ function createSubmitHandler (hostedFieldsInstance, orderIdFunction) : Function 
         logger.flush();
 
         return {
+          card:             payload.payment_source.card,
           liabilityShifted: payload.success,
           orderId
         };
