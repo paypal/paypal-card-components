@@ -43,7 +43,7 @@
     "@paypal/sdk-constants": "^1.0.8",
     "belter": "^1.0.44",
     "braintree-web": "^3.33.0",
-    "jsx-pragmatic": "^1.0.9",
+    "jsx-pragmatic": "^2",
     "zalgo-promise": "^1.0.34",
     "zoid": "^9.0.0"
   }
