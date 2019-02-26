@@ -56,7 +56,7 @@ describe('hosted-fields-component', () => {
     td.when(hostedFieldsCreate(td.matchers.isA(Object))).thenResolve(fakeHostedFieldsInstance);
     td.when(btClientCreate(td.matchers.isA(Object))).thenResolve(fakeBtClient);
 
-    let button = document.createElement('button');
+    const button = document.createElement('button');
     button.id = 'button';
 
     // $FlowFixMe
@@ -97,7 +97,7 @@ describe('hosted-fields-component', () => {
   });
 
   it('rejects with an error if braintree-web.client errors out', () => {
-    let error = new Error('Some BT Web client Error');
+    const error = new Error('Some BT Web client Error');
 
     td.when(btClientCreate(td.matchers.isA(Object))).thenReject(error);
 
@@ -111,7 +111,7 @@ describe('hosted-fields-component', () => {
   });
 
   it('rejects with an error if braintree-web.hosted-fields errors out', () => {
-    let error = new Error('Some BT Web Error');
+    const error = new Error('Some BT Web Error');
 
     td.when(hostedFieldsCreate(td.matchers.isA(Object))).thenReject(error);
 
@@ -173,7 +173,7 @@ describe('hosted-fields-component', () => {
   });
 
   it('can setup click handler for provided button if onApprove function is passed', () => {
-    let btn = document.createElement('button');
+    const btn = document.createElement('button');
 
     btn.id = 'button2';
     if (document.body) {
@@ -195,7 +195,7 @@ describe('hosted-fields-component', () => {
   });
 
   it('calls submit when btn is clicked', () => {
-    let btn = document.createElement('button');
+    const btn = document.createElement('button');
 
     btn.id = 'button2';
     if (document.body) {
@@ -211,7 +211,7 @@ describe('hosted-fields-component', () => {
   });
 
   it('calls onApprove function with tokenization data if passed in', (done) => {
-    let btn = document.createElement('button');
+    const btn = document.createElement('button');
 
     btn.id = 'button2';
     if (document.body) {
@@ -219,7 +219,7 @@ describe('hosted-fields-component', () => {
     }
 
     HostedFields.render(renderOptions, '#button2').then((handler) => {
-      let tokenizationData = {
+      const tokenizationData = {
         foo: 'bar'
       };
       td.replace(handler, 'submit');
@@ -234,7 +234,7 @@ describe('hosted-fields-component', () => {
   });
 
   it('calls onError function (if passed) when tokenization fails', (done) => {
-    let btn = document.createElement('button');
+    const btn = document.createElement('button');
 
     btn.id = 'button2';
     if (document.body) {
@@ -242,7 +242,7 @@ describe('hosted-fields-component', () => {
     }
 
     HostedFields.render(renderOptions, '#button2').then((handler) => {
-      let error = new Error('error');
+      const error = new Error('error');
       td.replace(handler, 'submit');
       td.when(handler.submit()).thenReject(error);
       btn.click();
@@ -255,7 +255,7 @@ describe('hosted-fields-component', () => {
   });
 
   it('does not require an onError function', (done) => {
-    let btn = document.createElement('button');
+    const btn = document.createElement('button');
 
     btn.id = 'button2';
     if (document.body) {
@@ -263,7 +263,7 @@ describe('hosted-fields-component', () => {
     }
 
     HostedFields.render(renderOptions, '#button2').then((handler) => {
-      let error = new Error('error');
+      const error = new Error('error');
       td.replace(handler, 'submit');
       td.when(handler.submit()).thenReject(error);
       btn.click();
@@ -276,7 +276,7 @@ describe('hosted-fields-component', () => {
 
   describe('#submit', () => {
     let button;
-    let orderId = 'im-order-id';
+    const orderId = 'im-order-id';
 
     beforeEach(() => {
       button = document.createElement('button');
@@ -317,7 +317,7 @@ describe('hosted-fields-component', () => {
     });
 
     it('rejects with an error if the error does not have a details object', () => {
-      let expectedError = new Error('something bad happened');
+      const expectedError = new Error('something bad happened');
 
       td.when(fakeHostedFieldsInstance.tokenize(td.matchers.isA(Object)))
         .thenReject(expectedError);
@@ -330,7 +330,7 @@ describe('hosted-fields-component', () => {
     });
 
     it('rejects with an error if the error\'s detail key is not an array indicating not a 3ds contingency', () => {
-      let expectedError = {
+      const expectedError = {
         details: 'its pretty baad'
       };
 
@@ -345,7 +345,7 @@ describe('hosted-fields-component', () => {
     });
 
     it('rejects with an error if the error has a details array, but is not a 3ds contingency', () => {
-      let expectedError = {
+      const expectedError = {
         details: [
           'its pretty baad'
         ]
@@ -362,8 +362,8 @@ describe('hosted-fields-component', () => {
     });
 
     it('runs through contingency flow if error is 3ds contingency and resolves if contingency resolves', () => {
-      let expectedUrl = 'https://www.paypal.com/webapps/helios?action=resolve&flow=3ds&cart_id=21E005655U660730L';
-      let error = {
+      const expectedUrl = 'https://www.paypal.com/webapps/helios?action=resolve&flow=3ds&cart_id=21E005655U660730L';
+      const error = {
         name:    'UNPROCESSABLE_ENTITY',
         message: 'The requested action could not be performed, semantically incorrect, or failed business validation.',
         details: [
@@ -394,7 +394,15 @@ describe('hosted-fields-component', () => {
       td.when(fakeHostedFieldsInstance.tokenize(td.matchers.isA(Object)))
         .thenReject(error);
 
-      td.when(contingencyFlow.start(expectedUrl)).thenResolve({ success: true });
+      td.when(contingencyFlow.start(expectedUrl)).thenResolve({
+        payment_source: {
+          card: {
+            last_digits: '1111',
+            card_type:   'VISA'
+          }
+        },
+        success: true
+      });
 
       return HostedFields.render(renderOptions, '#button').then((handler) => {
         return handler.submit().then(() => {
@@ -404,8 +412,8 @@ describe('hosted-fields-component', () => {
     });
 
     it('runs through contingency flow if error is 3ds contingency and rejects if contingency rejects', () => {
-      let expectedUrl = 'https://www.paypal.com/webapps/helios?action=resolve&flow=3ds&cart_id=21E005655U660730L';
-      let error = {
+      const expectedUrl = 'https://www.paypal.com/webapps/helios?action=resolve&flow=3ds&cart_id=21E005655U660730L';
+      const error = {
         name:    'UNPROCESSABLE_ENTITY',
         message: 'The requested action could not be performed, semantically incorrect, or failed business validation.',
         details: [

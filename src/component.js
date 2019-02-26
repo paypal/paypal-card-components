@@ -2,6 +2,7 @@
 
 import { getLogger, getClientToken, getCorrelationID, getPayPalAPIDomain } from '@paypal/sdk-client/src';
 import { FPTI_KEY } from '@paypal/sdk-constants/src';
+/* @flow */
 import { ZalgoPromise } from 'zalgo-promise/src';
 import { uniqueID } from 'belter/src';
 
@@ -12,7 +13,7 @@ import hostedFields from '../vendor/braintree-web/hosted-fields';
 import contingencyFlow from './contingency-flow';
 import type { HostedFieldsHandler } from './types';
 
-let TESTING_CONFIGURATION = {
+const TESTING_CONFIGURATION = {
   assetsUrl: 'https://assets.braintreegateway.com',
   card:      {
     supportedCardBrands: [ 'VISA' ]
@@ -51,7 +52,7 @@ function createSubmitHandler (hostedFieldsInstance, orderIdFunction) : Function 
           return ZalgoPromise.reject(err);
         }
 
-        let url = `${ err.links.find(link => link.rel === '3ds-contingency-resolution').href  }`;
+        const url = `${ err.links.find(link => link.rel === '3ds-contingency-resolution').href  }`;
         return contingencyFlow.start(url);
       }).then((payload) => {
         // does contingency flow give a payload?
@@ -71,6 +72,7 @@ function createSubmitHandler (hostedFieldsInstance, orderIdFunction) : Function 
         paymentInProgress = false;
 
         return {
+          card:             payload.payment_source.card,
           liabilityShifted: payload.success,
           orderId
         };
@@ -83,15 +85,20 @@ function createSubmitHandler (hostedFieldsInstance, orderIdFunction) : Function 
   };
 }
 
-type OptionsType = {
+type OptionsType = {|
   createOrder : () => ZalgoPromise<string>,
   onApprove : ({ }) => void | ZalgoPromise<void>,
-  onError? : (mixed) => void
-};
+  onError? : (mixed) => void,
+  fields? : {|
+    number? : {|
+      selector : string
+    |}
+  |}
+|};
 
-export let HostedFields = {
+export const HostedFields = {
   isEligible() : boolean {
-    let cardConfig = __hosted_fields__.serverConfig.fundingEligibility.card;
+    const cardConfig = __hosted_fields__.serverConfig.fundingEligibility.card;
 
     return cardConfig.eligible && !cardConfig.branded;
   },
@@ -103,7 +110,7 @@ export let HostedFields = {
       return ZalgoPromise.reject(new Error('createOrder parameter must be a function.'));
     }
     // toodoo - revert change below when config is being passed correctly
-    let configuration = (typeof __hosted_fields__ !== 'undefined') ? __hosted_fields__.serverConfig : TESTING_CONFIGURATION;
+    const configuration = (typeof __hosted_fields__ !== 'undefined') ? __hosted_fields__.serverConfig : TESTING_CONFIGURATION;
     configuration.assetsUrl = TESTING_CONFIGURATION.assetsUrl;
     if (!configuration.card && configuration.paypalMerchantConfiguration && configuration.paypalMerchantConfiguration.creditCard) {
       configuration.card = configuration.paypalMerchantConfiguration.creditCard;
@@ -111,15 +118,15 @@ export let HostedFields = {
       // configuration.card = TESTING_CONFIGURATION.card;
     }
 
-    let clientToken = getClientToken();
+    const clientToken = getClientToken();
 
-    let correlationId = getCorrelationID();
+    const correlationId = getCorrelationID();
     // $FlowFixMe
     configuration.correlationId = correlationId;
     // $FlowFixMe
     configuration.paypalApi = getPayPalAPIDomain();
 
-    let orderIdFunction = () => {
+    const orderIdFunction = () => {
       return ZalgoPromise.resolve().then(() => {
         return options.createOrder();
       });
@@ -134,7 +141,7 @@ export let HostedFields = {
       }
     }
 
-    let hostedFieldsCreateOptions = JSON.parse(JSON.stringify(options));
+    const hostedFieldsCreateOptions = JSON.parse(JSON.stringify(options));
 
     return btClient.create({
       authorization: clientToken,

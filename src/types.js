@@ -5,10 +5,10 @@ import { ZalgoPromise } from 'zalgo-promise/src';
 type SubmitFunctionType = (options? : Object) => ZalgoPromise<Object>;
 type GetCardTypesFunctionType = () => Object;
 
-export type HostedFieldsHandler = {
+export type HostedFieldsHandler = {|
     submit : SubmitFunctionType,
     getCardTypes : GetCardTypesFunctionType
-};
+|};
 
 export type FundingEligibilityType = {|
     card : {
@@ -43,13 +43,13 @@ export type FundingEligibilityType = {|
     }
 |};
 
-export type HostedFieldsServerConfigType = {
+export type HostedFieldsServerConfigType = {|
     fundingEligibility : FundingEligibilityType
-};
+|};
 
-export type HostedFieldsGlobalType = {
+export type HostedFieldsGlobalType = {|
     serverConfig : HostedFieldsServerConfigType,
     featureFlags : {
 
     }
-};
+|};
