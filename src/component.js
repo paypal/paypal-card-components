@@ -113,8 +113,8 @@ export const HostedFields = {
     const configuration = (typeof __hosted_fields__ !== 'undefined') ? __hosted_fields__.serverConfig : TESTING_CONFIGURATION;
     configuration.assetsUrl = TESTING_CONFIGURATION.assetsUrl;
 
-    let cardVendors = (configuration.fundingEligibility && configuration.fundingEligibility.card && configuration.fundingEligibility.card.vendors) || {};
-    let eligibleCards = Object.keys(cardVendors).filter(key => cardVendors[key].eligible);
+    const cardVendors = (configuration.fundingEligibility && configuration.fundingEligibility.card && configuration.fundingEligibility.card.vendors) || {};
+    const eligibleCards = Object.keys(cardVendors).filter(key => cardVendors[key].eligible);
 
     const clientToken = getClientToken();
 
