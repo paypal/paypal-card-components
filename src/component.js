@@ -23,8 +23,16 @@ const TESTING_CONFIGURATION = {
 let hosted_payment_session_id = '';
 
 function createSubmitHandler (hostedFieldsInstance, orderIdFunction) : Function {
+  let paymentInProgress = false;
+
   return (options = {}) => {
     const logger = getLogger();
+
+    if (paymentInProgress) {
+      return ZalgoPromise.reject(new Error('Hosted Fields payment is already in progress.'));
+    }
+
+    paymentInProgress = true;
 
     return orderIdFunction().then((orderId) => {
       logger.track({
@@ -61,11 +69,17 @@ function createSubmitHandler (hostedFieldsInstance, orderIdFunction) : Function 
         });
         logger.flush();
 
+        paymentInProgress = false;
+
         return {
           card:             payload.payment_source.card,
           liabilityShifted: payload.success,
           orderId
         };
+      }).catch((err) => {
+        paymentInProgress = false;
+
+        return ZalgoPromise.reject(err);
       });
     });
   };
@@ -139,6 +153,9 @@ export const HostedFields = {
       return hostedFields.create(hostedFieldsCreateOptions);
     }).then((hostedFieldsInstance) => {
       hostedFieldsInstance.submit = createSubmitHandler(hostedFieldsInstance, orderIdFunction);
+      hostedFieldsInstance.getCardTypes = () => {
+        return __hosted_fields__.serverConfig.fundingEligibility.card.vendors;
+      };
 
       if (button) {
         button.addEventListener('click', () => {

@@ -299,6 +299,23 @@ describe('hosted-fields-component', () => {
       });
     });
 
+    it('rejects if an order is already in progress', () => {
+      return HostedFields.render(renderOptions, '#button').then((handler) => {
+        td.replace(fakeHostedFieldsInstance, 'tokenize', () => {
+          return new ZalgoPromise(() => {
+            // do not resolve
+          });
+        });
+
+        handler.submit(); // start a request that never resolves
+
+        return handler.submit().then(rejectIfResolves).catch((err) => {
+          // $FlowFixMe
+          assert.equal(err.message, 'Hosted Fields payment is already in progress.');
+        });
+      });
+    });
+
     it('rejects with an error if the error does not have a details object', () => {
       const expectedError = new Error('something bad happened');
 
@@ -433,6 +450,19 @@ describe('hosted-fields-component', () => {
         return handler.submit().then(rejectIfResolves).catch(() => {
           td.verify(contingencyFlowStart(expectedUrl));
         });
+      });
+    });
+  });
+
+  describe('#getCardTypes', () => {
+    it('returns eligble card types', () => {
+      return HostedFields.render(renderOptions, '#button').then((hf) => {
+        const cards = hf.getCardTypes();
+
+        assert.equal(cards.visa.eligible, true);
+        assert.equal(cards.mastercard.eligible, true);
+        assert.equal(cards.elo.eligible, false);
+        assert.equal(cards.jcb.eligible, false);
       });
     });
   });
