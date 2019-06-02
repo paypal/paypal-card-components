@@ -10,7 +10,6 @@
     "release:major": "./node_modules/grumbler-scripts/publish.sh major",
     "flow-typed": "rm -rf ./flow-typed && flow-typed install",
     "flow": "flow",
-    "flow:build": "flow gen-flow-files ./src/index.js --out-dir ./dist/module",
     "build": "rm -rf ./vendor && mkdir -p ./vendor/braintree-web && cp -R ~/bt/braintree.js/dist/npm/* ./vendor/braintree-web",
     "lint": "eslint src/ test/ *.js",
     "test": "npm run lint && npm run flow-typed && npm run flow && npm run karma",
@@ -33,7 +32,7 @@
   },
   "homepage": "https://github.com/paypal/paypal-braintree-hosted-fields-component#readme",
   "devDependencies": {
-    "flow-bin": "^0.81.0",
+    "flow-bin": "^0.100.0",
     "grumbler-scripts": "^3",
     "mocha": "^5.0.5",
     "testdouble": "^3.7.0"
