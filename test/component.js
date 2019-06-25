@@ -144,6 +144,34 @@ describe('hosted-fields-component', () => {
       return handler.submit();
     }).then(() => {
       td.verify(fakeHostedFieldsInstance.tokenize({
+        vault:   false,
+        orderId: 'order-id'
+      }));
+    });
+  });
+
+  it.skip('defaults vault param to the value of getVault from @paypal/client-sdk when submitting', () => {
+    // find way to set the getVault param to true
+    // window.VAULT = true;
+
+    return HostedFields.render(renderOptions, '#button').then((handler) => {
+      return handler.submit();
+    }).then(() => {
+      td.verify(fakeHostedFieldsInstance.tokenize({
+        vault:   true,
+        orderId: 'order-id'
+      }));
+    });
+  });
+
+  it('can overwrite default vault property when submitting', () => {
+    return HostedFields.render(renderOptions, '#button').then((handler) => {
+      return handler.submit({
+        vault: true
+      });
+    }).then(() => {
+      td.verify(fakeHostedFieldsInstance.tokenize({
+        vault:   true,
         orderId: 'order-id'
       }));
     });
@@ -158,6 +186,7 @@ describe('hosted-fields-component', () => {
       });
     }).then(() => {
       td.verify(fakeHostedFieldsInstance.tokenize({
+        vault:          false,
         orderId:        'order-id',
         billingAddress: {
           postalCode: '60654'

@@ -1,6 +1,6 @@
 /* @flow */
 
-import { getLogger, getClientToken, getCorrelationID, getPayPalAPIDomain } from '@paypal/sdk-client/src';
+import { getLogger, getClientToken, getCorrelationID, getPayPalAPIDomain, getVault } from '@paypal/sdk-client/src';
 import { FPTI_KEY } from '@paypal/sdk-constants/src';
 /* @flow */
 import { ZalgoPromise } from 'zalgo-promise/src';
@@ -30,6 +30,10 @@ function createSubmitHandler (hostedFieldsInstance, orderIdFunction) : Function 
 
     if (paymentInProgress) {
       return ZalgoPromise.reject(new Error('Hosted Fields payment is already in progress.'));
+    }
+
+    if (!options.hasOwnProperty('vault')) {
+      options.vault = getVault();
     }
 
     paymentInProgress = true;
