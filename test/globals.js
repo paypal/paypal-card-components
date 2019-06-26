@@ -1,6 +1,7 @@
 /* @flow */
 
-import { getHost, getPath } from '@paypal/sdk-client/src';
+import { insertMockSDKScript } from '@paypal/sdk-client/src';
+import { SDK_SETTINGS } from '@paypal/sdk-constants/src';
 
 window.TEST_CARD_ELIGIBILITY = {
   eligible: true,
@@ -40,10 +41,9 @@ beforeEach(() => {
 
   body.innerHTML = '';
 
-  const script = document.createElement('script');
-  const src =  `https://${ getHost() }${ getPath() }`;
-
-  script.setAttribute('src', src);
-  script.setAttribute('data-client-token', 'TEST');
-  body.appendChild(script);
+  insertMockSDKScript({
+    attributes: {
+      [ SDK_SETTINGS.CLIENT_TOKEN ]: 'TEST'
+    }
+  });
 });
