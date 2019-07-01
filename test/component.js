@@ -446,15 +446,7 @@ describe('hosted-fields-component', () => {
       td.when(fakeHostedFieldsInstance.tokenize(td.matchers.isA(Object)))
         .thenReject(error);
 
-      td.when(contingencyFlow.start(expectedUrl)).thenResolve({
-        payment_source: {
-          card: {
-            last_digits: '1111',
-            card_type:   'VISA'
-          }
-        },
-        success: true
-      });
+      td.when(contingencyFlow.start(expectedUrl)).thenResolve({ success: true });
 
       return HostedFields.render(renderOptions, '#button').then((handler) => {
         return handler.submit().then(() => {
