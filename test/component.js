@@ -1,9 +1,12 @@
 /* @flow */
+/* eslint max-lines: off */
 
 import assert from 'assert';
 
 import td from 'testdouble/dist/testdouble';
 import { ZalgoPromise } from 'zalgo-promise/src';
+import { insertMockSDKScript } from '@paypal/sdk-client/src';
+import { SDK_QUERY_KEYS, QUERY_BOOL } from '@paypal/sdk-constants/src';
 
 import btClient from '../vendor/braintree-web/client';
 import hostedFields from '../vendor/braintree-web/hosted-fields';
@@ -144,6 +147,54 @@ describe('hosted-fields-component', () => {
       return handler.submit();
     }).then(() => {
       td.verify(fakeHostedFieldsInstance.tokenize({
+        vault:   false,
+        orderId: 'order-id'
+      }));
+    });
+  });
+
+  it('defaults vault param to the value of getVault when true from @paypal/client-sdk when submitting', () => {
+    insertMockSDKScript({
+      query: {
+        [ SDK_QUERY_KEYS.VAULT ]: QUERY_BOOL.TRUE
+      }
+    });
+
+    return HostedFields.render(renderOptions, '#button').then((handler) => {
+      return handler.submit();
+    }).then(() => {
+      td.verify(fakeHostedFieldsInstance.tokenize({
+        vault:   true,
+        orderId: 'order-id'
+      }));
+    });
+  });
+
+  it('defaults vault param to the value of getVault when false from @paypal/client-sdk when submitting', () => {
+    insertMockSDKScript({
+      query: {
+        [SDK_QUERY_KEYS.VAULT]: QUERY_BOOL.FALSE
+      }
+    });
+
+    return HostedFields.render(renderOptions, '#button').then((handler) => {
+      return handler.submit();
+    }).then(() => {
+      td.verify(fakeHostedFieldsInstance.tokenize({
+        vault:   false,
+        orderId: 'order-id'
+      }));
+    });
+  });
+
+  it('can overwrite default vault property when submitting', () => {
+    return HostedFields.render(renderOptions, '#button').then((handler) => {
+      return handler.submit({
+        vault: true
+      });
+    }).then(() => {
+      td.verify(fakeHostedFieldsInstance.tokenize({
+        vault:   true,
         orderId: 'order-id'
       }));
     });
@@ -158,6 +209,7 @@ describe('hosted-fields-component', () => {
       });
     }).then(() => {
       td.verify(fakeHostedFieldsInstance.tokenize({
+        vault:          false,
         orderId:        'order-id',
         billingAddress: {
           postalCode: '60654'
