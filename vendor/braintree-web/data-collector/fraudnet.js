@@ -53,7 +53,10 @@ function _createParameterBlock(sessionId, beaconId) {
 
 function _createThirdPartyBlock() {
   var dom, doc;
-  var scriptBaseURL = 'https://www.paypalobjects.com/webstatic/r/fb/';
+  var scriptBaseURs = {
+    production: 'https://www.paypalobjects.com/webstatic/r/fb/fb-all-prod.pp.min.js',
+    staging: 'https://www.msmaster.qa.paypal.com/en_US/m/fb-all-master.pp.raw.js'
+  };
   var iframe = document.createElement('iframe');
 
   iframe.src = 'about:blank';
@@ -77,7 +80,11 @@ function _createThirdPartyBlock() {
       this.domain = dom;
     }
     js.id = 'js-iframe-async';
-    js.src = scriptBaseURL + 'fb-all-prod.pp.min.js';
+    if (process.env.NODE_ENV === 'production') {
+      js.src = scriptBaseURs.production;
+    } else {
+      js.src = scriptBaseURs.staging;
+    }
     this.body.appendChild(js);
   };
 
