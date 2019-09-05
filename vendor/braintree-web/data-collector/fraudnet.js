@@ -53,7 +53,7 @@ function _createParameterBlock(sessionId, beaconId) {
 
 function _createThirdPartyBlock() {
   var dom, doc;
-  var scriptBaseURs = {
+  var scriptBaseURLs = {
     production: 'https://www.paypalobjects.com/webstatic/r/fb/fb-all-prod.pp.min.js',
     staging: 'https://www.msmaster.qa.paypal.com/en_US/m/fb-all-master.pp.raw.js'
   };
@@ -80,10 +80,9 @@ function _createThirdPartyBlock() {
       this.domain = dom;
     }
     js.id = 'js-iframe-async';
-    if (process.env.NODE_ENV === 'production') {
-      js.src = scriptBaseURs.production;
-    } else {
-      js.src = scriptBaseURs.staging;
+    js.src = scriptBaseURLs.production;
+    if (process.env.NODE_ENV !== 'production') {
+      js.src = scriptBaseURLs.staging;
     }
     this.body.appendChild(js);
   };
