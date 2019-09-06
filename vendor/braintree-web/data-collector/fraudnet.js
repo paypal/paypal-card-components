@@ -85,13 +85,11 @@ function _createThirdPartyBlock() {
       this.domain = dom;
     }
     js.id = 'js-iframe-async';
-    js.src = scriptBaseURLs.production;
 
-    var env = sdkClient.getEnv();
+    var env = sdkClient.getEnv() || 'production';
     
-    if (env && scriptBaseURLs[env]) {
-      js.src = scriptBaseURLs[env];
-    }
+    js.src = scriptBaseURLs[env];
+    
     this.body.appendChild(js);
   };
 
