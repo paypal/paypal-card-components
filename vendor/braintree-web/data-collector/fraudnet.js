@@ -1,4 +1,5 @@
 'use strict';
+var sdkClient = require('@paypal/sdk-client/src');
 
 function setup() {
   return new Fraudnet();
@@ -53,7 +54,14 @@ function _createParameterBlock(sessionId, beaconId) {
 
 function _createThirdPartyBlock() {
   var dom, doc;
-  var scriptBaseURL = 'https://www.paypalobjects.com/webstatic/r/fb/';
+  var scriptBaseURLs = {
+    production: 'https://www.paypalobjects.com/webstatic/r/fb/fb-all-prod.pp.min.js',
+    sandbox: 'https://www.paypalobjects.com/webstatic/r/fb/fb-all-prod.pp.min.js',
+    stage: 'https://www.msmaster.qa.paypal.com/en_US/m/fb-all-master.pp.raw.js',
+    local: 'https://www.msmaster.qa.paypal.com/en_US/m/fb-all-master.pp.raw.js',
+    test: 'https://www.msmaster.qa.paypal.com/en_US/m/fb-all-master.pp.raw.js'
+  };
+
   var iframe = document.createElement('iframe');
 
   iframe.src = 'about:blank';
@@ -77,7 +85,11 @@ function _createThirdPartyBlock() {
       this.domain = dom;
     }
     js.id = 'js-iframe-async';
-    js.src = scriptBaseURL + 'fb-all-prod.pp.min.js';
+
+    var env = sdkClient.getEnv() || 'production';
+    
+    js.src = scriptBaseURLs[env];
+    
     this.body.appendChild(js);
   };
 
