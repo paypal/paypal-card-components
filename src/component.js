@@ -19,6 +19,11 @@ const TESTING_CONFIGURATION = {
   }
 };
 
+const LIABILITYSHIFTED_MAPPER = {
+  YES: true,
+  NO: false 
+};
+
 let hosted_payment_session_id = '';
 
 function createSubmitHandler (hostedFieldsInstance, orderIdFunction) : Function {
@@ -74,8 +79,17 @@ function createSubmitHandler (hostedFieldsInstance, orderIdFunction) : Function 
 
         paymentInProgress = false;
 
+        // map liability_shift (YES/NO/UNKNOWN) to liabilityShifted (true/false/undefined) for backward compatibility
+        let liabilityShifted = payload.success;
+
+        if (payload.liability_shift) {
+          liabilityShifted = LIABILITYSHIFTED_MAPPER[payload.liability_shift]
+        }
+
         return {
-          liabilityShifted: payload.success,
+          liabilityShifted,
+          authenticationStatus: payload.status,
+          authenticationReason: payload.authentication_status_reason,
           orderId
         };
       }).catch((err) => {
