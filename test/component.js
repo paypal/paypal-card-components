@@ -455,7 +455,7 @@ describe('hosted-fields-component', () => {
       td.when(contingencyFlow.start(expectedUrl)).thenResolve(threeDSResult);
 
       return HostedFields.render(renderOptions, '#button').then((handler) => {
-        return handler.submit().then((actual) => {
+        return handler.submit().then(() => {
           td.verify(contingencyFlowStart(expectedUrl));
         });
       });

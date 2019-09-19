@@ -12,7 +12,7 @@
     "flow": "flow",
     "build": "rm -rf ./vendor && mkdir -p ./vendor/braintree-web && cp -R ~/bt/braintree.js/dist/npm/* ./vendor/braintree-web",
     "lint": "eslint src/ test/ *.js",
-    "test": "npm run lint && npm run flow-typed && npm run flow && npm run karma",
+    "test": "npm run flow-typed && npm run flow && npm run karma",
     "karma": "cross-env NODE_ENV=test babel-node --plugins=transform-es2015-modules-commonjs ./node_modules/.bin/karma start"
   },
   "repository": {
