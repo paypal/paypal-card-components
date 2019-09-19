@@ -79,9 +79,10 @@ function createSubmitHandler (hostedFieldsInstance, orderIdFunction) : Function 
 
         paymentInProgress = false;
 
-        // map liability_shift (YES/NO/UNKNOWN) to liabilityShifted (true/false/undefined) for backward compatibility
+        // keep this for backward compatible
         let liabilityShifted = payload.success;
 
+        // map liability_shift (YES/NO/UNKNOWN) to liabilityShifted (true/false/undefined) for backward compatibility
         if (payload.liability_shift) {
           liabilityShifted = LIABILITYSHIFTED_MAPPER[payload.liability_shift]
         }
