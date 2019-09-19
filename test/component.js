@@ -442,14 +442,20 @@ describe('hosted-fields-component', () => {
           }
         ]
       };
+      const threeDSResult = {
+        success:                      true,
+        liability_shift:              'YES',
+        status:                       'YES',
+        authentication_status_reason: 'UNAVAILABLE'
+      };
 
       td.when(fakeHostedFieldsInstance.tokenize(td.matchers.isA(Object)))
         .thenReject(error);
 
-      td.when(contingencyFlow.start(expectedUrl)).thenResolve({ success: true });
+      td.when(contingencyFlow.start(expectedUrl)).thenResolve(threeDSResult);
 
       return HostedFields.render(renderOptions, '#button').then((handler) => {
-        return handler.submit().then(() => {
+        return handler.submit().then((actual) => {
           td.verify(contingencyFlowStart(expectedUrl));
         });
       });
