@@ -533,7 +533,7 @@ describe('hosted-fields-component', () => {
       const threeDSResult = {
         success:                      true,
         liability_shift:              'YES',
-        status:                       'YES', 
+        status:                       'YES',
         authentication_status_reason: 'UNAVAILABLE'
       };
 
@@ -585,7 +585,7 @@ describe('hosted-fields-component', () => {
       const threeDSResult = {
         success:                      true,
         liability_shift:              'NO',
-        status:                       'YES', 
+        status:                       'YES',
         authentication_status_reason: 'UNAVAILABLE'
       };
 
