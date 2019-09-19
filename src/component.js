@@ -21,7 +21,7 @@ const TESTING_CONFIGURATION = {
 
 const LIABILITYSHIFTED_MAPPER = {
   YES: true,
-  NO: false 
+  NO: false
 };
 
 let hosted_payment_session_id = '';
@@ -84,7 +84,7 @@ function createSubmitHandler (hostedFieldsInstance, orderIdFunction) : Function 
 
         // map liability_shift (YES/NO/UNKNOWN) to liabilityShifted (true/false/undefined) for backward compatibility
         if (payload.liability_shift) {
-          liabilityShifted = LIABILITYSHIFTED_MAPPER[payload.liability_shift]
+          liabilityShifted = LIABILITYSHIFTED_MAPPER[payload.liability_shift];
         }
 
         return {
