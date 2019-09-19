@@ -21,7 +21,7 @@ const TESTING_CONFIGURATION = {
 
 const LIABILITYSHIFTED_MAPPER = {
   YES: true,
-  No:  false
+  NO:  false
 };
 
 let hosted_payment_session_id = '';
