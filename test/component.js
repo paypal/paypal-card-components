@@ -442,15 +442,19 @@ describe('hosted-fields-component', () => {
           }
         ]
       };
+      const threeDSResult = {
+        success: true
+      };
 
       td.when(fakeHostedFieldsInstance.tokenize(td.matchers.isA(Object)))
         .thenReject(error);
 
-      td.when(contingencyFlow.start(expectedUrl)).thenResolve({ success: true });
+      td.when(contingencyFlow.start(expectedUrl)).thenResolve(threeDSResult);
 
       return HostedFields.render(renderOptions, '#button').then((handler) => {
-        return handler.submit().then(() => {
+        return handler.submit().then((actual) => {
           td.verify(contingencyFlowStart(expectedUrl));
+          assert.equal(actual.liabilityShifted, true);
         });
       });
     });
@@ -493,6 +497,110 @@ describe('hosted-fields-component', () => {
       return HostedFields.render(renderOptions, '#button').then((handler) => {
         return handler.submit().then(rejectIfResolves).catch(() => {
           td.verify(contingencyFlowStart(expectedUrl));
+        });
+      });
+    });
+
+    it('resolve 3ds contingency and return liabilityShifted true if liability_shifted is YES', () => {
+      const expectedUrl = 'https://www.paypal.com/webapps/helios?action=resolve&flow=3ds&cart_id=21E005655U660730L';
+      const error = {
+        name:    'UNPROCESSABLE_ENTITY',
+        message: 'The requested action could not be performed, semantically incorrect, or failed business validation.',
+        details: [
+          {
+            issue:       'CONTINGENCY',
+            description: 'Buyer needs to resolve following contingency before proceeding with payment'
+          }
+        ],
+        links: [
+          {
+            href:    expectedUrl,
+            rel:    '3ds-contingency-resolution',
+            method: 'GET'
+          },
+          {
+            rel:    'information_link',
+            href:   'https://developer.paypal.com/docs/api/errors/#contingency',
+            method: 'GET'
+          },
+          {
+            rel:    'cancel',
+            href:   'https://api.paypal.com/v1/checkout/orders/21E005655U660730L',
+            method: 'DELETE'
+          }
+        ]
+      };
+      const threeDSResult = {
+        success:                      true,
+        liability_shift:              'YES',
+        status:                       'YES',
+        authentication_status_reason: 'UNAVAILABLE'
+      };
+
+
+      td.when(fakeHostedFieldsInstance.tokenize(td.matchers.isA(Object)))
+        .thenReject(error);
+
+      td.when(contingencyFlow.start(expectedUrl)).thenResolve(threeDSResult);
+
+      return HostedFields.render(renderOptions, '#button').then((handler) => {
+        return handler.submit().then((actual) => {
+          td.verify(contingencyFlowStart(expectedUrl));
+          assert.equal(actual.liabilityShifted, true);
+          assert.equal(actual.authenticationStatus, threeDSResult.status);
+          assert.equal(actual.authenticationReason, threeDSResult.authentication_status_reason);
+        });
+      });
+    });
+
+    it('resolve 3ds contingency and return liabilityShifted false if liability_shifted is NO', () => {
+      const expectedUrl = 'https://www.paypal.com/webapps/helios?action=resolve&flow=3ds&cart_id=21E005655U660730L';
+      const error = {
+        name:    'UNPROCESSABLE_ENTITY',
+        message: 'The requested action could not be performed, semantically incorrect, or failed business validation.',
+        details: [
+          {
+            issue:       'CONTINGENCY',
+            description: 'Buyer needs to resolve following contingency before proceeding with payment'
+          }
+        ],
+        links: [
+          {
+            href:    expectedUrl,
+            rel:    '3ds-contingency-resolution',
+            method: 'GET'
+          },
+          {
+            rel:    'information_link',
+            href:   'https://developer.paypal.com/docs/api/errors/#contingency',
+            method: 'GET'
+          },
+          {
+            rel:    'cancel',
+            href:   'https://api.paypal.com/v1/checkout/orders/21E005655U660730L',
+            method: 'DELETE'
+          }
+        ]
+      };
+      const threeDSResult = {
+        success:                      true,
+        liability_shift:              'NO',
+        status:                       'YES',
+        authentication_status_reason: 'UNAVAILABLE'
+      };
+
+
+      td.when(fakeHostedFieldsInstance.tokenize(td.matchers.isA(Object)))
+        .thenReject(error);
+
+      td.when(contingencyFlow.start(expectedUrl)).thenResolve(threeDSResult);
+
+      return HostedFields.render(renderOptions, '#button').then((handler) => {
+        return handler.submit().then((actual) => {
+          td.verify(contingencyFlowStart(expectedUrl));
+          assert.equal(actual.liabilityShifted, false);
+          assert.equal(actual.authenticationStatus, threeDSResult.status);
+          assert.equal(actual.authenticationReason, threeDSResult.authentication_status_reason);
         });
       });
     });

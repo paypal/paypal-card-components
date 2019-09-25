@@ -76,12 +76,17 @@ describe('contingency-flow', () => {
     const onContingencyResult = td.explain(fakeContingencyInit).calls[0].args[0]
       .onContingencyResult;
 
-    onContingencyResult(null, {
-      success: true
-    });
+    const threeDSResult = {
+      success:                      true,
+      liability_shift:              'YES',
+      status:                       'YES',
+      authentication_status_reason: 'UNAVAILABLE'
+    };
+
+    onContingencyResult(null, threeDSResult);
 
     return promise.then((result) => {
-      assert(result.success);
+      assert.equal(result, threeDSResult);
     });
   });
 
