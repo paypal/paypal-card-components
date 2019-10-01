@@ -75,7 +75,12 @@ const ContingencyComponent : ZoidComponent<ContingencyProps> = create({
       e.stopPropagation();
 
       if (contingencyResolveFunction) {
-        contingencyResolveFunction({ success: false });
+        contingencyResolveFunction({
+          success:                      false,
+          liability_shift:              'NO',
+          status:                       'NO',
+          authentication_status_reason: 'Skipped By Buyer'
+        });
         contingencyResolveFunction = null;
       }
       return close();
