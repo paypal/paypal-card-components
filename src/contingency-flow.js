@@ -79,7 +79,7 @@ const ContingencyComponent : ZoidComponent<ContingencyProps> = create({
           success:                      false,
           liability_shift:              'NO',
           status:                       'NO',
-          authentication_status_reason: 'Skipped By Buyer'
+          authentication_status_reason: 'SKIPPED_BY_BUYER'
         });
         contingencyResolveFunction = null;
       }
