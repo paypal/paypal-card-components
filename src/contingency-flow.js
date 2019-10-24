@@ -127,7 +127,7 @@ const ContingencyComponent : ZoidComponent<ContingencyProps> = create({
               width: 100%;
               height: 100%;
               background-color: rgba(0, 0, 0, 0.6);
-              z-index: 400;
+              z-index: 999;
           }
 
           #${ uid }.${ tag }-context-${ CONTEXT.POPUP } {
