@@ -91,7 +91,7 @@ function createSubmitHandler (hostedFieldsInstance, orderIdFunction) : Function 
           liabilityShifted,
           authenticationStatus: payload.status,
           authenticationReason: payload.authentication_status_reason,
-          card:                 payload.payment_source.card,
+          card:                 payload && payload.payment_source && payload.payment_source.card,
           orderId
         };
       }).catch((err) => {
