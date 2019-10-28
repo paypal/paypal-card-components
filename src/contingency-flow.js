@@ -1,7 +1,7 @@
 /* @flow */
 /* eslint import/no-default-export: off */
 
-import { getClientID, getPayPalDomain, getSDKMeta } from '@paypal/sdk-client/src';
+import { getLogger, getClientID, getPayPalDomain, getSDKMeta } from '@paypal/sdk-client/src';
 import { create, CONTEXT, EVENT, type ZoidComponent } from 'zoid/src';
 import { ZalgoPromise } from 'zalgo-promise/src';
 import { parseQuery, destroyElement } from 'belter/src';
@@ -75,6 +75,7 @@ const ContingencyComponent : ZoidComponent<ContingencyProps> = create({
       e.stopPropagation();
 
       if (contingencyResolveFunction) {
+        getLogger().info(`SKIPPED_BY_BUYER`);
         contingencyResolveFunction({
           success:                      false,
           liability_shift:              'NO',
@@ -127,7 +128,7 @@ const ContingencyComponent : ZoidComponent<ContingencyProps> = create({
               width: 100%;
               height: 100%;
               background-color: rgba(0, 0, 0, 0.6);
-              z-index: 400;
+              z-index: 999;
           }
 
           #${ uid }.${ tag }-context-${ CONTEXT.POPUP } {
