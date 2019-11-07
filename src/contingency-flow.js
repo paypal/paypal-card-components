@@ -46,7 +46,7 @@ const ContingencyComponent : ZoidComponent<ContingencyProps> = create({
       type:       'string',
       queryParam: true
     },
-    clientID: {
+    client_id: {
       type:       'string',
       value:      getClientID,
       queryParam: true
