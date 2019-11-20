@@ -116,9 +116,10 @@ type OptionsType = {|
 
 export const HostedFields = {
   isEligible() : boolean {
-    const cardConfig = __hosted_fields__.serverConfig.fundingEligibility.card;
+    // const cardConfig = __hosted_fields__.serverConfig.fundingEligibility.card;
+    // return cardConfig.eligible && !cardConfig.branded;
 
-    return cardConfig.eligible && !cardConfig.branded;
+    return cardConfig.eligible;
   },
 
   render(options : OptionsType, buttonSelector : string) : ZalgoPromise<HostedFieldsHandler> {
