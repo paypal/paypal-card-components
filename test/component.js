@@ -10,8 +10,9 @@ import { SDK_QUERY_KEYS, QUERY_BOOL } from '@paypal/sdk-constants/src';
 
 import btClient from '../vendor/braintree-web/client';
 import hostedFields from '../vendor/braintree-web/hosted-fields';
-import { HostedFields } from '../src/index';
+import { HostedFields, setupHostedFields } from '../src/index';
 import contingencyFlow from '../src/contingency-flow';
+import graphql from '../src/graphql';
 
 import rejectIfResolves from './utils/reject-if-resolves';
 
@@ -23,8 +24,30 @@ describe('hosted-fields-component', () => {
   let hostedFieldsCreate;
   let renderOptions;
   let fakeTokenizationPayload;
+  let graphqlGetFundingEligibility;
+  const eligibilityResult = {
+    card: {
+      eligible: true,
+      branded:  false,
+      vendors:  {
+        visa: {
+          eligible:   true,
+          vaultable:  true
+        },
+        mastercard: {
+          eligible:   true,
+          vaultable:  true
+        },
+        amex: {
+          eligible:   true,
+          vaultable:  true
+        }
+      }
+    }
+  };
 
   beforeEach(() => {
+    setupHostedFields();
     renderOptions = {
       createOrder: () => ZalgoPromise.resolve('order-id'),
       onApprove:   td.function(),
@@ -51,6 +74,8 @@ describe('hosted-fields-component', () => {
     fakeHostedFieldsInstance = td.object([ 'tokenize' ]);
     td.when(fakeHostedFieldsInstance.tokenize(td.matchers.isA(Object))).thenResolve(fakeTokenizationPayload);
     hostedFieldsCreate = td.replace(hostedFields, 'create');
+    graphqlGetFundingEligibility = td.replace(graphql, 'getFundingEligibility');
+    td.when(graphqlGetFundingEligibility()).thenResolve(eligibilityResult);
 
     fakeBtClient = {
       getConfiguration: (conf) => conf
@@ -67,6 +92,8 @@ describe('hosted-fields-component', () => {
   });
 
   afterEach(() => {
+    window.TEST_CARD_ELIGIBILITY.eligible = true;
+    window.TEST_CARD_ELIGIBILITY.branded = false;
     td.reset();
   });
 

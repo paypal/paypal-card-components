@@ -6,6 +6,7 @@ const globals = require('./globals');
 module.exports = {
   'hosted-fields': {
     entry:           './src/index',
+    setupHandler:    'setupHostedFields',
     staticNamespace: '__hosted_fields__',
     configQuery:     `
       fundingEligibility {
