@@ -1,6 +1,6 @@
 /* @flow */
 
-import { getMerchantID, getLogger, getClientToken, getCorrelationID, getPayPalAPIDomain, getVault } from '@paypal/sdk-client/src';
+import { getLogger, getClientToken, getCorrelationID, getPayPalAPIDomain, getVault } from '@paypal/sdk-client/src';
 import { FPTI_KEY } from '@paypal/sdk-constants/src';
 import { ZalgoPromise } from 'zalgo-promise/src';
 import { uniqueID } from 'belter/src';
