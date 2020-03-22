@@ -1,6 +1,6 @@
 /* @flow */
 
-import { getLogger, getClientToken, getCorrelationID, getPayPalAPIDomain, getVault } from '@paypal/sdk-client/src';
+import { getLogger, getClientToken, getCorrelationID, getPayPalAPIDomain, getVault, getMerchantID, getCardEligibility } from '@paypal/sdk-client/src';
 import { FPTI_KEY } from '@paypal/sdk-constants/src';
 import { ZalgoPromise } from 'zalgo-promise/src';
 import { uniqueID } from 'belter/src';
@@ -11,7 +11,6 @@ import hostedFields from '../vendor/braintree-web/hosted-fields';
 
 import contingencyFlow from './contingency-flow';
 import type { HostedFieldsHandler } from './types';
-import graphql from './graphql';
 
 const TESTING_CONFIGURATION = {
   assetsUrl: 'https://assets.braintreegateway.com',
@@ -136,21 +135,23 @@ export const HostedFields = {
       return ZalgoPromise.reject(new Error('createOrder parameter must be a function.'));
     }
 
-    // toodoo - revert change below when config is being passed correctly
-    const configuration = (typeof __hosted_fields__ !== 'undefined') ? __hosted_fields__.serverConfig : TESTING_CONFIGURATION;
-    configuration.assetsUrl = TESTING_CONFIGURATION.assetsUrl;
-
-    return (getUccEligibility || graphql.getFundingEligibility()).then((eligibilityData) => {
+    return (getUccEligibility || getCardEligibility()).then((eligibilityData) => {
       if (!eligibilityData || !eligibilityData.card || !eligibilityData.card.eligible || eligibilityData.card.branded) {
         // inEligible
-        return ZalgoPromise.reject(new Error('hosted fields is not eligible'));
+        return ZalgoPromise.reject(new Error('hosted fields are not eligible.'));
       }
-      const cardVendors = (eligibilityData && eligibilityData.card && eligibilityData.card.vendors) || {};
-      const eligibleCards = Object.keys(cardVendors).filter(key => Boolean(cardVendors[key] && cardVendors[key].eligible));
+      // toodoo - revert change below when config is being passed correctly
+      const configuration = (typeof __hosted_fields__ !== 'undefined') ? __hosted_fields__.serverConfig : TESTING_CONFIGURATION;
+
+      configuration.assetsUrl = TESTING_CONFIGURATION.assetsUrl;
+
+      const cardVendors = (configuration.fundingEligibility && configuration.fundingEligibility.card && configuration.fundingEligibility.card.vendors) || {};
+      const eligibleCards = Object.keys(cardVendors).filter(key => cardVendors[key].eligible);
 
       const clientToken = getClientToken();
 
       const correlationId = getCorrelationID();
+
       // $FlowFixMe
       configuration.correlationId = correlationId;
       // $FlowFixMe
@@ -224,8 +225,14 @@ export const HostedFields = {
 };
 
 export function setupHostedFields() : Function {
-  // kick off unbranded eligibility call to GQL if msp
-  getUccEligibility = graphql.getFundingEligibility();
+  const merchantId = getMerchantID();
+
+  // if msp, kick off eligibility call with multiple merchant ids to GQL
+  if (merchantId && merchantId.length > 1) {
+    getUccEligibility = getCardEligibility();
+  } else {
+    getUccEligibility = ZalgoPromise.resolve(__hosted_fields__.serverConfig.fundingEligibility);
+  }
 
   getUccEligibility.then((data) => {
     fundingEligibility = data;
