@@ -1,6 +1,6 @@
 /* @flow */
 
-import { getLogger, getClientToken, getCorrelationID, getPayPalAPIDomain, getVault, getMerchantID, getCardEligibility } from '@paypal/sdk-client/src';
+import { getLogger, getClientToken, getCorrelationID, getPayPalAPIDomain, getVault, getMerchantID, getFundingEligibility, getGraphQLFundingEligibility } from '@paypal/sdk-client/src';
 import { FPTI_KEY } from '@paypal/sdk-constants/src';
 import { ZalgoPromise } from 'zalgo-promise/src';
 import { uniqueID } from 'belter/src';
@@ -23,6 +23,13 @@ const LIABILITYSHIFTED_MAPPER = {
   YES: true,
   NO:  false
 };
+
+const uccEligibilityFields = `
+  card {
+      eligible 
+      branded 
+  }
+`;
 
 let hosted_payment_session_id = '';
 
@@ -135,8 +142,15 @@ export const HostedFields = {
       return ZalgoPromise.reject(new Error('createOrder parameter must be a function.'));
     }
 
-    return (getUccEligibility || getCardEligibility()).then((eligibilityData) => {
+    if (!getUccEligibility) {
+      // this should not happened, just in case
+      logger.warn(`FORCED_TO_CALL_GETGRAPHQLFUNDINGELIGIBILITY`);
+      getUccEligibility = getGraphQLFundingEligibility(uccEligibilityFields);
+    }
+
+    return getUccEligibility.then((eligibilityData) => {
       if (!eligibilityData || !eligibilityData.card || !eligibilityData.card.eligible || eligibilityData.card.branded) {
+        logger.warn(`HOSTEDFIELDS_NOT_ELIGIBLE_FOR_MSP`);
         // inEligible
         return ZalgoPromise.reject(new Error('hosted fields are not eligible.'));
       }
@@ -226,12 +240,13 @@ export const HostedFields = {
 
 export function setupHostedFields() : Function {
   const merchantId = getMerchantID();
+  const originalFundingEligibility = getFundingEligibility();
 
   // if msp, kick off eligibility call with multiple merchant ids to GQL
   if (merchantId && merchantId.length > 1) {
-    getUccEligibility = getCardEligibility();
+    getUccEligibility = getGraphQLFundingEligibility(uccEligibilityFields);
   } else {
-    getUccEligibility = ZalgoPromise.resolve(__hosted_fields__.serverConfig.fundingEligibility);
+    getUccEligibility = ZalgoPromise.resolve(originalFundingEligibility);
   }
 
   getUccEligibility.then((data) => {

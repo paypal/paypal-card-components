@@ -5,7 +5,7 @@ import assert from 'assert';
 
 import td from 'testdouble/dist/testdouble';
 import { ZalgoPromise } from 'zalgo-promise/src';
-import { insertMockSDKScript, getCardEligibility } from '@paypal/sdk-client/src';
+import { insertMockSDKScript } from '@paypal/sdk-client/src';
 import { SDK_QUERY_KEYS, QUERY_BOOL } from '@paypal/sdk-constants/src';
 
 import btClient from '../vendor/braintree-web/client';
@@ -23,13 +23,6 @@ describe('hosted-fields-component', () => {
   let hostedFieldsCreate;
   let renderOptions;
   let fakeTokenizationPayload;
-  let graphqlGetCardEligibility;
-  const eligibilityResult = {
-    card: {
-      eligible: true,
-      branded:  false
-    }
-  };
 
   beforeEach(() => {
     setupHostedFields();
@@ -59,8 +52,6 @@ describe('hosted-fields-component', () => {
     fakeHostedFieldsInstance = td.object([ 'tokenize' ]);
     td.when(fakeHostedFieldsInstance.tokenize(td.matchers.isA(Object))).thenResolve(fakeTokenizationPayload);
     hostedFieldsCreate = td.replace(hostedFields, 'create');
-    graphqlGetCardEligibility = td.function(getCardEligibility);
-    td.when(graphqlGetCardEligibility()).thenResolve(eligibilityResult);
 
     fakeBtClient = {
       getConfiguration: (conf) => conf
