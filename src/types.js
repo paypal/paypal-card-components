@@ -11,36 +11,36 @@ export type HostedFieldsHandler = {|
 |};
 
 export type FundingEligibilityType = {|
-    card : {
+    card : {|
         eligible : boolean,
         branded : boolean,
-        vendors : {
-            visa : {
+        vendors : {|
+            visa : {|
                 eligible : boolean
-            },
-            mastercard : {
+            |},
+            mastercard : {|
                 eligible : boolean
-            },
-            amex : {
+            |},
+            amex : {|
                 eligible : boolean
-            },
-            discover : {
+            |},
+            discover : {|
                 eligible : boolean
-            },
-            hiper : {
+            |},
+            hiper : {|
                 eligible : boolean
-            },
-            elo : {
+            |},
+            elo : {|
                 eligible : boolean
-            },
-            jcb : {
+            |},
+            jcb : {|
                 eligible : boolean
-            },
-            cup : {
+            |},
+            cup : {|
                 eligible : boolean
-            }
-        }
-    }
+            |}
+        |}
+    |}
 |};
 
 export type HostedFieldsServerConfigType = {|
@@ -49,7 +49,7 @@ export type HostedFieldsServerConfigType = {|
 
 export type HostedFieldsGlobalType = {|
     serverConfig : HostedFieldsServerConfigType,
-    featureFlags : {
+    featureFlags : {|
 
-    }
+    |}
 |};

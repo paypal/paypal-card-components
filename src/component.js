@@ -115,7 +115,7 @@ function createSubmitHandler (hostedFieldsInstance, orderIdFunction) : Function 
 
 type OptionsType = {|
   createOrder : () => ZalgoPromise<string>,
-  onApprove : ({ }) => void | ZalgoPromise<void>,
+  onApprove : ({| |}) => void | ZalgoPromise<void>,
   onError? : (mixed) => void,
   fields? : {|
     number? : {|
