@@ -10,7 +10,7 @@ import { SDK_QUERY_KEYS, QUERY_BOOL } from '@paypal/sdk-constants/src';
 
 import btClient from '../vendor/braintree-web/client';
 import hostedFields from '../vendor/braintree-web/hosted-fields';
-import { HostedFields } from '../src/index';
+import { HostedFields, setupHostedFields } from '../src/index';
 import contingencyFlow from '../src/contingency-flow';
 
 import rejectIfResolves from './utils/reject-if-resolves';
@@ -25,6 +25,7 @@ describe('hosted-fields-component', () => {
   let fakeTokenizationPayload;
 
   beforeEach(() => {
+    setupHostedFields();
     renderOptions = {
       createOrder: () => ZalgoPromise.resolve('order-id'),
       onApprove:   td.function(),
@@ -67,6 +68,8 @@ describe('hosted-fields-component', () => {
   });
 
   afterEach(() => {
+    window.TEST_CARD_ELIGIBILITY.eligible = true;
+    window.TEST_CARD_ELIGIBILITY.branded = false;
     td.reset();
   });
 

@@ -1,6 +1,6 @@
 /* @flow */
 
-import { getLogger, getClientToken, getCorrelationID, getPayPalAPIDomain, getVault } from '@paypal/sdk-client/src';
+import { getLogger, getClientToken, getCorrelationID, getPayPalAPIDomain, getVault, getMerchantID, getFundingEligibility, getGraphQLFundingEligibility } from '@paypal/sdk-client/src';
 import { FPTI_KEY } from '@paypal/sdk-constants/src';
 import { ZalgoPromise } from 'zalgo-promise/src';
 import { uniqueID } from 'belter/src';
@@ -24,7 +24,17 @@ const LIABILITYSHIFTED_MAPPER = {
   NO:  false
 };
 
+const uccEligibilityFields = `
+  card {
+      eligible 
+      branded 
+  }
+`;
+
 let hosted_payment_session_id = '';
+
+let fundingEligibility = null;
+let getUccEligibility = null;
 
 function createSubmitHandler (hostedFieldsInstance, orderIdFunction) : Function {
   let paymentInProgress = false;
@@ -116,6 +126,10 @@ type OptionsType = {|
 
 export const HostedFields = {
   isEligible() : boolean {
+    // check whether getFundingEligibility isFulfilled, otherwise, use the default;
+    if (fundingEligibility && fundingEligibility.card) {
+      return Boolean(fundingEligibility.card.eligible && !fundingEligibility.card.branded);
+    }
     const cardConfig = __hosted_fields__.serverConfig.fundingEligibility.card;
 
     return cardConfig.eligible && !cardConfig.branded;
@@ -127,83 +141,116 @@ export const HostedFields = {
     if (typeof options.createOrder !== 'function') {
       return ZalgoPromise.reject(new Error('createOrder parameter must be a function.'));
     }
-    // toodoo - revert change below when config is being passed correctly
-    const configuration = (typeof __hosted_fields__ !== 'undefined') ? __hosted_fields__.serverConfig : TESTING_CONFIGURATION;
-    configuration.assetsUrl = TESTING_CONFIGURATION.assetsUrl;
 
-    const cardVendors = (configuration.fundingEligibility && configuration.fundingEligibility.card && configuration.fundingEligibility.card.vendors) || {};
-    const eligibleCards = Object.keys(cardVendors).filter(key => cardVendors[key].eligible);
-
-    const clientToken = getClientToken();
-
-    const correlationId = getCorrelationID();
-    // $FlowFixMe
-    configuration.correlationId = correlationId;
-    // $FlowFixMe
-    configuration.paypalApi = getPayPalAPIDomain();
-
-    const orderIdFunction = () => {
-      return ZalgoPromise.resolve().then(() => {
-        return options.createOrder();
-      });
-    };
-
-    let button;
-
-    if (buttonSelector && options.onApprove) {
-      button = document.querySelector(buttonSelector);
-      if (!button) {
-        return ZalgoPromise.reject(new Error(`Could not find selector \`${ buttonSelector }\` on the page`));
-      }
+    if (!getUccEligibility) {
+      // this should not happened, just in case
+      logger.warn(`FORCED_TO_CALL_GETGRAPHQLFUNDINGELIGIBILITY`);
+      getUccEligibility = getGraphQLFundingEligibility(uccEligibilityFields);
     }
 
-    const hostedFieldsCreateOptions = JSON.parse(JSON.stringify(options));
+    return getUccEligibility.then((eligibilityData) => {
+      if (!eligibilityData || !eligibilityData.card || !eligibilityData.card.eligible || eligibilityData.card.branded) {
+        logger.warn(`HOSTEDFIELDS_NOT_ELIGIBLE_FOR_MSP`);
+        // inEligible
+        return ZalgoPromise.reject(new Error('hosted fields are not eligible.'));
+      }
+      // toodoo - revert change below when config is being passed correctly
+      const configuration = (typeof __hosted_fields__ !== 'undefined') ? __hosted_fields__.serverConfig : TESTING_CONFIGURATION;
 
-    return btClient.create({
-      authorization: clientToken,
-      paymentsSdk:   true,
-      configuration
-    }).then((btClientInstance) => {
-      hostedFieldsCreateOptions.paymentsSdk = true;
-      hostedFieldsCreateOptions.client = btClientInstance;
-      return hostedFields.create(hostedFieldsCreateOptions);
-    }).then((hostedFieldsInstance) => {
-      hostedFieldsInstance.submit = createSubmitHandler(hostedFieldsInstance, orderIdFunction);
-      hostedFieldsInstance.getCardTypes = () => {
-        return __hosted_fields__.serverConfig.fundingEligibility.card.vendors;
+      configuration.assetsUrl = TESTING_CONFIGURATION.assetsUrl;
+
+      const cardVendors = (configuration.fundingEligibility && configuration.fundingEligibility.card && configuration.fundingEligibility.card.vendors) || {};
+      const eligibleCards = Object.keys(cardVendors).filter(key => cardVendors[key].eligible);
+
+      const clientToken = getClientToken();
+
+      const correlationId = getCorrelationID();
+
+      // $FlowFixMe
+      configuration.correlationId = correlationId;
+      // $FlowFixMe
+      configuration.paypalApi = getPayPalAPIDomain();
+
+      const orderIdFunction = () => {
+        return ZalgoPromise.resolve().then(() => {
+          return options.createOrder();
+        });
       };
 
-      if (button) {
-        button.addEventListener('click', () => {
-          hostedFieldsInstance.submit().then((payload) => {
-            return options.onApprove(payload);
-          }).catch((err) => {
+      let button;
 
-            if (options.onError) {
-              options.onError(err);
-            }
-          });
-        });
+      if (buttonSelector && options.onApprove) {
+        button = document.querySelector(buttonSelector);
+        if (!button) {
+          return ZalgoPromise.reject(new Error(`Could not find selector \`${ buttonSelector }\` on the page`));
+        }
       }
 
-      hosted_payment_session_id = uniqueID();
-      logger.track({
-        comp:                                 'hostedpayment',
-        // risk_correlation_id: 'TODO',
-        api_integration_type:                 'PAYPALSDK',
-        [FPTI_KEY.STATE]:                     'CARD_PAYMENT_FORM',
-        [FPTI_KEY.TRANSITION]:                'collect_card_info',
-        hosted_payment_textboxes_shown:       Object.keys(hostedFieldsCreateOptions.fields).join(':'),
-        hosted_payment_session_cre_dt:        (new Date()).toString(),
-        hosted_payment_session_cre_ts_epoch:  Date.now().toString(),
-        [FPTI_KEY.CONTEXT_TYPE]:              'hosted_session_id',
-        [FPTI_KEY.CONTEXT_ID]:                hosted_payment_session_id,
-        [FPTI_KEY.FUNDING_LIST]:              eligibleCards.join(':'),
-        [FPTI_KEY.FUNDING_COUNT]:             eligibleCards.length.toString()
-      });
-      logger.flush();
+      const hostedFieldsCreateOptions = JSON.parse(JSON.stringify(options));
 
-      return hostedFieldsInstance;
+      return btClient.create({
+        authorization: clientToken,
+        paymentsSdk:   true,
+        configuration
+      }).then((btClientInstance) => {
+        hostedFieldsCreateOptions.paymentsSdk = true;
+        hostedFieldsCreateOptions.client = btClientInstance;
+        return hostedFields.create(hostedFieldsCreateOptions);
+      }).then((hostedFieldsInstance) => {
+        hostedFieldsInstance.submit = createSubmitHandler(hostedFieldsInstance, orderIdFunction);
+        hostedFieldsInstance.getCardTypes = () => {
+          return __hosted_fields__.serverConfig.fundingEligibility.card.vendors;
+        };
+
+        if (button) {
+          button.addEventListener('click', () => {
+            hostedFieldsInstance.submit().then((payload) => {
+              return options.onApprove(payload);
+            }).catch((err) => {
+
+              if (options.onError) {
+                options.onError(err);
+              }
+            });
+          });
+        }
+
+        hosted_payment_session_id = uniqueID();
+        logger.track({
+          comp:                                 'hostedpayment',
+          // risk_correlation_id: 'TODO',
+          api_integration_type:                 'PAYPALSDK',
+          [FPTI_KEY.STATE]:                     'CARD_PAYMENT_FORM',
+          [FPTI_KEY.TRANSITION]:                'collect_card_info',
+          hosted_payment_textboxes_shown:       Object.keys(hostedFieldsCreateOptions.fields).join(':'),
+          hosted_payment_session_cre_dt:        (new Date()).toString(),
+          hosted_payment_session_cre_ts_epoch:  Date.now().toString(),
+          [FPTI_KEY.CONTEXT_TYPE]:              'hosted_session_id',
+          [FPTI_KEY.CONTEXT_ID]:                hosted_payment_session_id,
+          [FPTI_KEY.FUNDING_LIST]:              eligibleCards.join(':'),
+          [FPTI_KEY.FUNDING_COUNT]:             eligibleCards.length.toString()
+        });
+        logger.flush();
+
+        return hostedFieldsInstance;
+      });
     });
   }
 };
+
+export function setupHostedFields() : Function {
+  const merchantId = getMerchantID();
+  const originalFundingEligibility = getFundingEligibility();
+
+  // if msp, kick off eligibility call with multiple merchant ids to GQL
+  if (merchantId && merchantId.length > 1) {
+    getUccEligibility = getGraphQLFundingEligibility(uccEligibilityFields);
+  } else {
+    getUccEligibility = ZalgoPromise.resolve(originalFundingEligibility);
+  }
+
+  getUccEligibility.then((data) => {
+    fundingEligibility = data;
+  });
+
+}

@@ -70,9 +70,9 @@ const ContingencyComponent : ZoidComponent<ContingencyProps> = create({
       return;
     }
 
-    function closeComponent(e) : ZalgoPromise<void> {
-      e.preventDefault();
-      e.stopPropagation();
+    function closeComponent(err) : ZalgoPromise<void> {
+      err.preventDefault();
+      err.stopPropagation();
 
       if (contingencyResolveFunction) {
         getLogger().info(`SKIPPED_BY_BUYER`);
@@ -87,9 +87,9 @@ const ContingencyComponent : ZoidComponent<ContingencyProps> = create({
       return close();
     }
 
-    function focusComponent(e) : ZalgoPromise<void> {
-      e.preventDefault();
-      e.stopPropagation();
+    function focusComponent(err) : ZalgoPromise<void> {
+      err.preventDefault();
+      err.stopPropagation();
       // $FlowFixMe
       return focus();
     }
@@ -112,6 +112,7 @@ const ContingencyComponent : ZoidComponent<ContingencyProps> = create({
       }, 1);
     });
     
+    /* eslint function-call-argument-newline: off */
     return node('div', { 'id': uid, 'onClick': focusComponent, 'class': `${ tag } ${ tag }-tag-${ tag } ${ tag }-context-${ context } ${ tag }-focus` },
 
       node('a', { 'href': '#', 'onClick': closeComponent, 'class': `${ tag }-close` }),

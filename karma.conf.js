@@ -41,7 +41,9 @@ export default (karma : Object) =>
         __PATH__:           '/sdk/js',
         __CORRELATION_ID__: 'abc123',
         __VERSION__:        '1.0.55',
-        __NAMESPACE__:      'testpaypal'
+        __NAMESPACE__:      'testpaypal',
+
+        __FUNDING_ELIGIBILITY__: hostedFieldsGlobal.serverConfig.fundingEligibility
       }
     })
   }));
