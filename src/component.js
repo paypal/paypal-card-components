@@ -240,19 +240,22 @@ export const HostedFields = {
 
 export function setupHostedFields() : Function {
   // not run inside zoid
-  if (!isChildWindow()) {
-    const merchantId = getMerchantID();
-    const originalFundingEligibility = getFundingEligibility();
-
-    // if msp, kick off eligibility call with multiple merchant ids to GQL
-    if (merchantId && merchantId.length > 1) {
-      getUccEligibility = getGraphQLFundingEligibility(uccEligibilityFields);
-    } else {
-      getUccEligibility = ZalgoPromise.resolve(originalFundingEligibility);
-    }
-
-    getUccEligibility.then((data) => {
-      fundingEligibility = data;
-    });
+  if (isChildWindow()) {
+    return;
   }
+
+  const merchantId = getMerchantID();
+  const originalFundingEligibility = getFundingEligibility();
+
+  // if msp, kick off eligibility call with multiple merchant ids to GQL
+  if (merchantId && merchantId.length > 1) {
+    getUccEligibility = getGraphQLFundingEligibility(uccEligibilityFields);
+  } else {
+    getUccEligibility = ZalgoPromise.resolve(originalFundingEligibility);
+  }
+
+  getUccEligibility.then((data) => {
+    fundingEligibility = data;
+  });
+  
 }
