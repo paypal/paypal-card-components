@@ -1,6 +1,6 @@
 /* @flow */
 
-import { getLogger, getClientToken, getCorrelationID, getPayPalAPIDomain, getVault, getMerchantID, getFundingEligibility, getGraphQLFundingEligibility } from '@paypal/sdk-client/src';
+import { getLogger, getClientToken, getCorrelationID, getPayPalAPIDomain, getVault, getMerchantID, getFundingEligibility, getGraphQLFundingEligibility, isChildWindow } from '@paypal/sdk-client/src';
 import { FPTI_KEY } from '@paypal/sdk-constants/src';
 import { ZalgoPromise } from 'zalgo-promise/src';
 import { uniqueID } from 'belter/src';
@@ -239,18 +239,20 @@ export const HostedFields = {
 };
 
 export function setupHostedFields() : Function {
-  const merchantId = getMerchantID();
-  const originalFundingEligibility = getFundingEligibility();
+  // not run inside zoid
+  if (!isChildWindow()) {
+    const merchantId = getMerchantID();
+    const originalFundingEligibility = getFundingEligibility();
 
-  // if msp, kick off eligibility call with multiple merchant ids to GQL
-  if (merchantId && merchantId.length > 1) {
-    getUccEligibility = getGraphQLFundingEligibility(uccEligibilityFields);
-  } else {
-    getUccEligibility = ZalgoPromise.resolve(originalFundingEligibility);
+    // if msp, kick off eligibility call with multiple merchant ids to GQL
+    if (merchantId && merchantId.length > 1) {
+      getUccEligibility = getGraphQLFundingEligibility(uccEligibilityFields);
+    } else {
+      getUccEligibility = ZalgoPromise.resolve(originalFundingEligibility);
+    }
+
+    getUccEligibility.then((data) => {
+      fundingEligibility = data;
+    });
   }
-
-  getUccEligibility.then((data) => {
-    fundingEligibility = data;
-  });
-
 }
