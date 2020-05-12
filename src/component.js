@@ -20,8 +20,9 @@ const TESTING_CONFIGURATION = {
 };
 
 const LIABILITYSHIFTED_MAPPER = {
-  YES: true,
-  NO:  false
+  YES:      true,
+  POSSIBLE: true,
+  NO:       false
 };
 
 const uccEligibilityFields = `
@@ -99,6 +100,7 @@ function createSubmitHandler (hostedFieldsInstance, orderIdFunction) : Function 
 
         return {
           liabilityShifted,
+          liabilityShift:       payload.liability_shift,
           authenticationStatus: payload.status,
           authenticationReason: payload.authentication_status_reason,
           card:                 payload && payload.payment_source && payload.payment_source.card,
