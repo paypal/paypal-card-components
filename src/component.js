@@ -1,6 +1,6 @@
 /* @flow */
 
-import { getLogger, getClientToken, getCorrelationID, getPayPalAPIDomain, getVault, getMerchantID, getFundingEligibility, getGraphQLFundingEligibility } from '@paypal/sdk-client/src';
+import { getLogger, getClientToken, getCorrelationID, getPayPalAPIDomain, getVault, getMerchantID, getFundingEligibility, getGraphQLFundingEligibility, isChildWindow } from '@paypal/sdk-client/src';
 import { FPTI_KEY } from '@paypal/sdk-constants/src';
 import { ZalgoPromise } from 'zalgo-promise/src';
 import { uniqueID } from 'belter/src';
@@ -241,6 +241,11 @@ export const HostedFields = {
 };
 
 export function setupHostedFields() : Function {
+  // not run inside zoid
+  if (isChildWindow()) {
+    return;
+  }
+
   const merchantId = getMerchantID();
   const originalFundingEligibility = getFundingEligibility();
 
@@ -254,5 +259,5 @@ export function setupHostedFields() : Function {
   getUccEligibility.then((data) => {
     fundingEligibility = data;
   });
-
+  
 }
