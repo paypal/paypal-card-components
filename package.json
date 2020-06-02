@@ -1,6 +1,6 @@
 {
   "name": "@paypal/card-components",
-  "version": "1.0.40",
+  "version": "1.0.42",
   "description": "Hosted Fields component for unified PayPal/Braintree web sdk",
   "main": "index.js",
   "scripts": {
