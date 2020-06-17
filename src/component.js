@@ -12,6 +12,8 @@ import hostedFields from '../vendor/braintree-web/hosted-fields';
 import contingencyFlow from './contingency-flow';
 import type { HostedFieldsHandler } from './types';
 
+const MSP_ENABLED = false;  // flag whether msp feature is enabled
+
 const TESTING_CONFIGURATION = {
   assetsUrl: 'https://assets.braintreegateway.com',
   card:      {
@@ -250,7 +252,7 @@ export function setupHostedFields() : Function {
   const originalFundingEligibility = getFundingEligibility();
 
   // if msp, kick off eligibility call with multiple merchant ids to GQL
-  if (merchantId && merchantId.length > 1) {
+  if (MSP_ENABLED && merchantId && merchantId.length > 1) {
     getUccEligibility = getGraphQLFundingEligibility(uccEligibilityFields);
   } else {
     getUccEligibility = ZalgoPromise.resolve(originalFundingEligibility);
