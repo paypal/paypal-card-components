@@ -154,7 +154,7 @@ export const HostedFields = {
 
     return getUccEligibility.then((eligibilityData) => {
       if (!eligibilityData || !eligibilityData.card || !eligibilityData.card.eligible || eligibilityData.card.branded) {
-        logger.warn(`HOSTEDFIELDS_NOT_ELIGIBLE_FOR_MSP`);
+        logger.warn('HOSTEDFIELDS_NOT_ELIGIBLE');
         // inEligible
         return ZalgoPromise.reject(new Error('hosted fields are not eligible.'));
       }
