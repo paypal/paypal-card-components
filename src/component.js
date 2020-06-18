@@ -253,6 +253,7 @@ export function setupHostedFields() : Function {
 
   // if msp, kick off eligibility call with multiple merchant ids to GQL
   if (MSP_ENABLED && merchantId && merchantId.length > 1) {
+    getLogger().info('HOSTEDFIELDS_MSP_GETFUNDINGELIGIBILITY');
     getUccEligibility = getGraphQLFundingEligibility(uccEligibilityFields);
   } else {
     getUccEligibility = ZalgoPromise.resolve(originalFundingEligibility);
