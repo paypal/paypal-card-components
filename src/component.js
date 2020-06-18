@@ -56,6 +56,7 @@ function createSubmitHandler (hostedFieldsInstance, orderIdFunction) : Function 
     paymentInProgress = true;
 
     return orderIdFunction().then((orderId) => {
+      logger.info('HOSTEDFIELDS_SUBMIT');
       logger.track({
         [ FPTI_KEY.STATE ]:              'CARD_PAYMENT_FORM',
         [ FPTI_KEY.TRANSITION ]:         'process_receive_order',
@@ -74,6 +75,8 @@ function createSubmitHandler (hostedFieldsInstance, orderIdFunction) : Function 
         }
 
         const url = `${ err.links.find(link => link.rel === '3ds-contingency-resolution').href  }`;
+
+        logger.info('HOSTEDFIELDS_3DS');
         return contingencyFlow.start(url);
       }).then((payload) => {
         // does contingency flow give a payload?
@@ -218,7 +221,7 @@ export const HostedFields = {
             });
           });
         }
-
+        logger.info('HOSTEDFIELDS_RENDERED');
         hosted_payment_session_id = uniqueID();
         logger.track({
           comp:                                 'hostedpayment',
