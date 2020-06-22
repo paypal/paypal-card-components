@@ -56,6 +56,7 @@ function createSubmitHandler (hostedFieldsInstance, orderIdFunction) : Function 
     paymentInProgress = true;
 
     return orderIdFunction().then((orderId) => {
+      logger.info('HOSTEDFIELDS_SUBMIT');
       logger.track({
         [ FPTI_KEY.STATE ]:              'CARD_PAYMENT_FORM',
         [ FPTI_KEY.TRANSITION ]:         'process_receive_order',
@@ -74,6 +75,8 @@ function createSubmitHandler (hostedFieldsInstance, orderIdFunction) : Function 
         }
 
         const url = `${ err.links.find(link => link.rel === '3ds-contingency-resolution').href  }`;
+
+        logger.info('HOSTEDFIELDS_3DS');
         return contingencyFlow.start(url);
       }).then((payload) => {
         // does contingency flow give a payload?
@@ -154,7 +157,7 @@ export const HostedFields = {
 
     return getUccEligibility.then((eligibilityData) => {
       if (!eligibilityData || !eligibilityData.card || !eligibilityData.card.eligible || eligibilityData.card.branded) {
-        logger.warn(`HOSTEDFIELDS_NOT_ELIGIBLE_FOR_MSP`);
+        logger.warn('HOSTEDFIELDS_NOT_ELIGIBLE');
         // inEligible
         return ZalgoPromise.reject(new Error('hosted fields are not eligible.'));
       }
@@ -218,7 +221,7 @@ export const HostedFields = {
             });
           });
         }
-
+        logger.info('HOSTEDFIELDS_RENDERED');
         hosted_payment_session_id = uniqueID();
         logger.track({
           comp:                                 'hostedpayment',
@@ -253,6 +256,7 @@ export function setupHostedFields() : Function {
 
   // if msp, kick off eligibility call with multiple merchant ids to GQL
   if (MSP_ENABLED && merchantId && merchantId.length > 1) {
+    getLogger().info('HOSTEDFIELDS_MSP_GETFUNDINGELIGIBILITY');
     getUccEligibility = getGraphQLFundingEligibility(uccEligibilityFields);
   } else {
     getUccEligibility = ZalgoPromise.resolve(originalFundingEligibility);
