@@ -12,7 +12,7 @@ import hostedFields from '../vendor/braintree-web/hosted-fields';
 import contingencyFlow from './contingency-flow';
 import type { HostedFieldsHandler } from './types';
 
-const MSP_ENABLED = false;  // flag whether msp feature is enabled
+const MSP_ENABLED = true;  // flag whether msp feature is enabled
 
 const TESTING_CONFIGURATION = {
   assetsUrl: 'https://assets.braintreegateway.com',
