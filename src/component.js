@@ -12,7 +12,7 @@ import hostedFields from '../vendor/braintree-web/hosted-fields';
 import contingencyFlow from './contingency-flow';
 import type { HostedFieldsHandler } from './types';
 
-const MSP_ENABLED = false;  // flag whether msp feature is enabled
+const MSP_ENABLED = true;  // flag whether msp feature is enabled
 
 const TESTING_CONFIGURATION = {
   assetsUrl: 'https://assets.braintreegateway.com',
@@ -133,6 +133,11 @@ type OptionsType = {|
 
 export const HostedFields = {
   isEligible() : boolean {
+    const clientToken = getClientToken();
+
+    if (!clientToken) {
+      return false;
+    }
     // check whether getFundingEligibility isFulfilled, otherwise, use the default;
     if (fundingEligibility && fundingEligibility.card) {
       return Boolean(fundingEligibility.card.eligible && !fundingEligibility.card.branded);
