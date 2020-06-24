@@ -133,6 +133,11 @@ type OptionsType = {|
 
 export const HostedFields = {
   isEligible() : boolean {
+    const clientToken = getClientToken();
+
+    if (!clientToken) {
+      return false;
+    }
     // check whether getFundingEligibility isFulfilled, otherwise, use the default;
     if (fundingEligibility && fundingEligibility.card) {
       return Boolean(fundingEligibility.card.eligible && !fundingEligibility.card.branded);
