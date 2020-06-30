@@ -17,7 +17,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/paypal/paypal-braintree-hosted-fields-component.git"
+    "url": "git+https://github.com/paypal/paypal-card-components.git"
   },
   "files": [
     "vendor/",
@@ -28,9 +28,9 @@
   "author": "dbrain",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/paypal/paypal-braintree-hosted-fields-component/issues"
+    "url": "https://github.com/paypal/paypal-card-components/issues"
   },
-  "homepage": "https://github.com/paypal/paypal-braintree-hosted-fields-component#readme",
+  "homepage": "https://github.com/paypal/paypal-card-components#readme",
   "devDependencies": {
     "flow-bin": "^0.100.0",
     "grumbler-scripts": "^3",
