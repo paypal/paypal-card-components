@@ -4,3 +4,7 @@ flow-typed
 package-lock.json
 npm-debug.log
 
+# Text editor / IDE meta folder
+.vscode
+.idea
+
