@@ -12,6 +12,7 @@ import btClient from '../vendor/braintree-web/client';
 import hostedFields from '../vendor/braintree-web/hosted-fields';
 import { HostedFields, setupHostedFields } from '../src/index';
 import contingencyFlow from '../src/contingency-flow';
+import type { InstallmentsConfiguration } from '../src/component';
 
 import rejectIfResolves from './utils/reject-if-resolves';
 
@@ -114,6 +115,50 @@ describe('hosted-fields-component', () => {
 
       assert.equal(err, error);
     });
+  });
+
+  it('rejects if installments object is passed but no onInstallmentsRequested function is passed', () => {
+    const options = {
+      ...renderOptions,
+      installments: {
+        // eslint-disable-next-line no-unused-vars
+        onInstallmentsAvailable(installments) : void {
+          // render installments on page here
+        }
+      }
+    };
+
+    // $FlowFixMe
+    return HostedFields.render(options, '#button')
+      .then(rejectIfResolves)
+      .catch(err => {
+        // $FlowFixMe
+        assert.equal(err.message, 'installments must include both onInstallmentsRequested and onInstallmentsAvailable functions');
+      });
+  });
+
+  it('rejects if installments object is passed but no onInstallmentsAvailable function is passed', () => {
+    const options = {
+      ...renderOptions,
+      installments: {
+        onInstallmentsRequested() : InstallmentsConfiguration {
+          return {
+            financingCountryCode: 'ABC',
+            currencyCode:         'ABC',
+            billingCountryCode:   'ABC',
+            amount:               '100.00'
+          };
+        }
+      }
+    };
+
+    // $FlowFixMe
+    return HostedFields.render(options, '#button')
+      .then(rejectIfResolves)
+      .catch(err => {
+        // $FlowFixMe
+        assert.equal(err.message, 'installments must include both onInstallmentsRequested and onInstallmentsAvailable functions');
+      });
   });
 
   it('rejects with an error if braintree-web.hosted-fields errors out', () => {

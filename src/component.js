@@ -120,8 +120,20 @@ function createSubmitHandler (hostedFieldsInstance, orderIdFunction) : Function 
   };
 }
 
-type OptionsType = {|
+export type InstallmentsConfiguration = {|
+  financingCountryCode : string,
+  currencyCode : string,
+  billingCountryCode : string,
+  amount : string
+|};
+export type OptionsType = {|
   createOrder : () => ZalgoPromise<string>,
+  installments? : {|
+    onInstallmentsRequested : () => InstallmentsConfiguration | ZalgoPromise<InstallmentsConfiguration>,
+    // eslint-disable-next-line no-warning-comments
+    // TODO should probably be better defined than mixed here
+    onInstallmentsAvailable : (mixed) => void
+  |},
   onApprove : ({| |}) => void | ZalgoPromise<void>,
   onError? : (mixed) => void,
   fields? : {|
@@ -152,6 +164,15 @@ export const HostedFields = {
 
     if (typeof options.createOrder !== 'function') {
       return ZalgoPromise.reject(new Error('createOrder parameter must be a function.'));
+    }
+
+    if (options.installments) {
+      if (
+        typeof options.installments.onInstallmentsRequested !== 'function' ||
+        typeof options.installments.onInstallmentsAvailable !== 'function'
+      ) {
+        return ZalgoPromise.reject(new Error('installments must include both onInstallmentsRequested and onInstallmentsAvailable functions'));
+      }
     }
 
     if (!getUccEligibility) {
