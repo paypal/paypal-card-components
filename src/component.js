@@ -132,7 +132,8 @@ export type OptionsType = {|
     onInstallmentsRequested : () => InstallmentsConfiguration | ZalgoPromise<InstallmentsConfiguration>,
     // eslint-disable-next-line no-warning-comments
     // TODO should probably be better defined than mixed here
-    onInstallmentsAvailable : (mixed) => void
+    onInstallmentsAvailable : (mixed) => void,
+    onInstallmentsError? : (mixed) => void
   |},
   onApprove : ({| |}) => void | ZalgoPromise<void>,
   onError? : (mixed) => void,

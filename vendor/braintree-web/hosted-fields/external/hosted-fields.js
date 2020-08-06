@@ -468,6 +468,11 @@ function HostedFields(options) {
   this._bus.on('INSTALLMENTS_AVAILABLE', function (data) {
     options.installments.onInstallmentsAvailable(data);
   });
+  this._bus.on('INSTALLMENTS_ERROR', function(installmentsLookupError) {
+    if (options.installments.onInstalmentsError) {
+      options.installments.onInstallmentsError(installmentsLookupError);
+    }
+  });
 
   this._bus.on(
     events.INPUT_EVENT,
