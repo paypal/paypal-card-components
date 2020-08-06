@@ -161,6 +161,9 @@ export const HostedFields = {
   },
 
   render(options : OptionsType, buttonSelector : string) : ZalgoPromise<HostedFieldsHandler> {
+    let onInstallmentsAvailable;
+    let onInstallmentsRequested;
+    let onInstallmentsError;
     const logger = getLogger();
 
     if (typeof options.createOrder !== 'function') {
@@ -174,6 +177,29 @@ export const HostedFields = {
       ) {
         return ZalgoPromise.reject(new Error('installments must include both onInstallmentsRequested and onInstallmentsAvailable functions'));
       }
+
+      onInstallmentsRequested = () => {
+        // eslint-disable-next-line no-warning-comments
+        // TODO logging here
+        // $FlowFixMe
+        return options.installments.onInstallmentsRequested();
+      };
+      onInstallmentsAvailable = (...args) => {
+        // eslint-disable-next-line no-warning-comments
+        // TODO logging here
+        // $FlowFixMe
+        return options.installments.onInstallmentsAvailable(...args);
+      };
+
+      onInstallmentsError = (...args) => {
+        // eslint-disable-next-line no-warning-comments
+        // TODO logging here
+        // $FlowFixMe
+        if (typeof options.installments.onInstallmentsError === 'function') {
+          // $FlowFixMe
+          return options.installments.onInstallmentsError(...args);
+        }
+      };
     }
 
     if (!getUccEligibility) {
@@ -221,6 +247,13 @@ export const HostedFields = {
       }
 
       const hostedFieldsCreateOptions = JSON.parse(JSON.stringify(options));
+      if (onInstallmentsRequested && onInstallmentsAvailable) {
+        hostedFieldsCreateOptions.installments = {
+          onInstallmentsRequested,
+          onInstallmentsAvailable,
+          onInstallmentsError
+        };
+      }
 
       return btClient.create({
         authorization: clientToken,
