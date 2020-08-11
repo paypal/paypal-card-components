@@ -60,6 +60,7 @@ function createSubmitHandler (hostedFieldsInstance, orderIdFunction) : Function 
       logger.track({
         [ FPTI_KEY.STATE ]:              'CARD_PAYMENT_FORM',
         [ FPTI_KEY.TRANSITION ]:         'process_receive_order',
+        hosted_payment_has_installments:  String(options.hasOwnProperty('installments')),
         hosted_payment_session_id,
         [ FPTI_KEY.CONTEXT_TYPE ]:       'Cart-ID',
         [ FPTI_KEY.CONTEXT_ID ]:         orderId
