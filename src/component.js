@@ -60,7 +60,7 @@ function createSubmitHandler (hostedFieldsInstance, orderIdFunction) : Function 
       logger.track({
         [ FPTI_KEY.STATE ]:              'CARD_PAYMENT_FORM',
         [ FPTI_KEY.TRANSITION ]:         'process_receive_order',
-        hosted_payment_has_installments:  String(options.hasOwnProperty('installments')),
+        payments_schedule:         options.hasOwnProperty('installments') ? 'INSTALLMENTS_PAYMENT'  : '',
         hosted_payment_session_id,
         [ FPTI_KEY.CONTEXT_TYPE ]:       'Cart-ID',
         [ FPTI_KEY.CONTEXT_ID ]:         orderId
@@ -180,23 +180,42 @@ export const HostedFields = {
       }
 
       onInstallmentsRequested = () => {
-        // eslint-disable-next-line no-warning-comments
-        // TODO logging here
+        logger.info('HOSTEDFIELDS_INSTALLMENTS_REQUESTED');
+        logger.track({
+          comp:                                'hostedpayment',
+          api_integration_type:                'PAYPALSDK',
+          [FPTI_KEY.STATE]:                    'CARD_PAYMENT_FORM',
+          [FPTI_KEY.TRANSITION]:               'process_installments_request'
+        });
+        logger.flush();
         // $FlowFixMe
         return options.installments.onInstallmentsRequested();
       };
       onInstallmentsAvailable = (...args) => {
-        // eslint-disable-next-line no-warning-comments
-        // TODO logging here
+        logger.info('HOSTEDFIELDS_INSTALLMENTS_AVAILABLE');
+        logger.track({
+          comp:                                'hostedpayment',
+          api_integration_type:                'PAYPALSDK',
+          [FPTI_KEY.STATE]:                    'CARD_PAYMENT_FORM',
+          [FPTI_KEY.TRANSITION]:               'process_card_issuer_installments'
+        });
+        logger.flush();
         // $FlowFixMe
         return options.installments.onInstallmentsAvailable(...args);
       };
 
       onInstallmentsError = (...args) => {
-        // eslint-disable-next-line no-warning-comments
-        // TODO logging here
         // $FlowFixMe
         if (typeof options.installments.onInstallmentsError === 'function') {
+          logger.warn('HOSTEDFIELDS_INSTALLMENTS_ERROR');
+          logger.track({
+            comp:                                'hostedpayment',
+            api_integration_type:                'PAYPALSDK',
+            [FPTI_KEY.STATE]:                    'CARD_PAYMENT_FORM',
+            [FPTI_KEY.TRANSITION]:               'process_installments_error'
+          });
+          logger.flush();
+
           // $FlowFixMe
           return options.installments.onInstallmentsError(...args);
         }
@@ -326,5 +345,5 @@ export function setupHostedFields() : Function {
   getUccEligibility.then((data) => {
     fundingEligibility = data;
   });
-  
+
 }
