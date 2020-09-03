@@ -4,6 +4,7 @@ import { getLogger, getClientToken, getCorrelationID, getPayPalAPIDomain, getVau
 import { FPTI_KEY } from '@paypal/sdk-constants/src';
 import { ZalgoPromise } from 'zalgo-promise/src';
 import { uniqueID } from 'belter/src';
+import { destroy as zoidDestroy } from 'zoid/src';
 
 // toodoo unvendor this when braintree-web is updated
 import btClient from '../vendor/braintree-web/client';
@@ -29,8 +30,8 @@ const LIABILITYSHIFTED_MAPPER = {
 
 const uccEligibilityFields = `
   card {
-      eligible 
-      branded 
+      eligible
+      branded
   }
 `;
 
@@ -270,5 +271,9 @@ export function setupHostedFields() : Function {
   getUccEligibility.then((data) => {
     fundingEligibility = data;
   });
-  
+
+}
+
+export function destroy() {
+  zoidDestroy();
 }
