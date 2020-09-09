@@ -5,9 +5,9 @@
   "main": "index.js",
   "scripts": {
     "release": "npm run release:patch",
-    "release:patch": "./node_modules/grumbler-scripts/publish.sh patch",
-    "release:minor": "./node_modules/grumbler-scripts/publish.sh minor",
-    "release:major": "./node_modules/grumbler-scripts/publish.sh major",
+    "release:patch": "./publish.sh patch",
+    "release:minor": "./publish.sh minor",
+    "release:major": "./publish.sh major",
     "flow-typed": "rm -rf ./flow-typed && flow-typed install",
     "flow": "flow",
     "build": "rm -rf ./vendor && mkdir -p ./vendor/braintree-web && cp -R ~/bt/braintree.js/dist/npm/* ./vendor/braintree-web",
