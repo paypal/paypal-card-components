@@ -13,6 +13,7 @@ import hostedFields from '../vendor/braintree-web/hosted-fields';
 import { HostedFields, setupHostedFields } from '../src/index';
 import contingencyFlow from '../src/contingency-flow';
 import type { InstallmentsConfiguration } from '../src/component';
+import { getContingencyFlowComponent } from '../src/zoid/contingency-flow';
 
 import rejectIfResolves from './utils/reject-if-resolves';
 
@@ -497,11 +498,12 @@ describe('hosted-fields-component', () => {
       td.when(fakeHostedFieldsInstance.tokenize(td.matchers.isA(Object)))
         .thenReject(error);
 
-      td.when(contingencyFlow.start(expectedUrl)).thenResolve(threeDSResult);
+      td.when(contingencyFlowStart(getContingencyFlowComponent(), expectedUrl)).thenResolve(threeDSResult);
 
       return HostedFields.render(renderOptions, '#button').then((handler) => {
         return handler.submit().then((actual) => {
-          td.verify(contingencyFlowStart(expectedUrl));
+
+          td.verify(contingencyFlowStart(getContingencyFlowComponent(), expectedUrl));
           assert.equal(actual.liabilityShifted, true);
         });
       });
@@ -540,11 +542,11 @@ describe('hosted-fields-component', () => {
       td.when(fakeHostedFieldsInstance.tokenize(td.matchers.isA(Object)))
         .thenReject(error);
 
-      td.when(contingencyFlow.start(expectedUrl)).thenReject();
+      td.when(contingencyFlowStart(getContingencyFlowComponent(), expectedUrl)).thenReject();
 
       return HostedFields.render(renderOptions, '#button').then((handler) => {
         return handler.submit().then(rejectIfResolves).catch(() => {
-          td.verify(contingencyFlowStart(expectedUrl));
+          td.verify(contingencyFlowStart(getContingencyFlowComponent(), expectedUrl));
         });
       });
     });
@@ -589,11 +591,11 @@ describe('hosted-fields-component', () => {
       td.when(fakeHostedFieldsInstance.tokenize(td.matchers.isA(Object)))
         .thenReject(error);
 
-      td.when(contingencyFlow.start(expectedUrl)).thenResolve(threeDSResult);
+      td.when(contingencyFlowStart(getContingencyFlowComponent(), expectedUrl)).thenResolve(threeDSResult);
 
       return HostedFields.render(renderOptions, '#button').then((handler) => {
         return handler.submit().then((actual) => {
-          td.verify(contingencyFlowStart(expectedUrl));
+          td.verify(contingencyFlowStart(getContingencyFlowComponent(), expectedUrl));
           assert.equal(actual.liabilityShifted, true);
           assert.equal(actual.authenticationStatus, threeDSResult.status);
           assert.equal(actual.authenticationReason, threeDSResult.authentication_status_reason);
@@ -641,11 +643,11 @@ describe('hosted-fields-component', () => {
       td.when(fakeHostedFieldsInstance.tokenize(td.matchers.isA(Object)))
         .thenReject(error);
 
-      td.when(contingencyFlow.start(expectedUrl)).thenResolve(threeDSResult);
+      td.when(contingencyFlowStart(getContingencyFlowComponent(), expectedUrl)).thenResolve(threeDSResult);
 
       return HostedFields.render(renderOptions, '#button').then((handler) => {
         return handler.submit().then((actual) => {
-          td.verify(contingencyFlowStart(expectedUrl));
+          td.verify(contingencyFlowStart(getContingencyFlowComponent(), expectedUrl));
           assert.equal(actual.liabilityShifted, false);
           assert.equal(actual.authenticationStatus, threeDSResult.status);
           assert.equal(actual.authenticationReason, threeDSResult.authentication_status_reason);

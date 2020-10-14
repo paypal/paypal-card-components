@@ -4,11 +4,13 @@ import { getLogger, getClientToken, getCorrelationID, getPayPalAPIDomain, getVau
 import { FPTI_KEY } from '@paypal/sdk-constants/src';
 import { ZalgoPromise } from 'zalgo-promise/src';
 import { uniqueID } from 'belter/src';
+import { destroy as zoidDestroy } from 'zoid/src';
 
 // toodoo unvendor this when braintree-web is updated
 import btClient from '../vendor/braintree-web/client';
 import hostedFields from '../vendor/braintree-web/hosted-fields';
 
+import { getContingencyFlowComponent } from './zoid/contingency-flow';
 import contingencyFlow from './contingency-flow';
 import type { HostedFieldsHandler } from './types';
 
@@ -29,8 +31,8 @@ const LIABILITYSHIFTED_MAPPER = {
 
 const uccEligibilityFields = `
   card {
-      eligible 
-      branded 
+      eligible
+      branded
   }
 `;
 
@@ -78,7 +80,7 @@ function createSubmitHandler (hostedFieldsInstance, orderIdFunction) : Function 
         const url = `${ err.links.find(link => link.rel === '3ds-contingency-resolution').href  }`;
 
         logger.info('HOSTEDFIELDS_3DS');
-        return contingencyFlow.start(url);
+        return contingencyFlow.start(getContingencyFlowComponent(), url);
       }).then((payload) => {
         // does contingency flow give a payload?
         logger.track({
@@ -331,6 +333,9 @@ export function setupHostedFields() : Function {
     return;
   }
 
+  // initialize the contingency flow zoid component
+  getContingencyFlowComponent();
+
   const merchantId = getMerchantID();
   const originalFundingEligibility = getFundingEligibility();
 
@@ -346,4 +351,8 @@ export function setupHostedFields() : Function {
     fundingEligibility = data;
   });
 
+}
+
+export function destroy() {
+  zoidDestroy();
 }
