@@ -14,7 +14,7 @@ const hostedFieldsGlobal = {
   }
 };
 
-export default (karma : Object) =>
+export default (karma : Object) : void =>
   karma.set(getKarmaConfig(karma, {
     client: {
       captureConsole: true
@@ -38,6 +38,7 @@ export default (karma : Object) =>
         __STAGE_HOST__:     'msmaster.qa.paypal.com',
         __HOST__:           'test.paypal.com',
         __HOSTNAME__:       'test.paypal.com',
+        __SDK_HOST__:       'test.paypal.com',
         __PATH__:           '/sdk/js',
         __CORRELATION_ID__: 'abc123',
         __VERSION__:        '1.0.55',

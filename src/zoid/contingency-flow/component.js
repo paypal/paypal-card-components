@@ -21,7 +21,9 @@ const CLASS = {
   PRERENDER_FRAME: 'prerender-frame'
 };
 
-export const getContingencyFlowComponent = memoize(() : ZoidComponent<ContingencyFlowProps> => {
+type ContingencyFlowComponent = ZoidComponent<ContingencyFlowProps>;
+
+export const getContingencyFlowComponent : () => ContingencyFlowComponent = memoize(() => {
   const ContingencyComponent : ZoidComponent<ContingencyFlowProps> = create({
     url:      () => `${ getPayPalDomain() }/webapps/helios`,
     props:    {

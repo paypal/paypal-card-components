@@ -7,7 +7,9 @@ import { uniqueID } from 'belter/src';
 import { destroy as zoidDestroy } from 'zoid/src';
 
 // toodoo unvendor this when braintree-web is updated
+// $FlowFixMe
 import btClient from '../vendor/braintree-web/client';
+// $FlowFixMe
 import hostedFields from '../vendor/braintree-web/hosted-fields';
 
 import { getContingencyFlowComponent } from './zoid/contingency-flow';

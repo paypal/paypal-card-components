@@ -3,6 +3,7 @@
 import assert from 'assert';
 
 import td from 'testdouble/dist/testdouble';
+import { destroy } from 'zoid/src';
 
 import '../src/index';
 import contingencyFlow from '../src/contingency-flow';
@@ -24,6 +25,7 @@ describe('contingency-flow', () => {
 
   afterEach(() => {
     td.reset();
+    return destroy();
   });
 
   it('renders a zoid component', () => {

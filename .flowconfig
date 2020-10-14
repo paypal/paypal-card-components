@@ -3,6 +3,7 @@
 .*/node_modules/npm
 .*/node_modules/jsonlint
 .*/dist/module
+.*/vendor
 [include]
 [libs]
 flow-typed

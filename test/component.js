@@ -7,8 +7,11 @@ import td from 'testdouble/dist/testdouble';
 import { ZalgoPromise } from 'zalgo-promise/src';
 import { insertMockSDKScript } from '@paypal/sdk-client/src';
 import { SDK_QUERY_KEYS, QUERY_BOOL } from '@paypal/sdk-constants/src';
+import { destroy } from 'zoid/src';
 
+// $FlowFixMe
 import btClient from '../vendor/braintree-web/client';
+// $FlowFixMe
 import hostedFields from '../vendor/braintree-web/hosted-fields';
 import { HostedFields, setupHostedFields } from '../src/index';
 import contingencyFlow from '../src/contingency-flow';
@@ -73,6 +76,7 @@ describe('hosted-fields-component', () => {
     window.TEST_CARD_ELIGIBILITY.eligible = true;
     window.TEST_CARD_ELIGIBILITY.branded = false;
     td.reset();
+    return destroy();
   });
 
   describe('isEligible', () => {
@@ -96,6 +100,7 @@ describe('hosted-fields-component', () => {
   });
 
   it('rejects if no payments function is provided', () => {
+    // $FlowFixMe
     delete renderOptions.createOrder;
 
     return HostedFields.render(renderOptions, '#button').then(rejectIfResolves).catch((err) => {
