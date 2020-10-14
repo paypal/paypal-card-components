@@ -62,6 +62,7 @@ function createSubmitHandler (hostedFieldsInstance, orderIdFunction) : Function 
       logger.track({
         [ FPTI_KEY.STATE ]:              'CARD_PAYMENT_FORM',
         [ FPTI_KEY.TRANSITION ]:         'process_receive_order',
+        payments_schedule:         options.hasOwnProperty('installments') ? 'INSTALLMENTS_PAYMENT'  : '',
         hosted_payment_session_id,
         [ FPTI_KEY.CONTEXT_TYPE ]:       'Cart-ID',
         [ FPTI_KEY.CONTEXT_ID ]:         orderId
@@ -122,8 +123,21 @@ function createSubmitHandler (hostedFieldsInstance, orderIdFunction) : Function 
   };
 }
 
-type OptionsType = {|
+export type InstallmentsConfiguration = {|
+  financingCountryCode : string,
+  currencyCode : string,
+  billingCountryCode : string,
+  amount : string
+|};
+export type OptionsType = {|
   createOrder : () => ZalgoPromise<string>,
+  installments? : {|
+    onInstallmentsRequested : () => InstallmentsConfiguration | ZalgoPromise<InstallmentsConfiguration>,
+    // eslint-disable-next-line no-warning-comments
+    // TODO should probably be better defined than mixed here
+    onInstallmentsAvailable : (mixed) => void,
+    onInstallmentsError? : (mixed) => void
+  |},
   onApprove : ({| |}) => void | ZalgoPromise<void>,
   onError? : (mixed) => void,
   fields? : {|
@@ -150,10 +164,64 @@ export const HostedFields = {
   },
 
   render(options : OptionsType, buttonSelector : string) : ZalgoPromise<HostedFieldsHandler> {
+    let onInstallmentsAvailable;
+    let onInstallmentsRequested;
+    let onInstallmentsError;
     const logger = getLogger();
 
     if (typeof options.createOrder !== 'function') {
       return ZalgoPromise.reject(new Error('createOrder parameter must be a function.'));
+    }
+
+    if (options.installments) {
+      if (
+        typeof options.installments.onInstallmentsRequested !== 'function' ||
+        typeof options.installments.onInstallmentsAvailable !== 'function'
+      ) {
+        return ZalgoPromise.reject(new Error('installments must include both onInstallmentsRequested and onInstallmentsAvailable functions'));
+      }
+
+      onInstallmentsRequested = () => {
+        logger.info('HOSTEDFIELDS_INSTALLMENTS_REQUESTED');
+        logger.track({
+          comp:                                'hostedpayment',
+          api_integration_type:                'PAYPALSDK',
+          [FPTI_KEY.STATE]:                    'CARD_PAYMENT_FORM',
+          [FPTI_KEY.TRANSITION]:               'process_installments_request'
+        });
+        logger.flush();
+        // $FlowFixMe
+        return options.installments.onInstallmentsRequested();
+      };
+      onInstallmentsAvailable = (...args) => {
+        logger.info('HOSTEDFIELDS_INSTALLMENTS_AVAILABLE');
+        logger.track({
+          comp:                                'hostedpayment',
+          api_integration_type:                'PAYPALSDK',
+          [FPTI_KEY.STATE]:                    'CARD_PAYMENT_FORM',
+          [FPTI_KEY.TRANSITION]:               'process_card_issuer_installments'
+        });
+        logger.flush();
+        // $FlowFixMe
+        return options.installments.onInstallmentsAvailable(...args);
+      };
+
+      onInstallmentsError = (...args) => {
+        // $FlowFixMe
+        if (typeof options.installments.onInstallmentsError === 'function') {
+          logger.warn('HOSTEDFIELDS_INSTALLMENTS_ERROR');
+          logger.track({
+            comp:                                'hostedpayment',
+            api_integration_type:                'PAYPALSDK',
+            [FPTI_KEY.STATE]:                    'CARD_PAYMENT_FORM',
+            [FPTI_KEY.TRANSITION]:               'process_installments_error'
+          });
+          logger.flush();
+
+          // $FlowFixMe
+          return options.installments.onInstallmentsError(...args);
+        }
+      };
     }
 
     if (!getUccEligibility) {
@@ -201,6 +269,13 @@ export const HostedFields = {
       }
 
       const hostedFieldsCreateOptions = JSON.parse(JSON.stringify(options));
+      if (onInstallmentsRequested && onInstallmentsAvailable) {
+        hostedFieldsCreateOptions.installments = {
+          onInstallmentsRequested,
+          onInstallmentsAvailable,
+          onInstallmentsError
+        };
+      }
 
       return btClient.create({
         authorization: clientToken,

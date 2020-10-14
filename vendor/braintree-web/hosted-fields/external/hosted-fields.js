@@ -458,6 +458,22 @@ function HostedFields(options) {
     self._emit('ready');
   });
 
+  this._bus.on('INSTALLMENTS_REQUESTED', function (data, reply) {
+    Promise.resolve().then(function () {
+      return options.installments.onInstallmentsRequested();
+    }).then(function (data) {
+      reply(data);
+    });
+  });
+  this._bus.on('INSTALLMENTS_AVAILABLE', function (data) {
+    options.installments.onInstallmentsAvailable(data);
+  });
+  this._bus.on('INSTALLMENTS_ERROR', function(installmentsLookupError) {
+    if (options.installments.onInstalmentsError) {
+      options.installments.onInstallmentsError(installmentsLookupError);
+    }
+  });
+
   this._bus.on(
     events.INPUT_EVENT,
     createInputEventHandler(fields).bind(this)
@@ -523,10 +539,15 @@ HostedFields.prototype._setupLabelFocus = function (type, container) {
 };
 
 HostedFields.prototype._waitForIframeInputsToBeReady = function (fieldCount, options) {
+  var installments = options.installments;
+
   return new Promise(function (resolve) {
     this._bus.on(events.FRAME_READY, function (reply) {
       fieldCount--;
       if (fieldCount === 0) {
+        if (installments) {
+          options.listenForInstallments = Boolean(installments.onInstallmentsRequested && installments.onInstallmentsAvailable);
+        }
         reply(options);
         resolve();
       }
