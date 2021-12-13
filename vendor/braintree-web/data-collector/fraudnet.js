@@ -6,7 +6,7 @@ function setup() {
 }
 
 function Fraudnet() {
-  this.sessionId = _generateSessionId();
+  this.sessionId = sdkClient.getClientMetadataID() || _generateSessionId();
   this._beaconId = _generateBeaconId(this.sessionId);
 
   this._parameterBlock = _createParameterBlock(this.sessionId, this._beaconId);
