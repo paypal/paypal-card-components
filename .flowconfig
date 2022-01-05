@@ -12,7 +12,7 @@ node_modules/grumbler-scripts/declarations.js
 node_modules/zoid/src/declarations.js
 node_modules/post-robot/src/declarations.js
 node_modules/@paypal/sdk-client/src/declarations.js
-.*/node_modules/resolve
+node_modules/resolve/test/resolver/malformed_package_json/package.json
 [options]
 module.name_mapper='^src\(.*\)$' -> '<PROJECT_ROOT>/src/\1'
 experimental.const_params=false
