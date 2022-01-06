@@ -18,13 +18,6 @@ import type { HostedFieldsHandler } from './types';
 
 const MSP_ENABLED = true;  // flag whether msp feature is enabled
 
-const TESTING_CONFIGURATION = {
-  assetsUrl: 'https://assets.braintreegateway.com',
-  card:      {
-    supportedCardBrands: [ 'VISA' ]
-  }
-};
-
 const LIABILITYSHIFTED_MAPPER = {
   YES:      true,
   POSSIBLE: true,
@@ -160,9 +153,9 @@ export const HostedFields = {
     if (fundingEligibility && fundingEligibility.card) {
       return Boolean(fundingEligibility.card.eligible && !fundingEligibility.card.branded);
     }
-    const cardConfig = __hosted_fields__.serverConfig.fundingEligibility.card;
+    const cardConfig = getFundingEligibility().card || {};
 
-    return cardConfig.eligible && !cardConfig.branded;
+    return Boolean(cardConfig.eligible && !cardConfig.branded);
   },
 
   render(options : OptionsType, buttonSelector : string) : ZalgoPromise<HostedFieldsHandler> {
@@ -238,22 +231,18 @@ export const HostedFields = {
         // inEligible
         return ZalgoPromise.reject(new Error('hosted fields are not eligible.'));
       }
-      // toodoo - revert change below when config is being passed correctly
-      const configuration = (typeof __hosted_fields__ !== 'undefined') ? __hosted_fields__.serverConfig : TESTING_CONFIGURATION;
 
-      configuration.assetsUrl = TESTING_CONFIGURATION.assetsUrl;
+      const configuration = {
+        assetsUrl:          'https://assets.braintreegateway.com',
+        correlationId:      getCorrelationID(),
+        fundingEligibility: getFundingEligibility(),
+        paypalApi:          getPayPalAPIDomain()
+      };
 
       const cardVendors = (configuration.fundingEligibility && configuration.fundingEligibility.card && configuration.fundingEligibility.card.vendors) || {};
-      const eligibleCards = Object.keys(cardVendors).filter(key => cardVendors[key].eligible);
+      const eligibleCards = Object.keys(cardVendors).filter(key => cardVendors[key] && cardVendors[key].eligible);
 
       const clientToken = getClientToken();
-
-      const correlationId = getCorrelationID();
-
-      // $FlowFixMe
-      configuration.correlationId = correlationId;
-      // $FlowFixMe
-      configuration.paypalApi = getPayPalAPIDomain();
 
       const orderIdFunction = () => {
         return ZalgoPromise.resolve().then(() => {
@@ -290,7 +279,7 @@ export const HostedFields = {
       }).then((hostedFieldsInstance) => {
         hostedFieldsInstance.submit = createSubmitHandler(hostedFieldsInstance, orderIdFunction);
         hostedFieldsInstance.getCardTypes = () => {
-          return __hosted_fields__.serverConfig.fundingEligibility.card.vendors;
+          return cardVendors;
         };
 
         if (button) {
