@@ -4,7 +4,6 @@
 let BraintreeError = require('../lib/braintree-error');
 
 let Client = require('./client');
-let globals = require('./globals');
 let getConfiguration = require('./get-configuration').getConfiguration;
 
 
@@ -12,6 +11,7 @@ let VERSION = '3.32.0-payments-sdk-dev';
 let Promise = require('../lib/promise');
 
 let wrapPromise = require('@braintree/wrap-promise');
+let sdkClient = require("@paypal/sdk-client/src")
 
 let sharedErrors = require('../lib/errors');
 let errors = require('./errors');
@@ -83,9 +83,12 @@ function transformPaymentsSDKConfiguration(config, auth) {
       return Promise.reject(new BraintreeError(errors.CLIENT_INVALID_AUTHORIZATION));
   }
 
-  let supportedCardTypes = Object.keys(globals.FUNDING_ELIGIBILITY.card.vendors)
+  const fundingEligibility = sdkClient.getFundingEligibility();
+  const cardVendors = (fundingEligibility.card && fundingEligibility.card.vendors) || {}
+
+  let supportedCardTypes = Object.keys(cardVendors)
     .filter((name) => {
-      return globals.FUNDING_ELIGIBILITY.card.vendors[name].eligible;
+      return cardVendors[name] && cardVendors[name].eligible;
     });
 
   // TODO which of these fields do we need

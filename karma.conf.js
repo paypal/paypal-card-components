@@ -6,36 +6,32 @@ import { getWebpackConfig } from 'grumbler-scripts/config/webpack.config';
 
 import globals from './globals';
 
-const hostedFieldsGlobal = {
-  serverConfig: {
-    fundingEligibility: {
-      card: {
-        eligible: true,
-        branded:  false,
+const fundingEligibility = {
+  card: {
+    eligible: true,
+    branded:  false,
     
-        vendors: {
-          visa: {
-            eligible: true
-          },
-          mastercard: {
-            eligible: true
-          },
-          amex: {
-            eligible: true
-          },
-          discover: {
-            eligible: true
-          },
-          hiper: {
-            eligible: false
-          },
-          elo: {
-            eligible: false
-          },
-          jcb: {
-            eligible: false
-          }
-        }
+    vendors: {
+      visa: {
+        eligible: true
+      },
+      mastercard: {
+        eligible: true
+      },
+      amex: {
+        eligible: true
+      },
+      discover: {
+        eligible: true
+      },
+      hiper: {
+        eligible: false
+      },
+      elo: {
+        eligible: false
+      },
+      jcb: {
+        eligible: false
       }
     }
   }
@@ -50,7 +46,6 @@ export default (karma : Object) : void =>
     webpack:  getWebpackConfig({
       vars: {
         ...globals,
-        __hosted_fields__:  hostedFieldsGlobal,
 
         __CLIENT_ID__:      'xyz',
         __MERCHANT_ID__:    'abc',
@@ -72,7 +67,7 @@ export default (karma : Object) : void =>
         __VERSION__:           '1.0.55',
         __NAMESPACE__:         'testpaypal',
 
-        __FUNDING_ELIGIBILITY__: hostedFieldsGlobal.serverConfig.fundingEligibility
+        __FUNDING_ELIGIBILITY__: fundingEligibility
       }
     })
   }));
