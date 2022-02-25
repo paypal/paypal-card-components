@@ -416,7 +416,8 @@ function HostedFields(options) {
     frame = iFramer({
       type: key,
       name: 'braintree-hosted-field-' + key,
-      style: constants.defaultIFrameStyle
+      style: constants.defaultIFrameStyle,
+      loading: "eager"
     });
 
     this._injectedNodes = this._injectedNodes.concat(injectFrame(frame, container));
