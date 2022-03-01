@@ -3,7 +3,7 @@
 import assert from 'assert';
 
 import td from 'testdouble/dist/testdouble';
-import { destroy } from 'zoid/src';
+import { destroy } from '@krakenjs/zoid/src';
 
 import '../src/index';
 import contingencyFlow from '../src/contingency-flow';

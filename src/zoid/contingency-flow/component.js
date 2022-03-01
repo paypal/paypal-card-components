@@ -2,10 +2,10 @@
 /* eslint import/no-default-export: off */
 
 import { getClientID, getPayPalDomain, getSDKMeta } from '@paypal/sdk-client/src';
-import { create, CONTEXT, EVENT, type ZoidComponent } from 'zoid/src';
-import { ZalgoPromise } from 'zalgo-promise/src';
-import { destroyElement, memoize } from 'belter/src';
-import { node, dom } from 'jsx-pragmatic/src';
+import { create, CONTEXT, EVENT, type ZoidComponent } from '@krakenjs/zoid/src';
+import { ZalgoPromise } from '@krakenjs/zalgo-promise/src';
+import { destroyElement, memoize } from '@krakenjs/belter/src';
+import { node, dom } from '@krakenjs/jsx-pragmatic/src';
 
 import contingencyFlow from '../../contingency-flow';
 

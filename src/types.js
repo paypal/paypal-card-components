@@ -1,6 +1,6 @@
 /* @flow */
 
-import { ZalgoPromise } from 'zalgo-promise/src';
+import { ZalgoPromise } from '@krakenjs/zalgo-promise/src';
 
 type SubmitFunctionType = (options? : Object) => ZalgoPromise<Object>;
 type GetCardTypesFunctionType = () => Object;
