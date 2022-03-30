@@ -25,7 +25,7 @@
     "globals.js"
   ],
   "author": "dbrain",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "bugs": {
     "url": "https://github.com/paypal/paypal-card-components/issues"
   },
