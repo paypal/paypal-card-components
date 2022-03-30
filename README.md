@@ -1,9 +1,21 @@
 Hosted Fields Component
 -----------------------
 
-[![npm version](https://img.shields.io/npm/v/@paypal/card-components.svg?style=flat-square)](https://www.npmjs.com/package/@paypal/card-components)
+[![build status][build-badge]][build]
+[![code coverage][coverage-badge]][coverage]
+[![npm version][version-badge]][package]
+[![apache license][license-badge]][license]
 
-[![dependencies Status](https://david-dm.org/paypal/paypal-card-components/status.svg)](https://david-dm.org/paypal/paypal-card-components) [![devDependencies Status](https://david-dm.org/paypal/paypal-card-components/dev-status.svg)](https://david-dm.org/paypal/paypal-card-components?type=dev)
+[build-badge]: https://img.shields.io/github/workflow/status/paypal/paypal-card-components/build?logo=github&style=flat-square
+[build]: https://github.com/paypal/paypal-card-components/actions?query=workflow%3Abuild
+[coverage-badge]: https://img.shields.io/codecov/c/github/paypal/paypal-card-components.svg?style=flat-square
+[coverage]: https://codecov.io/github/paypal/paypal-card-components/
+[version-badge]: https://img.shields.io/npm/v/@paypal/card-components.svg?style=flat-square
+[package]: https://www.npmjs.com/package/@paypal/card-components
+[license-badge]: https://img.shields.io/npm/l/@paypal/card-components.svg?style=flat-square
+[license]: https://github.com/paypal/paypal-card-components/blob/main/LICENSE
+
+
 
 Hosted Fields component to be included in the Payments SDK
 
