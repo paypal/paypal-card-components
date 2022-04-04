@@ -1,9 +1,9 @@
 /* @flow */
 /* eslint import/no-default-export: off */
 import { getLogger } from '@paypal/sdk-client/src';
-import { ZalgoPromise } from 'zalgo-promise/src';
-import { parseQuery } from 'belter/src';
-import type { ZoidComponent } from 'zoid/src';
+import { ZalgoPromise } from '@krakenjs/zalgo-promise/src';
+import { parseQuery } from '@krakenjs/belter/src';
+import type { ZoidComponent } from '@krakenjs/zoid/src';
 
 import type { ContingencyFlowProps } from './zoid/contingency-flow/props';
 

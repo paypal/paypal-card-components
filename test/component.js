@@ -4,10 +4,10 @@
 import assert from 'assert';
 
 import td from 'testdouble/dist/testdouble';
-import { ZalgoPromise } from 'zalgo-promise/src';
+import { ZalgoPromise } from '@krakenjs/zalgo-promise/src';
 import { insertMockSDKScript } from '@paypal/sdk-client/src';
 import { SDK_QUERY_KEYS, QUERY_BOOL } from '@paypal/sdk-constants/src';
-import { destroy } from 'zoid/src';
+import { destroy } from '@krakenjs/zoid/src';
 
 // $FlowFixMe
 import btClient from '../vendor/braintree-web/client';

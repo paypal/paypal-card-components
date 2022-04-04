@@ -2,9 +2,9 @@
 
 import { getLogger, getClientToken, getCorrelationID, getPayPalAPIDomain, getVault, getMerchantID, getFundingEligibility, getGraphQLFundingEligibility, isChildWindow } from '@paypal/sdk-client/src';
 import { FPTI_KEY } from '@paypal/sdk-constants/src';
-import { ZalgoPromise } from 'zalgo-promise/src';
-import { uniqueID } from 'belter/src';
-import { destroy as zoidDestroy } from 'zoid/src';
+import { ZalgoPromise } from '@krakenjs/zalgo-promise/src';
+import { uniqueID } from '@krakenjs/belter/src';
+import { destroy as zoidDestroy } from '@krakenjs/zoid/src';
 
 // toodoo unvendor this when braintree-web is updated
 // $FlowFixMe
