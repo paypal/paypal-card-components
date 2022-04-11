@@ -31,8 +31,8 @@
   },
   "homepage": "https://github.com/paypal/paypal-card-components#readme",
   "devDependencies": {
+    "@krakenjs/grumbler-scripts": "^6.0.2",
     "flow-bin": "0.135.0",
-    "grumbler-scripts": "^3",
     "mocha": "^5.0.5",
     "testdouble": "^3.7.0"
   },
@@ -40,9 +40,9 @@
     "@krakenjs/belter": "^2.0.0",
     "@krakenjs/jsx-pragmatic": "^3.0.0",
     "@krakenjs/zalgo-promise": "^2.0.0",
+    "@krakenjs/zoid": "^10.0.0",
     "@paypal/sdk-client": "^4.0.166",
     "@paypal/sdk-constants": "^1.0.8",
-    "braintree-web": "3.33.0",
-    "@krakenjs/zoid": "^10.0.0"
+    "braintree-web": "3.33.0"
   }
 }
