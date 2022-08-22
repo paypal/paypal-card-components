@@ -9,7 +9,7 @@ var BraintreeError = require('../lib/braintree-error');
 var Venmo = require('./venmo');
 var Promise = require('../lib/promise');
 var supportsVenmo = require('./shared/supports-venmo');
-var VERSION = "3.32.0-payments-sdk-dev";
+var VERSION = "3.32.0-paypal-vault-v3-support";
 
 /**
  * @static

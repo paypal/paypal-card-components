@@ -11,7 +11,7 @@ var errors = require('./errors');
 var Promise = require('../lib/promise');
 var wrapPromise = require('@braintree/wrap-promise');
 var PayPalCheckout = require('./paypal-checkout');
-var VERSION = "3.32.0-payments-sdk-dev";
+var VERSION = "3.32.0-paypal-vault-v3-support";
 
 /**
  * @static

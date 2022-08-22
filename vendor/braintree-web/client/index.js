@@ -7,7 +7,7 @@ let Client = require('./client');
 let getConfiguration = require('./get-configuration').getConfiguration;
 
 
-let VERSION = '3.32.0-payments-sdk-dev';
+let VERSION = '3.32.0-paypal-vault-v3-support';
 let Promise = require('../lib/promise');
 
 let wrapPromise = require('@braintree/wrap-promise');

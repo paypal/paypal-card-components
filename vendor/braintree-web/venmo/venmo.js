@@ -10,7 +10,7 @@ var convertMethodsToError = require('../lib/convert-methods-to-error');
 var wrapPromise = require('@braintree/wrap-promise');
 var BraintreeError = require('../lib/braintree-error');
 var Promise = require('../lib/promise');
-var VERSION = "3.32.0-payments-sdk-dev";
+var VERSION = "3.32.0-paypal-vault-v3-support";
 
 /**
  * Venmo tokenize payload.

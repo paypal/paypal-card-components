@@ -6,7 +6,7 @@
 
 var basicComponentVerification = require('../lib/basic-component-verification');
 var VaultManager = require('./vault-manager');
-var VERSION = "3.32.0-payments-sdk-dev";
+var VERSION = "3.32.0-paypal-vault-v3-support";
 var wrapPromise = require('@braintree/wrap-promise');
 
 /**

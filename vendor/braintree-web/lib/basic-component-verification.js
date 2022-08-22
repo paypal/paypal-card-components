@@ -3,7 +3,7 @@
 var BraintreeError = require('./braintree-error');
 var Promise = require('./promise');
 var sharedErrors = require('./errors');
-var VERSION = "3.32.0-payments-sdk-dev";
+var VERSION = "3.32.0-paypal-vault-v3-support";
 
 function basicComponentVerification(options) {
   var client, clientVersion, name;

@@ -27,7 +27,7 @@ var attributeValidationError = require('./attribute-validation-error');
 var useMin = require('../../lib/use-min');
 var Promise = require('../../lib/promise');
 var wrapPromise = require('@braintree/wrap-promise');
-var VERSION = "3.32.0-payments-sdk-dev";
+var VERSION = "3.32.0-paypal-vault-v3-support";
 
 /**
  * @typedef {object} HostedFields~tokenizePayload
