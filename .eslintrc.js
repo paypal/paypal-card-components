@@ -1,7 +1,7 @@
 /* @flow */
 
 module.exports = {
-  extends: './node_modules/@krakenjs/grumbler-scripts/config/.eslintrc-browser.js',
+  extends: "@krakenjs/eslint-config-grumbler/eslintrc-browser",
 
   globals: {
     __ENV__: true
@@ -9,5 +9,9 @@ module.exports = {
 
   rules: {
     indent: [2, 2, {SwitchCase: 1}],
+    'import/no-nodejs-modules':    'off',
+    'import/export':               'off',
+    'import/no-unassigned-import': 'off',
+    'no-console': 'off'
   }
 };
