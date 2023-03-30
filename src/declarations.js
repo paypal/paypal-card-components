@@ -1,5 +1,5 @@
 /* @flow */
 
-import type { HostedFieldsGlobalType } from './types';
+import type { HostedFieldsGlobalType } from "./types";
 
-declare var __hosted_fields__ : HostedFieldsGlobalType;
+declare var __hosted_fields__: HostedFieldsGlobalType;

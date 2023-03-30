@@ -1,11 +1,11 @@
 /* @flow */
 /* eslint import/no-default-export: off */
-import { getLogger } from '@paypal/sdk-client/src';
-import { ZalgoPromise } from '@krakenjs/zalgo-promise/src';
-import { parseQuery } from '@krakenjs/belter/src';
-import type { ZoidComponent } from '@krakenjs/zoid/src';
+import { getLogger } from "@paypal/sdk-client/src";
+import { ZalgoPromise } from "@krakenjs/zalgo-promise/src";
+import { parseQuery } from "@krakenjs/belter/src";
+import type { ZoidComponent } from "@krakenjs/zoid/src";
 
-import type { ContingencyFlowProps } from './zoid/contingency-flow/props';
+import type { ContingencyFlowProps } from "./zoid/contingency-flow/props";
 
 let contingencyResolveFunction;
 
@@ -16,16 +16,19 @@ function skip() {
 
   getLogger().info(`SKIPPED_BY_BUYER`);
   contingencyResolveFunction({
-    success:                      false,
-    liability_shift:              'NO',
-    status:                       'NO',
-    authentication_status_reason: 'SKIPPED_BY_BUYER'
+    success: false,
+    liability_shift: "NO",
+    status: "NO",
+    authentication_status_reason: "SKIPPED_BY_BUYER",
   });
   contingencyResolveFunction = null;
 }
 
-function start(ContingencyFlowComponent : ZoidComponent<ContingencyFlowProps>, url : string) : ZalgoPromise<Object> {
-  const params = parseQuery(url.split('?')[1]);
+function start(
+  ContingencyFlowComponent: ZoidComponent<ContingencyFlowProps>,
+  url: string
+): ZalgoPromise<Object> {
+  const params = parseQuery(url.split("?")[1]);
   const body = document.body;
 
   if (!body) {
@@ -37,10 +40,10 @@ function start(ContingencyFlowComponent : ZoidComponent<ContingencyFlowProps>, u
 
     // $FlowFixMe
     ContingencyFlowComponent({
-      action:              params.action,
-      xcomponent:          '1',
-      flow:                params.flow,
-      cart_id:             params.cart_id,
+      action: params.action,
+      xcomponent: "1",
+      flow: params.flow,
+      cart_id: params.cart_id,
       onContingencyResult: (err, result) => {
         contingencyResolveFunction = null;
 
@@ -50,15 +53,15 @@ function start(ContingencyFlowComponent : ZoidComponent<ContingencyFlowProps>, u
         }
         resolve(result);
       },
-      onError:             (err) => {
+      onError: (err) => {
         contingencyResolveFunction = null;
         reject(err);
-      }
+      },
     }).render(body);
   });
 }
 
 export default {
   skip,
-  start
+  start,
 };

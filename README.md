@@ -1,5 +1,4 @@
-Hosted Fields Component
------------------------
+## Hosted Fields Component
 
 [![build status][build-badge]][build]
 [![code coverage][coverage-badge]][coverage]
@@ -14,8 +13,6 @@ Hosted Fields Component
 [package]: https://www.npmjs.com/package/@paypal/card-components
 [license-badge]: https://img.shields.io/npm/l/@paypal/card-components.svg?style=flat-square
 [license]: https://github.com/paypal/paypal-card-components/blob/main/LICENSE
-
-
 
 Hosted Fields component to be included in the Payments SDK
 

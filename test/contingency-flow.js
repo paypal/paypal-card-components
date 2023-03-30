@@ -1,16 +1,16 @@
 /* @flow */
 
-import assert from 'assert';
+import assert from "assert";
 
-import td from 'testdouble/dist/testdouble';
-import { destroy } from '@krakenjs/zoid/src';
+import td from "testdouble/dist/testdouble";
+import { destroy } from "@krakenjs/zoid/src";
 
-import '../src/index';
-import contingencyFlow from '../src/contingency-flow';
+import "../src/index";
+import contingencyFlow from "../src/contingency-flow";
 
-import rejectIfResolves from './utils/reject-if-resolves';
+import rejectIfResolves from "./utils/reject-if-resolves";
 
-describe('contingency-flow', () => {
+describe("contingency-flow", () => {
   let fakeContingencyFlowComponent;
   let fakeContingencyFlowComponentRender;
 
@@ -18,8 +18,10 @@ describe('contingency-flow', () => {
     fakeContingencyFlowComponentRender = td.func();
     fakeContingencyFlowComponent = td.func();
 
-    td.when(fakeContingencyFlowComponent(), { ignoreExtraArgs: true }).thenReturn({
-      render: fakeContingencyFlowComponentRender
+    td.when(fakeContingencyFlowComponent(), {
+      ignoreExtraArgs: true,
+    }).thenReturn({
+      render: fakeContingencyFlowComponentRender,
     });
   });
 
@@ -28,28 +30,36 @@ describe('contingency-flow', () => {
     return destroy();
   });
 
-  it('renders a zoid component', () => {
-    contingencyFlow.start(fakeContingencyFlowComponent, 'https://example.com?cart_id=abc123&action=action&xcomponent=1&flow=contingency');
+  it("renders a zoid component", () => {
+    contingencyFlow.start(
+      fakeContingencyFlowComponent,
+      "https://example.com?cart_id=abc123&action=action&xcomponent=1&flow=contingency"
+    );
 
-    td.verify(fakeContingencyFlowComponent({
-      action:              'action',
-      xcomponent:           '1',
-      flow:                'contingency',
-      cart_id:             'abc123',
-      onContingencyResult: td.matchers.isA(Function),
-      onError:             td.matchers.isA(Function)
-    }));
+    td.verify(
+      fakeContingencyFlowComponent({
+        action: "action",
+        xcomponent: "1",
+        flow: "contingency",
+        cart_id: "abc123",
+        onContingencyResult: td.matchers.isA(Function),
+        onError: td.matchers.isA(Function),
+      })
+    );
 
     td.verify(fakeContingencyFlowComponentRender(document.body));
   });
 
-  it('rejects when contingency returns an error object with code and description', () => {
-    const promise = contingencyFlow.start(fakeContingencyFlowComponent, 'https://example.com?cart_id=abc123&action=contingency&xcomponent=1&flow=contingency');
-    const onContingencyResult = td.explain(fakeContingencyFlowComponent).calls[0].args[0]
-      .onContingencyResult;
+  it("rejects when contingency returns an error object with code and description", () => {
+    const promise = contingencyFlow.start(
+      fakeContingencyFlowComponent,
+      "https://example.com?cart_id=abc123&action=contingency&xcomponent=1&flow=contingency"
+    );
+    const onContingencyResult = td.explain(fakeContingencyFlowComponent)
+      .calls[0].args[0].onContingencyResult;
     const error = {
-      code:        42,
-      description: 'The error of life'
+      code: 42,
+      description: "The error of life",
     };
 
     onContingencyResult(error);
@@ -59,12 +69,15 @@ describe('contingency-flow', () => {
     });
   });
 
-  it('rejects when contingency returns an error object with description only', () => {
-    const promise = contingencyFlow.start(fakeContingencyFlowComponent, 'https://example.com?cart_id=abc123&action=contingency&xcomponent=1&flow=contingency');
-    const onContingencyResult = td.explain(fakeContingencyFlowComponent).calls[0].args[0]
-      .onContingencyResult;
+  it("rejects when contingency returns an error object with description only", () => {
+    const promise = contingencyFlow.start(
+      fakeContingencyFlowComponent,
+      "https://example.com?cart_id=abc123&action=contingency&xcomponent=1&flow=contingency"
+    );
+    const onContingencyResult = td.explain(fakeContingencyFlowComponent)
+      .calls[0].args[0].onContingencyResult;
     const error = {
-      description: 'The error of life'
+      description: "The error of life",
     };
 
     onContingencyResult(error);
@@ -74,16 +87,19 @@ describe('contingency-flow', () => {
     });
   });
 
-  it('resolves when contingency is successful', () => {
-    const promise = contingencyFlow.start(fakeContingencyFlowComponent, 'https://example.com?cart_id=abc123&action=contingency&xcomponent=1&flow=contingency');
-    const onContingencyResult = td.explain(fakeContingencyFlowComponent).calls[0].args[0]
-      .onContingencyResult;
+  it("resolves when contingency is successful", () => {
+    const promise = contingencyFlow.start(
+      fakeContingencyFlowComponent,
+      "https://example.com?cart_id=abc123&action=contingency&xcomponent=1&flow=contingency"
+    );
+    const onContingencyResult = td.explain(fakeContingencyFlowComponent)
+      .calls[0].args[0].onContingencyResult;
 
     const threeDSResult = {
-      success:                      true,
-      liability_shift:              'YES',
-      status:                       'YES',
-      authentication_status_reason: 'UNAVAILABLE'
+      success: true,
+      liability_shift: "YES",
+      status: "YES",
+      authentication_status_reason: "UNAVAILABLE",
     };
 
     onContingencyResult(null, threeDSResult);
@@ -93,9 +109,12 @@ describe('contingency-flow', () => {
     });
   });
 
-  it('rejects when onError is called with an error', () => {
-    const randomError = new Error('spooky');
-    const promise = contingencyFlow.start(fakeContingencyFlowComponent, 'https://example.com?cart_id=abc123&action=contingency&xcomponent=1&flow=contingency');
+  it("rejects when onError is called with an error", () => {
+    const randomError = new Error("spooky");
+    const promise = contingencyFlow.start(
+      fakeContingencyFlowComponent,
+      "https://example.com?cart_id=abc123&action=contingency&xcomponent=1&flow=contingency"
+    );
     const onError = td.explain(fakeContingencyFlowComponent).calls[0].args[0]
       .onError;
 
