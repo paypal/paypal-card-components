@@ -4,3 +4,4 @@ coverage
 flow-typed
 CHANGELOG.md
 node_modules
+vendor

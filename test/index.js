@@ -1,6 +1,6 @@
 /* @flow */
 
-import './globals';
+import "./globals";
 
-export * from './component';
-export * from './contingency-flow';
+export * from "./component";
+export * from "./contingency-flow";
