@@ -107,7 +107,9 @@ function createSubmitHandler (hostedFieldsInstance, orderIdFunction) : Function 
           authenticationStatus: payload.status,
           authenticationReason: payload.authentication_status_reason,
           card:                 payload && payload.payment_source && payload.payment_source.card,
-          orderId
+          orderId,
+          // add "orderID" alias to be consistent with the Buttons component interface with `onApprove({ orderID })`
+          orderID: orderId
         };
       }).catch((err) => {
         paymentInProgress = false;
