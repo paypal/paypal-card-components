@@ -10,7 +10,7 @@ const fundingEligibility = {
   card: {
     eligible: true,
     branded:  false,
-    
+
     vendors: {
       visa: {
         eligible: true
@@ -56,16 +56,17 @@ export default (karma : Object) : void =>
         __COMMIT__: true,
         __VAULT__:  true,
 
-        __PORT__:              8000,
-        __PAYPAL_API_DOMAIN__: 'msmaster.qa.paypal.com',
-        __STAGE_HOST__:        'msmaster.qa.paypal.com',
-        __HOST__:              'test.paypal.com',
-        __HOSTNAME__:          'test.paypal.com',
-        __SDK_HOST__:          'test.paypal.com',
-        __PATH__:              '/sdk/js',
-        __CORRELATION_ID__:    'abc123',
-        __VERSION__:           '1.0.55',
-        __NAMESPACE__:         'testpaypal',
+        __PORT__:               8000,
+        __PAYPAL_API_DOMAIN__:  'msmaster.qa.paypal.com',
+        __STAGE_HOST__:         'msmaster.qa.paypal.com',
+        __HOST__:               'test.paypal.com',
+        __HOSTNAME__:           'test.paypal.com',
+        __SDK_HOST__:           'test.paypal.com',
+        __PATH__:               '/sdk/js',
+        __CORRELATION_ID__:     'abc123',
+        __VERSION__:            '1.0.55',
+        __NAMESPACE__:          'testpaypal',
+        __DISABLE_SET_COOKIE__: false,
 
         __FUNDING_ELIGIBILITY__: fundingEligibility
       }
