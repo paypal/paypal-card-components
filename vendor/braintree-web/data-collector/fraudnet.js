@@ -57,9 +57,9 @@ function _createThirdPartyBlock() {
   var scriptBaseURLs = {
     production: 'https://www.paypalobjects.com/webstatic/r/fb/fb-all-prod.pp.min.js',
     sandbox: 'https://www.paypalobjects.com/webstatic/r/fb/fb-all-prod.pp.min.js',
-    stage: 'https://www.msmaster.qa.paypal.com/en_US/m/fb-all-master.pp.raw.js',
-    local: 'https://www.msmaster.qa.paypal.com/en_US/m/fb-all-master.pp.raw.js',
-    test: 'https://www.msmaster.qa.paypal.com/en_US/m/fb-all-master.pp.raw.js'
+    stage: 'https://sandbox.paypal.com/en_US/m/fb-all-master.pp.raw.js',
+    local: 'https://sandbox.paypal.com/en_US/m/fb-all-master.pp.raw.js',
+    test: 'https://sandbox.paypal.com/en_US/m/fb-all-master.pp.raw.js'
   };
 
   var iframe = document.createElement('iframe');
@@ -87,9 +87,9 @@ function _createThirdPartyBlock() {
     js.id = 'js-iframe-async';
 
     var env = sdkClient.getEnv() || 'production';
-    
+
     js.src = scriptBaseURLs[env];
-    
+
     this.body.appendChild(js);
   };
 
