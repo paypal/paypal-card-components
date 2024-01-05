@@ -45,7 +45,6 @@
     "@krakenjs/zalgo-promise": "^2.0.0",
     "@krakenjs/zoid": "^10.0.0",
     "@paypal/sdk-client": "^4.0.166",
-    "@paypal/sdk-constants": "^1.0.8",
-    "braintree-web": "3.33.0"
+    "@paypal/sdk-constants": "^1.0.8"
   }
 }
