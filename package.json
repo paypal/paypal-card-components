@@ -40,12 +40,22 @@
     "testdouble": "^3.7.0"
   },
   "dependencies": {
+    "@braintree/browser-detection": "1.7.0",
+    "@braintree/iframer": "1.0.3",
+    "@braintree/sanitize-url": "2.1.0",
+    "@braintree/wrap-promise": "1.1.1",
     "@krakenjs/belter": "^2.0.0",
     "@krakenjs/jsx-pragmatic": "^3.0.0",
     "@krakenjs/zalgo-promise": "^2.0.0",
     "@krakenjs/zoid": "^10.0.0",
     "@paypal/sdk-client": "^4.0.166",
     "@paypal/sdk-constants": "^1.0.8",
-    "braintree-web": "3.33.0"
+    "card-validator": "4.3.0",
+    "credit-card-type": "6.3.0",
+    "framebus": "3.0.1",
+    "inject-stylesheet": "1.0.0",
+    "promise-polyfill": "7.0.2",
+    "restricted-input": "1.2.7"
+
   }
 }
