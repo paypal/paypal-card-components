@@ -42,7 +42,7 @@
   "dependencies": {
     "@braintree/browser-detection": "1.7.0",
     "@braintree/iframer": "1.0.3",
-    "@braintree/sanitize-url": "2.1.0",
+    "@braintree/sanitize-url": "6.0.1",
     "@braintree/wrap-promise": "1.1.1",
     "@krakenjs/belter": "^2.0.0",
     "@krakenjs/jsx-pragmatic": "^3.0.0",
