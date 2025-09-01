@@ -5,5 +5,6 @@ export type ContingencyFlowProps = {|
     cart_id : string,
     flow : string,
     xcomponent : string,
-    onContingencyResult : (err : mixed, result : Object) => void
+    onContingencyResult : (err : mixed, result : Object) => void,
+    go_to : string
 |};
