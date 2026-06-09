@@ -1,6 +1,5 @@
 node_modules
 coverage
-flow-typed
 package-lock.json
 npm-debug.log
 

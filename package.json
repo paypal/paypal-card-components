@@ -12,7 +12,7 @@
     "flow": "flow",
     "lint": "eslint src/ test/ *.js",
     "test": "npm run lint && npm run flow && npm run karma",
-    "karma": "cross-env NODE_ENV=test babel-node --plugins=transform-es2015-modules-commonjs ./node_modules/.bin/karma start"
+    "karma": "cross-env NODE_ENV=test babel-node --plugins=@babel/transform-modules-commonjs ./node_modules/.bin/karma start"
   },
   "repository": {
     "type": "git",
