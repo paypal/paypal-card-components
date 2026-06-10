@@ -26,6 +26,9 @@ jobs:
         with:
           useLockFile: false
 
+      - name: ▶️ Run flow-typed script
+        run: npm run flow-typed
+
       - name: ▶️ Run test script
         run: npm run test
 
