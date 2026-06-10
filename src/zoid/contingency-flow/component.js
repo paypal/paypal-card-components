@@ -59,6 +59,10 @@ export const getContingencyFlowComponent : () => ContingencyFlowComponent = memo
         queryParam:  true,
         sendToChild: false,
         value:       () => getSDKMeta()
+      },
+      go_to: {
+        type: 'string',
+        queryParam: true
       }
     },
     tag: CONTINGENCY_TAG,
