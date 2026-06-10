@@ -11,7 +11,7 @@
     "flow-typed": "rm -rf ./flow-typed && flow-typed install",
     "flow": "flow",
     "lint": "eslint src/ test/ *.js",
-    "test": "npm run lint && npm run flow-typed && npm run flow && npm run karma",
+    "test": "npm run lint && npm run flow && npm run karma",
     "karma": "cross-env NODE_ENV=test babel-node --plugins=@babel/transform-modules-commonjs ./node_modules/.bin/karma start"
   },
   "repository": {
