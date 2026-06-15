@@ -3,12 +3,9 @@
 var parser;
 var legalHosts = {
   'paypal.com': 1,
-  'paypalcorp.com': 1,
   'braintreepayments.com': 1,
   'braintreegateway.com': 1,
-  'braintree-api.com': 1,
-  // TODO remove this hack!
-  'herokuapp.com': 1
+  'braintree-api.com': 1
 };
 
 function stripSubdomains(domain) {
